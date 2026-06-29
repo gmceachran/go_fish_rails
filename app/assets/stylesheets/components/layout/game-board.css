@@ -1,0 +1,31 @@
+.game-board {
+  --gf-side: 334px;
+  --gf-tray: 250px;
+
+  display: grid;
+  grid-template-columns: 1fr var(--gf-side);
+  grid-template-rows: 1fr var(--gf-tray);
+  overflow: hidden;
+
+  .game-board__players {
+    flex-grow: 1;
+    background-color: var(--op-color-neutral-plus-max);
+    overflow: inherit;
+  }
+
+  .game-board__feed {
+    overflow: inherit;
+    background-color: var(--op-color-primary-plus-eight);
+    border-left: var(--op-border-width) solid var(--op-color-border);
+  }
+
+  .game-board__tray {
+    background-color: var(--op-color-neutral-plus-eight);
+    border-top: var(--op-border-width) solid var(--op-color-border);
+
+    &.game-board__tray--books {
+      border-left: var(--op-border-width) solid var(--op-color-border);
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+.playing-card {
+  --_gf-small-card-width: 66px;
+  --_gf-small-card-height: 94px;
+  --_gf-medium-card-width: 84px;
+  --_gf-medium-card-height: 119px;
+  --_gf-large-card-width: 108px;
+  --_gf-large-card-height: 154px;
+
+  --_gf-radius-x-small: calc(var(--op-radius-small) * 0.75); /* 3px */
+  --_gf-radius-2x-small: calc(var(--op-radius-small) * 1.5); /* 6px */
+
+  box-shadow: var(--op-shadow-x-small);
+  border-radius: var(--_gf-radius-x-small);
+
+  &.playing-card--back {
+    border-radius: var(--_gf-radius-2x-small);
+  }
+
+  &.playing-card--small {
+    max-height: var(--_gf-small-card-height);
+    max-width: var(--_gf-small-card-height);
+  }
+
+  &.playing-card--medium {
+    max-height: var(--_gf-medium-card-height);
+    max-width: var(--_gf-medium-card-width);
+  }
+
+  &.playing-card--large {
+    height: var(--_gf-large-card-height);
+    width: var(--_gf-large-card-width);
+  }
+}

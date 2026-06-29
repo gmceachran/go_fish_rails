@@ -1,0 +1,27 @@
+.game-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--op-space-small);
+  background-color: var(--op-color-primary-plus-seven);
+  border: var(--op-border-width) solid var(--op-color-primary-plus-six);
+  padding: var(--op-space-medium);
+  border-radius: var(--op-radius-large);
+  font-size: var(--op-space-small);
+  font-weight: var(--op-font-weight-normal);
+
+  .game-actions__options {
+    display: flex;
+    gap: var(--op-space-small);
+
+    .game-actions__field {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+      gap: var(--op-space-2x-small);
+
+      .game-actions__label {
+        color: var(--op-color-primary-on-plus-seven);
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 doctype html
 html
   head = render 'head'
-  body.app-body
-    .app__content
-      = yield
+  link rel='stylesheet' href="https://cdn.jsdelivr.net/npm/@rolemodel/optics@2.3.1/dist/css/optics+phosphor_icons.min.css"
+  link rel='stylesheet' href="stylesheets/application.css"
+  body.op-page
+    = yield

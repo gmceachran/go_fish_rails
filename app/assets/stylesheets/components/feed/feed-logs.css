@@ -1,0 +1,21 @@
+.feed-logs {
+  --_gf-feed-logs-gap: var(--op-space-x-small);
+
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  height: 100%;
+  gap: var(--_gf-feed-logs-gap);
+  
+  .feed-logs__response-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--_gf-feed-logs-gap);
+    padding-inline: var(--op-space-small);
+
+    .ph-arrow-bend-down-right {
+      color: var(--op-color-primary-on-plus-five-alt);
+    } 
+  }
+}

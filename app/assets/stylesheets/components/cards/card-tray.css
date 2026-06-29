@@ -1,0 +1,7 @@
+.card-tray {
+  display: flex;
+
+  & > :not(:first-child) {
+    margin-left: -40px;
+  }
+}
