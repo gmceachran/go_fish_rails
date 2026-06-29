@@ -1,0 +1,27 @@
+:root {
+  --gf-navbar-height: calc(var(--op-size-unit) * 15); /* 60 px */
+  --gf-navbar-height__condensed: calc(var(--op-size-unit) * 12); /* 60 px */
+
+  --op-color-primary-h: 200;
+  --op-color-primary-s: 50%;
+  --op-color-primary-l: 32%;
+
+
+  --op-color-alerts-warning-h: 47;
+  --op-color-alerts-warning-s: 100%;
+  --op-color-alerts-warning-l: 61%;
+
+  --op-color-alerts-warning-plus-seven: light-dark(
+    hsl(var(--op-color-alerts-warning-h) var(--op-color-alerts-warning-s) 14%),
+    hsl(var(--op-color-alerts-warning-h) var(--op-color-alerts-warning-s) 8%)
+  );
+  --op-color-alerts-warning-on-plus-seven: light-dark(
+    hsl(var(--op-color-alerts-warning-h) var(--op-color-alerts-warning-s) 60%),
+    hsl(var(--op-color-alerts-warning-h) var(--op-color-alerts-warning-s) 45%)
+  );
+
+  --op-radius-small: 4px;
+  --op-radius-medium: 16px;
+  --op-radius-large: 24px;
+  --op-radius-x-large: 32px;
+}
