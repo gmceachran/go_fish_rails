@@ -2,5 +2,7 @@ doctype html
 html
   head = render 'head'
   body.op-page
-    sidebar = render 'sidebar'
-    = yield
+    .op-page__sidebar = render 'sidebar'
+    .op-page__main
+      main.op-page__main-content
+        = yield

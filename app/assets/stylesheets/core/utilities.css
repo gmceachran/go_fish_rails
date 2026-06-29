@@ -1,0 +1,9 @@
+p, h2, h1 {
+  margin: 0;
+}
+
+.container {
+  &.container--no-padding {
+    padding-inline: 0;
+  }
+}

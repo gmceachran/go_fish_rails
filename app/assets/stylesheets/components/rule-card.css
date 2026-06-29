@@ -1,0 +1,22 @@
+.rule-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--op-space-2x-small);
+  border: var(--op-border-width) solid var(--op-color-border);
+  border-radius: var(--op-radius-small);
+  background-color: white;
+  padding: var(--op-space-scale-unit);
+  box-shadow: var(--op-shadow-x-small);
+
+  .rule-card__header {
+    font-size: var(--op-font-small);
+    color: var(--op-color-neutral-on-plus-five);
+    font-weight: var(--op-font-weight-normal);
+  }
+
+  .rule-card__content {
+    font-size: var(--op-font-x-small);
+    color: var(--op-color-neutral-on-plus-eight-alt);
+    font-weight: var(--op-font-weight-light);
+  }
+}

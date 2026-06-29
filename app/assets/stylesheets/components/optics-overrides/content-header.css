@@ -1,0 +1,5 @@
+.content-header {
+  .content-header__subline {
+    font-size: var(--op-font-large);
+  }
+}
