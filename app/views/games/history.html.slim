@@ -1,1 +1,10 @@
-p History
+.container.container--xs.container--no-padding
+  header.content-header
+    .content-header__details
+      h1.content-header__subline History
+  .op-stack
+    - @game_history.each do |game|
+      .game-card
+        p.game-card__title  = game[:title]
+        p.game-card__result players: #{game[:player_count]}
+        p.game-card__result = game[:won] ? "won" : "lost"
