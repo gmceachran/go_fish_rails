@@ -5,7 +5,7 @@ RSpec.describe "Sessions", type: :system do
     it 'shows login form' do
       visit new_session_path
 
-      expect(page).to have_button "Sign in"
+      expect(page).to have_button "Log in"
       expect(page).to have_content "Forgot password?"
     end
   end

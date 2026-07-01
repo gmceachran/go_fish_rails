@@ -2,11 +2,19 @@
 = tag.div(flash[:notice], style: "color:green") if flash[:notice]
 
 = form_with url: session_path do |form|
-  = form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address]
-  br
-  = form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72
-  br
-  = form.submit "Sign in"
+  .form-group
+    = form.label :email_address
+      | Enter your email address:
+    = form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address]
+
+  .form-group
+    = form.label :password
+      | Enter your password:
+    = form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72
+
+  .form-group
+    = form.submit "Log in"
+
 br
 
 = link_to "Forgot password?", new_password_path

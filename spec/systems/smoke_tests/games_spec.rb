@@ -2,12 +2,9 @@ require "rails_helper"
 
 
 RSpec.describe "Games", type: :system do
-  let(:user) { create :user }
-
   describe "#index" do
-
     it "shows the game index" do
-      log_in(user)
+      create_and_log_in
       visit games_path
 
       expect(page).to have_content "Your Games"
@@ -17,6 +14,7 @@ RSpec.describe "Games", type: :system do
 
   describe "#history" do
     it 'shows game history' do
+      create_and_log_in
       visit games_history_path
       expect(page).to have_content "History"
     end

@@ -11,6 +11,11 @@ module SignUpHelper
     visit new_session_path
     fill_in "email_address", with: user.email_address
     fill_in "password", with: user.password
-    click_on "Sign in"
+    click_on "Log in"
+  end
+
+  def create_and_log_in
+    user = create :user
+    log_in(user)
   end
 end

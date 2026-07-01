@@ -10,4 +10,5 @@
     .sidebar__content.sidebar__content--end
       .divider.divider--spacing-large
       button.btn.btn--no-border Profile
-      button.btn.btn--no-border Logout
+      = button_to session_path, method: :delete, class: "btn btn--no-border" do 
+        | Log Out
