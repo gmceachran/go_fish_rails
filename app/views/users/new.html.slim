@@ -1,0 +1,9 @@
+= form_with model: @user, method: :post do |form|
+  p Enter your email address
+  / = form.label 
+  = form.email_field :email_address
+  p Create a password:
+  = form.password_field :password
+  p Confirm your password:
+  = form.password_field :password_confirmation
+  = form.submit "Sign up"

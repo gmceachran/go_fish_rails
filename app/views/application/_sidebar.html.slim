@@ -3,10 +3,10 @@
     a.sidebar__brand[href="/"]
       img[src="./public/rms-logo.svg" alt="RoleModel Software Logo"]
     .sidebar__content.sidebar__content--start
-      button.btn.btn--no-border All Games
-      button.btn.btn--no-border Stats
-      button.btn.btn--no-border History
-      button.btn.btn--no-border button_to="#{pages_rules_path}" Rules
+      a.btn.btn--no-border href = root_url All Games
+      a.btn.btn--no-border href = stats_url Stats
+      a.btn.btn--no-border href = games_history_url History
+      a.btn.btn--no-border href = pages_rules_url  Rules
     .sidebar__content.sidebar__content--end
       .divider.divider--spacing-large
       button.btn.btn--no-border Profile
