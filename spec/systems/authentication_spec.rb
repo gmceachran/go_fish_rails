@@ -30,7 +30,7 @@ RSpec.describe :authentication, type: :system do
       click_on "Log Out"
 
       expect(page).to have_current_path new_session_path
-      expect(page).to have_content "Enter your email address:"
+      expect(page).to have_content "Email address"
     end
   end
 
@@ -42,8 +42,8 @@ RSpec.describe :authentication, type: :system do
 
   def log_in(email, password)
     visit new_session_path
-    fill_in "email_address", with: email
-    fill_in "password", with: password
+    fill_in "Email", with: email
+    fill_in "Password", with: password
     click_on "Log in"
   end
 end

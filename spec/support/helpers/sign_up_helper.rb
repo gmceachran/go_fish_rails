@@ -4,13 +4,13 @@ module SignUpHelper
     fill_in "user_email_address", with: email
     fill_in "user_password", with: password
     fill_in "user_password_confirmation", with: password
-    click_on "Sign up"
+    click_on "Create User"
   end
 
   def log_in(user)
     visit new_session_path
-    fill_in "email_address", with: user.email_address
-    fill_in "password", with: user.password
+    fill_in "Email", with: user.email_address
+    fill_in "Password", with: user.password
     click_on "Log in"
   end
 
