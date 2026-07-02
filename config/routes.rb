@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :users, only: [ :new, :create ]
 
   get "games/history", to: "games#history"
-  resources :games, only: [ :index ]
+  resources :games, only: [ :index, :new, :create, :destroy, :update ]
 
   root "games#index"
 

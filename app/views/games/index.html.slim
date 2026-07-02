@@ -1,52 +1,40 @@
 .op-page__main
   main.op-page__main-content
     .op-stack
-
-      section.op-stack
+      section.op-stack.your-games
         header.content-header.items-end
           .content-header__details
             h2.content-header__title
               | Your Games
           .content-header__aside
-            button.btn.margin-xs.btn--primary
-              | New Game
+            a.btn.margin-xs.btn--primary href = new_game_path New Game
 
         .divider
-        .card.card--padded.card--condensed
-          .flex.items-center.justify-between
-            button.btn.btn--no-border
-              | Game 1
-            em
-              | (Full)
-            button.btn
-              | Game 2
-        .card.card--padded.card--condensed
-          .flex.items-center.justify-between
-            button.btn.btn--no-border
-              | Play Now
-            em
-              | (2/3 players)
-            button.btn.btn--disabled
-              | Waiting...
+        - @user_games.each do |game|
+          .card.card--padded.card--condensed
+            .flex.items-center.justify-between
+              button.btn.btn--no-border
+                | Game #{game.id}
+              em
+                - if game.players.count >= game.max_players
+                  | (Full)
+                - else
+                  | (#{game.players.count}/#{game.max_players} players)
+              button.btn
+                | Play Now
 
-      section
+      section.open-games
         header.content-header
           .content-header__details
             h2.content-header__title
               | Games
-              
+
         .divider
-        .card.flex.items-center.justify-between.margin-top-xs
-          button.btn.btn--no-border.margin-xs
-            | Game 0
-          em
-            | (1/5 players)
-          button.btn.margin-xs
-            | Join
-        .card.flex.items-center.justify-between.margin-top-xs
-          button.btn.btn--no-border.margin-xs
-            | game 1
-          em
-            | (2/3 players)
-          button.btn.margin-xs
-            | Join
+        - @open_games.each do |game|
+          .card.flex.items-center.justify-between.margin-top-xs
+            button.btn.btn--no-border.margin-xs
+              | Game #{game.id}
+            em
+              | (#{game.players.count}/#{game.max_players} players)
+            button.btn.margin-xs
+              | Join

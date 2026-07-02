@@ -1,0 +1,22 @@
+.modal-wrapper.modal-wrapper--active.modal-wrapper--demo
+  .modal-wrapper__backdrop
+  .modal
+
+    .modal__header
+      | Create New Game
+      button.btn.btn--no-border.btn--icon.btn--pill
+        span.material-symbols-outlined.icon--x-large close
+
+    = simple_form_for @game, url: games_path do |f|
+      .modal__body
+        | Choose Number of Players
+        label for="options"
+        select name="options"
+          option 2
+          option 3
+          option 4
+          option 5
+
+      .modal__footer
+        a.btn href = root_path Cancel
+        = f.button :submit, "Create Game"

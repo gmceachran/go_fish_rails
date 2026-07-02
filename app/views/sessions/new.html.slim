@@ -1,9 +1,11 @@
-= simple_form_for :session, url: session_path do |f|
-  = f.input :email_address
-  = f.input :password
-  = f.button :submit, "Log in"
+.container.container--xs
+  .form-container
+    = simple_form_for :session, url: session_path do |f|
+      = f.input :email_address
+      = f.input :password
+      = f.button :submit, "Log in"
 
-br
+    br
 
-= link_to "Forgot password?", new_password_path
-= link_to "Don't have an account?", new_user_path
+    = link_to "Forgot password?", new_password_path
+    = link_to "Don't have an account?", new_user_path
