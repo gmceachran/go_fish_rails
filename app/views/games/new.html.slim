@@ -5,17 +5,13 @@
     .modal__header
       | Create New Game
       button.btn.btn--no-border.btn--icon.btn--pill
-        span.material-symbols-outlined.icon--x-large close
+        a.material-symbols-outlined.icon--x-large href = root_path
+          | close
 
     = simple_form_for @game, url: games_path do |f|
       .modal__body
         | Choose Number of Players
-        label for="options"
-        select name="options"
-          option 2
-          option 3
-          option 4
-          option 5
+        = f.input :max_players, collection: [2, 3, 4, 5], selected: 2, label: "Number of players"
 
       .modal__footer
         a.btn href = root_path Cancel

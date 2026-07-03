@@ -1,0 +1,18 @@
+.card.card--padded.card--condensed
+  .flex.items-center.justify-between
+    button.btn.btn--no-border
+      | Game #{game.id}
+    em
+      - unless game.joinable?
+        | Active
+      - else
+        | (#{game.players.count}/#{game.max_players} players)
+    - if is_user_game
+      - unless game.joinable?
+        button.btn
+          | Play Now
+      - else
+        button.btn.btn--disabled
+          | Waiting...
+    - else
+      = button_to "Join", game_players_path(game), class: "btn"

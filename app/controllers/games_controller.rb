@@ -1,20 +1,18 @@
 class GamesController < ApplicationController
   def index
+    @user_games = Current.session.user.games
+    @open_games = Game.waiting - @user_games
   end
 
-  def index
-    @open_games = Game.waiting
-    @user_games = Current.session.user.games
+  def new
+    @game = Game.new
   end
 
   def create
-    @game = Game.new(max_players: params[:options])
-    if @game.save
-      Current.session.user.players.create!(game: @game)
-      # redirect_to ?
-    else
-      redirect_to root_path
-    end
+    @game = Game.new(params.require(:game).permit(:max_players))
+    @game.save
+    @game.players.create(user: Current.session.user)
+    redirect_to root_path
   end
 
   def destroy
