@@ -17,5 +17,6 @@ module SignUpHelper
   def create_and_log_in
     user = create :user
     log_in(user)
+    user
   end
 end

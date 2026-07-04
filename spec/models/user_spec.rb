@@ -42,7 +42,7 @@ RSpec.describe User, type: :model do
     before { create :user, email_address: email }
 
     context "when given email already exists in database" do
-      let(:user) { build :user }
+      let(:user) { build :user, email_address: email }
 
       it "entries are invalid" do
         expect(user).to_not be_valid

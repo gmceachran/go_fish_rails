@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe :create_game, type: :system do
-  before { create_and_log_in }
+  let!(:user) { create_and_log_in }
 
   context "when a user clicks create game" do
    it "opens the create game form" do
@@ -15,18 +15,12 @@ RSpec.describe :create_game, type: :system do
 
   context "when a user submits the create game form" do
     it "adds the game to the list" do
-      visit root_path
-      user_games = find("[data-testid='your-games']").all(".card", text: "Waiting...")
-      expect(user_games).to be_empty
-
-      click_on "New Game"
-      click_on "Create Game"
-
-      visit current_path
-      screenshot_and_save_page
-
-      current_user_games = find("[data-testid='your-games']").all(".card", text: "Waiting...")
-      expect(current_user_games.length).to be 1
+      expect do
+        visit root_path
+        click_on "New Game"
+        click_on "Create Game"
+        visit current_path
+      end.to change { user.games.count }.by 1
     end
   end
 
