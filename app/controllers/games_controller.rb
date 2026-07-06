@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   def index
-    @user_games = Current.session.user.games
+    @user_games = Current.session.user.games.select { |game| game.state != "over" }
     @open_games = Game.waiting - @user_games
   end
 
