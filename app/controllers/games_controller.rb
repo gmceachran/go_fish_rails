@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   def index
     @user_games = Current.session.user.games.select { |game| game.state != "over" }
+    # ASK: is the above the correct way to load this in?
     @open_games = Game.waiting - @user_games
   end
 

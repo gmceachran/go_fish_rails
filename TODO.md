@@ -1,5 +1,5 @@
 TODO:
-  - bug: games page currently shows finished games
+  - refactor to user symbols instead of strings for as_json methods
   - import basic ruby objects
   - determine the structure of the game
 
@@ -9,3 +9,6 @@ TODO:
       - would that mean there was a turn object in the database?
 
   - import css
+
+DONE:
+  - bug: games page currently shows finished games

@@ -45,10 +45,24 @@ RSpec.describe Game, type: :model do
   describe "#start_if_full!" do
     context "when the last player joins" do
       let(:game) { create(:game, max_players: 2) }
-
-      before do
-        create(:player, game: game)
-        create(:player, game: game)
+      let!(:player1) { create :player, game: game }
+      let!(:player2) { create :player, game: game }
+      let(:mock_state) do
+        {
+          "game_id" => game.id,
+          "players" => [
+            {
+              "user_id" => player1.user_id,
+              "hand" => [],
+              "books" => []
+            },
+            {
+              "user_id" => player2.user_id,
+              "hand" => [],
+              "books" => []
+            }
+          ]
+        }
       end
 
       it "transitions to active and sets started_at" do
@@ -57,11 +71,7 @@ RSpec.describe Game, type: :model do
         expect(game.started_at).not_to be_nil
       end
 
-      # it "instantiates a GoFish::Game object with appropriate state" do
-      # end
-
-      it "serializes data and populates the database" do
-        mock_state = { "game_id" => game.id }
+      it "populates the database with opening game state as json" do
         game_state = JSON.parse(Game.find(game.id).go_fish)
         expect(game_state).to eq mock_state
       end
