@@ -1,10 +1,20 @@
-.container.container--xs.container--no-padding
-  header.content-header
-    .content-header__details
-      h1.content-header__subline History
-  .op-stack
-    - @game_history.each do |game|
-      .game-card
-        p.game-card__title  = game[:title]
-        p.game-card__result players: #{game[:player_count]}
-        p.game-card__result = game[:won] ? "won" : "lost"
+/ app/views/games/history.html.slim
+.op-page__main
+  main.op-page__main-content
+    .op-stack
+      header.content-header
+        .content-header__details
+          h2.content-header__title
+            | History
+
+      .divider
+      - @completed_games.each do |game|
+        - won = game.players.find_by(user: Current.session.user).winner
+        .card.card--padded.card--condensed
+          .flex.items-center.justify-between
+            span
+              | Game #{game.id}
+            em
+              = game.ended_at.strftime("%b %-d, %Y")
+            em
+              = won ? "Won" : "Lost"
