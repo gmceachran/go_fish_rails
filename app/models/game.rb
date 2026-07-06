@@ -1,4 +1,6 @@
 class Game < ApplicationRecord
+  # serialize :go_fish, GoFish::Game
+
   has_many :players, dependent: :destroy
   has_many :users, through: :players
 
@@ -9,10 +11,14 @@ class Game < ApplicationRecord
 
   def joinable? = waiting? && players.count < max_players
 
-  def start_if_full!
+  def start_if_full!(game_id)
     return unless waiting? && players.count >= max_players
 
     update(started_at: Time.current, state: :active)
+    game = GoFish::Game.new(game_id)
+    json = game.dump
+    game_data = Game.find(game_id)
+    game_data.update(go_fish: json)
   end
 
   def declare_winner!(player)

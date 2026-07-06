@@ -17,6 +17,6 @@ class Player < ApplicationRecord
   end
 
   def start_game_if_full
-    game.start_if_full!
+    game.start_if_full!(game.id)
   end
 end

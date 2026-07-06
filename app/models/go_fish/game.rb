@@ -10,8 +10,8 @@ module GoFish
       JSON.parse(json)
     end
 
-    def self.dump(object)
-      object.to_json
+    def dump
+      { "game_id" => game_id }.to_json
     end
   end
 end

@@ -56,6 +56,15 @@ RSpec.describe Game, type: :model do
         expect(game.state).to eq("active")
         expect(game.started_at).not_to be_nil
       end
+
+      # it "instantiates a GoFish::Game object with appropriate state" do
+      # end
+
+      it "serializes data and populates the database" do
+        mock_state = { "game_id" => game.id }
+        game_state = JSON.parse(Game.find(game.id).go_fish)
+        expect(game_state).to eq mock_state
+      end
     end
 
     context "when the game is not yet full" do

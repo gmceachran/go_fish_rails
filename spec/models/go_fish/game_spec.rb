@@ -14,7 +14,7 @@ RSpec.describe GoFish::Game, type: :model do
 
   describe "#dump" do
     it "turns the given hash into a json string" do
-      dumped_object = GoFish::Game.dump(object)
+      dumped_object = game.dump
       expect(dumped_object).to eq json
     end
   end
