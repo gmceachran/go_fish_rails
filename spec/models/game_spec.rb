@@ -47,23 +47,6 @@ RSpec.describe Game, type: :model do
       let(:game) { create(:game, max_players: 2) }
       let!(:player1) { create :player, game: game }
       let!(:player2) { create :player, game: game }
-      let(:mock_state) do
-        {
-          "game_id" => game.id,
-          "players" => [
-            {
-              "user_id" => player1.user_id,
-              "hand" => [],
-              "books" => []
-            },
-            {
-              "user_id" => player2.user_id,
-              "hand" => [],
-              "books" => []
-            }
-          ]
-        }
-      end
 
       it "transitions to active and sets started_at" do
         game.reload
@@ -72,8 +55,10 @@ RSpec.describe Game, type: :model do
       end
 
       it "populates the database with opening game state as json" do
-        game_state = JSON.parse(Game.find(game.id).go_fish)
-        expect(game_state).to eq mock_state
+        go_fish_game = Game.find(game.id).go_fish
+        expect(go_fish_game).to be_a_kind_of GoFish::Game
+        expect(go_fish_game.players.first.user_id).to be player1.user_id
+        expect(go_fish_game.players.last.user_id).to be player2.user_id
       end
     end
 
@@ -117,40 +102,6 @@ RSpec.describe Game, type: :model do
         game.update(state: active)
         expect(game).to be_invalid
       end
-    end
-
-    context "when game is full" do
-      let(:game) { create :game }
-
-      it "game is active" do
-        # expect(game) started at to not be nill
-        # expect game state to be active
-      end
-
-      it "game cannot be waiting" do
-        
-      end
-    end
-
-    context "when there is no winner" do
-      it "game is active" do
-        
-      end
-
-      it "game cannot be over" do
-        
-      end
-    end
-
-    context "when there is a winner" do
-      it "game is over" do
-        
-      end
-
-      it "game cannot be active" do
-        
-      end
-
     end
   end
 end

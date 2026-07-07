@@ -1,10 +1,8 @@
 require "rails_helper"
 
 RSpec.describe GoFish::Game, type: :model do
-  let(:game) { described_class.new }
-  let(:object) do
+  let(:json) do
     {
-      "game_id" => 0,
       "players" => [
         {
           "user_id" => 0,
@@ -16,36 +14,56 @@ RSpec.describe GoFish::Game, type: :model do
           "hand" => [],
           "books" => []
         }
-      ]
+      ],
+      "active_player_index" => 0
     }
   end
-  let(:json) { object.to_json }
-  before { 2.times { |i| game.add_player i } }
+  let!(:game) { GoFish::Game.load(json) }
 
   describe "#load" do
-    it "turns the given json string into a ruby hash" do
-      loaded_json = GoFish::Game.load(json)
-      expect(loaded_json).to eq object
+    # ASK: should I have a happy path test asserting from json is called?
+    # if so how, what object should I expect it to be called on?
+
+    context "when json is nil" do
+      it "returns nil" do
+        expect(GoFish::Game.load(nil)).to be_nil
+      end
+    end
+  end
+
+  describe "#from_json" do
+    it "turns the given json string into a ruby object" do
+      expect(game).to be_a_kind_of GoFish::Game
+      expect(game.players.first.user_id).to be 0
+      expect(game.players.last.user_id).to be 1
     end
   end
 
   describe "#dump" do
     it "turns the given hash into a json string" do
-      dumped_object = game.dump
+      dumped_object = GoFish::Game.dump(game)
       expect(dumped_object).to eq json
     end
   end
 
-  describe "#add_player" do
-    let(:user_id) { 1 }
+  describe "#active_player?" do
+    context "when given user_id does not match active player's user_id" do
+      it "returns false" do
+        expect(game.active_player?(1)).to be false
+      end
+    end
 
-    it "adds a player object to the game's players array" do
-      players = game.players
-      expect do
-        game.add_player(user_id)
-      end.to change { players.length }.by 1
-      expect(players.last).to be_a_kind_of GoFish::Player
-      expect(players.last.user_id).to be user_id
+    context "when given user_id does match active player's user_id" do
+      it "returns true" do
+        expect(game.active_player?(0)).to be true
+      end
+    end
+  end
+
+  describe "#opponents" do
+    it "returns the round's opponents" do
+      opponents = [game.players.last]
+      expect(game.opponents).to eq opponents
     end
   end
 end

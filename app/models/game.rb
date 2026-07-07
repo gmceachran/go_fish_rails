@@ -1,6 +1,5 @@
 class Game < ApplicationRecord
-  # serialize :go_fish, GoFish::Game
-  # ASK: what does this do? Doesn't seem necessary so far
+  serialize :go_fish, coder: GoFish::Game
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
@@ -16,7 +15,7 @@ class Game < ApplicationRecord
     return unless waiting? && players.count >= max_players
 
     update(started_at: Time.current, state: :active)
-    update_with_starting_game_state(game_id)
+    update_with_starting_game_state
   end
 
   def declare_winner!(player)
@@ -39,11 +38,10 @@ class Game < ApplicationRecord
     end
   end
 
-  def update_with_starting_game_state(game_id)
-    game = GoFish::Game.new(game_id)
-    game_data = Game.find(game_id)
-    game_data.players.each { |player| game.add_player(player.user_id) }
-    json = game.dump
-    game_data.update(go_fish: json)
+  def update_with_starting_game_state
+    self.go_fish = GoFish::Game.new(players: users.map do |user|
+      GoFish::Player.new(user_id: user.id)
+    end)
+    save!
   end
 end
