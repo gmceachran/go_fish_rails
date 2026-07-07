@@ -1,0 +1,34 @@
+.feed-logs
+  .bubble
+    p.bubble__text
+      | Joby asked#{' '}
+      strong Natalie#{' '}
+      | for any#{' '}
+      strong 9s
+  .feed-logs__response-row
+    i.ph.ph-arrow-bend-down-right
+    .bubble.bubble--alert
+      .bubble__text
+        | Go Fish: Natalie doesn't have any 9s
+  .feed-logs__response-row
+    i.ph.ph-arrow-bend-down-right
+    .bubble.bubble--response
+      p.bubble__text
+        | You drew a 7 of Diamonds
+- if @is_clients_turn
+  form action='/ask' method='POST'
+    .game-actions
+      .game-actions__options
+        .game-actions__field
+          label.game-actions__label
+            | Player
+          select.form-control.form-control--small name='opponent'
+            - @opponents.each do |opponent|
+              option value="#{opponent.name}" #{opponent.name}
+        .game-actions__field
+          label.game-actions__label
+            | Card Rank
+          select.form-control.form-control--small name='rank'
+            - @player.hand.uniq { |card| card.rank }.each do |card|
+              option value="#{card.rank}" #{card.rank}
+      button.btn.btn--primary.btn--pill.btn--small Ask for Cards

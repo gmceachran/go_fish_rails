@@ -1,0 +1,19 @@
+details.accordion
+  summary.accordion__header
+    i.ph.ph-caret-right.accordion__marker
+    span.header__content
+      | #{opponent.name}
+      .hand-info
+        p.hand-info__text
+          | Cards#{' '}
+          strong #{opponent.hand.length}
+        p.hand-info__text
+          | Books#{' '}
+          strong #{opponent.books.length}
+  .accordion__tray
+    .card-tray
+      - opponent.hand.length.times do
+        img.playing-card.playing-card--medium.playing-card--back src="/images/cards_light/card_back.svg" alt="Face down card"
+    .card-tray
+      - opponent.books.each do |book|
+        img.playing-card.playing-card--small src="/images/cards_light/#{book.rank}_spades.svg" alt="#{book.rank} of Spades"

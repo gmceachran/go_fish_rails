@@ -1,0 +1,47 @@
+.game-board
+
+  section.game-board__players
+    .gf-section
+      header.gf-section__header.gf-section__header--players
+        i.ph.ph-caret-left.accordion__marker
+        h2.header__text.header__text--players
+          | Game 1
+      .gf-section__content.gf-section__content--players
+        .players-content
+          .players-content__header
+            | Players
+          .players-content__accordions
+            - @opponents.each do |opponent|
+              = render partial: 'accordion', locals: { opponent: }
+
+  section.game-board__feed
+    .gf-section
+      header.gf-section__header.gf-section__header--feed
+        h2.header__text.header__text--feed
+          | Game Feed
+        - if @is_clients_turn
+          .badge.badge--primary Your Turn
+        - else
+          .badge.badge--primary Opponent's Turn
+      .gf-section__content.gf-section__content--feed
+        = render partial: 'feed', locals: { opponents: @opponents, player: @player, is_clients_turn: @is_clients_turn }
+ 
+  section.game-board__tray
+    .gf-section
+      header.gf-section__header.gf-section__header--tray
+        h2.header__text.header__text--tray
+          | Your Hand
+      .gf-section__content.gf-section__content--tray
+        .card-tray id='player-hand'
+          - @player.hand.each do |card|
+            img.playing-card.playing-card--large src="/images/cards_light/#{card.rank}_#{card.suit}.svg" alt="#{card.rank} of #{card.suit}"
+
+  section.game-board__tray.game-board__tray--books
+    .gf-section
+      header.gf-section__header.gf-section__header--tray
+        h2.header__text.header__text--tray
+          | Books
+      .gf-section__content.gf-section__content--tray
+        .card-tray
+          - @player.books.each do |book|
+            img.playing-card.playing-card--large src="/images/cards_light/#{book.rank}_spades.svg" alt="#{book.rank} of spades"

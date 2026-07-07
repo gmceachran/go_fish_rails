@@ -9,6 +9,8 @@ class Game < ApplicationRecord
   validate :ended_at_validation
   validate :timestamps_match_state
 
+  scope :not_over, -> { where.not(state: :over) }
+
   def joinable? = waiting? && players.count < max_players
 
   def start_if_full!(game_id)

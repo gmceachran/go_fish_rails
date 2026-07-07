@@ -8,9 +8,8 @@ module GoFish
       @active_player_index = active_player_index
     end
 
-    def self.dump(obj)
-      obj.as_json
-    end
+    def active_player = players[active_player_index]
+    def self.dump(obj) = obj.as_json
 
     def self.load(json)
       return nil if json.nil?
@@ -37,8 +36,6 @@ module GoFish
       players - current_player
     end
 
-    private
-
-    def active_player = players[active_player_index]
+    private_class_method :from_json
   end
 end

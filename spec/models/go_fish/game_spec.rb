@@ -7,12 +7,14 @@ RSpec.describe GoFish::Game, type: :model do
         {
           "user_id" => 0,
           "hand" => [],
-          "books" => []
+          "books" => [],
+          "name" => "Lord Farquad"
         },
         {
           "user_id" => 1,
           "hand" => [],
-          "books" => []
+          "books" => [],
+          "name" => "Lord Farquad"
         }
       ],
       "active_player_index" => 0
@@ -21,21 +23,18 @@ RSpec.describe GoFish::Game, type: :model do
   let!(:game) { GoFish::Game.load(json) }
 
   describe "#load" do
-    # ASK: should I have a happy path test asserting from json is called?
-    # if so how, what object should I expect it to be called on?
+    context "when json is not nil" do
+      it "turns the given json string into a ruby object" do
+        expect(game).to be_a_kind_of GoFish::Game
+        expect(game.players.first.user_id).to be 0
+        expect(game.players.last.user_id).to be 1
+      end
+    end
 
     context "when json is nil" do
       it "returns nil" do
         expect(GoFish::Game.load(nil)).to be_nil
       end
-    end
-  end
-
-  describe "#from_json" do
-    it "turns the given json string into a ruby object" do
-      expect(game).to be_a_kind_of GoFish::Game
-      expect(game.players.first.user_id).to be 0
-      expect(game.players.last.user_id).to be 1
     end
   end
 
@@ -64,6 +63,13 @@ RSpec.describe GoFish::Game, type: :model do
     it "returns the round's opponents" do
       opponents = [game.players.last]
       expect(game.opponents).to eq opponents
+    end
+  end
+
+  describe "#active_player" do
+    let(:active_player) { game.players.first }
+    it "returns the active player" do
+      expect(game.active_player).to be active_player
     end
   end
 end
