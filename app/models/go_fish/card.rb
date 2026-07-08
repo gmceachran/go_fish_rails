@@ -29,6 +29,8 @@ module GoFish
       @suit = suit
     end
 
+    def self.from_json(json) = Card.new(json["rank"], json["suit"])
+
     def ==(other_card)
       rank == other_card.rank && suit == other_card.suit
     end

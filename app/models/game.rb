@@ -44,6 +44,7 @@ class Game < ApplicationRecord
     self.go_fish = GoFish::Game.new(players: users.map do |user|
       GoFish::Player.new(user_id: user.id)
     end)
+    self.go_fish.start
     save!
   end
 end

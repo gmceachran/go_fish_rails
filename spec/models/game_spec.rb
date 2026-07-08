@@ -54,11 +54,19 @@ RSpec.describe Game, type: :model do
         expect(game.started_at).not_to be_nil
       end
 
+      let(:dealt_deck_length) { 38 }
+      let(:starting_hand_size) { 7 }
+
       it "populates the database with opening game state as json" do
         go_fish_game = Game.find(game.id).go_fish
         expect(go_fish_game).to be_a_kind_of GoFish::Game
         expect(go_fish_game.players.first.user_id).to be player1.user_id
         expect(go_fish_game.players.last.user_id).to be player2.user_id
+
+        expect(go_fish_game.deck_length).to be dealt_deck_length
+        go_fish_game.players.each do |player|
+          expect(player.hand_size).to be starting_hand_size
+        end
       end
     end
 

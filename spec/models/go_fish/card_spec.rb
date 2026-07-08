@@ -19,6 +19,19 @@ RSpec.describe GoFish::Card, type: :model do
   }.to raise_error GoFish::Card::InvalidSuit
   end
 
+  describe "#from_json" do
+    let(:rank) { "2" }
+    let(:suit) { "Spades" }
+    let(:json) { { "rank" => rank, "suit" => suit } }
+
+    it "receives a json hash and returns a GoFIsh::Card" do
+      card = GoFish::Card.from_json(json)
+      expect(card).to be_a_kind_of GoFish::Card
+      expect(card.rank).to eq rank
+      expect(card.suit).to eq suit
+    end
+  end
+
   describe '#value' do
     it 'returns the index of the given rank' do
       card = GoFish::Card.new('4', 'Spades')

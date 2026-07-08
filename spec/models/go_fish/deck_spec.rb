@@ -51,4 +51,21 @@ RSpec.describe GoFish::Deck, type: :model do
       end
     end
   end
+
+  describe "#from_json" do
+    let(:json) do
+      {
+        "cards" => [
+          { "rank" => "2", "suit" => "Spades" },
+          { "rank" => "3", "suit" => "Spades" }
+        ]
+      }
+    end
+
+    it "receives a json hash and returns a deck object" do
+      deck = GoFish::Deck.from_json(json)
+      expect(deck).to be_a_kind_of GoFish::Deck
+      expect(deck.cards.first).to be_a_kind_of GoFish::Card
+    end
+  end
 end
