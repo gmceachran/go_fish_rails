@@ -9,4 +9,5 @@ RSpec.configure do |c|
   c.include PlaywrightHelper, type: :system
   c.include SelectHelper, type: :system
   c.include SignUpHelper, type: :system
+  c.include GameControlHelper, type: :system
 end
