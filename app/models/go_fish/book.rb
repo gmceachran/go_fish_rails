@@ -5,5 +5,6 @@ module GoFish
 
     def initialize(rank) = @rank = rank
     def value = RANKS.index(rank)
+    def self.from_json(json) = Book.new(json["rank"])
   end
 end

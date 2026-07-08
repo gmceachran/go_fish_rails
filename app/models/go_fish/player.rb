@@ -14,10 +14,13 @@ module GoFish
       hand = player["hand"].map do |card|
         GoFish::Card.from_json(card)
       end
+      books = player["books"].map do |book|
+        GoFish::Book.from_json(book)
+      end
 
-      player = Player.new(user_id: player["user_id"],
-                 hand: hand,
-                 books: player["books"])
+      Player.new(user_id: player["user_id"],
+                hand: hand,
+                books: books)
     end
 
     def hand_size = hand.length
