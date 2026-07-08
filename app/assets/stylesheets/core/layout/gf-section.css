@@ -61,7 +61,7 @@
     &.gf-section__content--feed {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-between; 
       overflow: hidden;
       height: 100%;
       padding: var(--op-space-medium);

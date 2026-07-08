@@ -34,7 +34,7 @@
       .gf-section__content.gf-section__content--tray
         .card-tray id='player-hand'
           - @player.hand.each do |card|
-            img.playing-card.playing-card--large src="/images/cards_light/#{card.rank}_#{card.suit}.svg" alt="#{card.rank} of #{card.suit}"
+            = image_tag "cards_light/#{card.rank}_#{card.suit.downcase}.svg", class: "playing-card playing-card--large", alt: "#{card.rank} of #{card.suit}"
 
   section.game-board__tray.game-board__tray--books
     .gf-section
@@ -44,4 +44,4 @@
       .gf-section__content.gf-section__content--tray
         .card-tray
           - @player.books.each do |book|
-            img.playing-card.playing-card--large src="/images/cards_light/#{book.rank}_spades.svg" alt="#{book.rank} of spades"
+            = image_tag "cards_light/#{book.rank}_#{book.suit.downcase}.svg", class: "playing-card playing-card--large", alt: "#{book.rank} of #{book.suit}"

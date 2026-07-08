@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="252" height="360" viewBox="0 0 252 360">
+
+    <!-- White card -->
+    <rect width="252" height="360" rx="12" fill="#FFFFFF"></rect>
+
+    <!-- Blue border -->
+    <rect x="8" y="8" width="236" height="344" rx="10" fill="#337799"></rect>
+
+    <!-- White inset band -->
+    <rect x="12" y="12" width="228" height="336" rx="8" fill="#FFFFFF"></rect>
+
+    <!-- Solid blue center -->
+    <rect x="18" y="18" width="216" height="324" rx="6" fill="#337799"></rect>
+
+</svg>
