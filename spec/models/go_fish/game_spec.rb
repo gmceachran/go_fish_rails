@@ -68,6 +68,12 @@ RSpec.describe GoFish::Game, type: :model do
     end
   end
 
+  describe "#player" do
+    it "returns the appropriate player by the given id" do
+      expect(game.player(0)).to be game.players.first
+    end
+  end
+
   describe "#opponents" do
     it "returns the round's opponents" do
       opponents = [ game.players.last ]

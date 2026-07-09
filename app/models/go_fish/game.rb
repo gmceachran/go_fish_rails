@@ -14,6 +14,7 @@ module GoFish
                    active_player_index: 0,
                    deck: GoFish::Deck.new,
                    turn_results: [])
+
       @players = players
       @active_player_index = active_player_index
       @deck = deck
@@ -45,8 +46,12 @@ module GoFish
     end
 
     def active_player?(user_id)
-      player = players.detect { it.user_id == user_id }
+      player = player(user_id)
       active_player_index == players.index(player)
+    end
+
+    def player(user_id)
+      players.detect { it.user_id == user_id }
     end
 
     def opponents

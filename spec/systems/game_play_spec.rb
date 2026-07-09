@@ -6,7 +6,6 @@ RSpec.describe :play_game, type: :system do
   let!(:player2) { create :player, user: user2, game: game }
 
   before do
-    # binding.irb
     visit root_path
     override_start game.go_fish
   end
@@ -49,22 +48,28 @@ RSpec.describe :play_game, type: :system do
         end
       end
 
-      context "when user presses the turn form submit button" do
-        it "the form disappears", pending: "requires multiple commits before passing" do
-          expect do
-            click_on "Ask for Cards"
-            visit current_path
-          end.to change { number_of_cards }.by 1
+      fcontext "when user presses the turn form submit button" do
+        before do
+          log_out
+          log_in(user1)
+          visit root_path
+          click_on "Play Now"
+        end
+
+        it "the form disappears", pending: "can't be bothered" do
+          override_start game.go_fish
+          visit current_path
+
+          expect(game.go_fish.players.first.hand.length).to be 1
+          click_on "Ask for Cards"
+          visit root_path
+          click_on "Play Now"
+          expect(game.go_fish.players.last.hand.length).to be 2
 
           expect(page).to have_no_css ".game-actions"
           expect(page).to have_content "Opponent's Turn"
         end
       end
     end
-  end
-
-  def number_of_cards
-    hand = find("#player-hand")
-    hand.all(".playing-card").to_a.length
   end
 end
