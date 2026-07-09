@@ -12,10 +12,10 @@ Rails.application.routes.draw do
   get "games/history", to: "games#history"
 
   resources :games
-  # get "/games/:id", to: "games#show", as: "game"
 
   resources :games do
     resources :players, only: [ :create ]
+    resources :turns, only: [ :create ]
   end
 
   root "games#index"

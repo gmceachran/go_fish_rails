@@ -6,6 +6,7 @@ RSpec.describe :play_game, type: :system do
   let!(:player2) { create :player, user: user2, game: game }
 
   before do
+    # binding.irb
     visit root_path
     override_start game.go_fish
   end
@@ -49,6 +50,7 @@ RSpec.describe :play_game, type: :system do
       end
 
       context "when user presses the turn form submit button" do
+        # change this to a helper method
         let(:hand) { find("#player-hand") }
         let(:cards) { hand.all(".playing-card").to_a }
 

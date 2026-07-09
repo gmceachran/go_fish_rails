@@ -55,6 +55,10 @@ module GoFish
       deal(players, STARTING_HAND[number_of_players])
     end
 
+    def take_turn(turn)
+      binding.irb
+    end
+
     private_class_method :from_json
     private
 

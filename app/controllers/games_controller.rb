@@ -5,10 +5,12 @@ class GamesController < ApplicationController
   end
 
   def show
-    game = Game.find(params[:id]).go_fish
+    @game_id = params[:id]
+    game = Game.find(@game_id).go_fish
     @is_clients_turn = game.active_player?(Current.session[:user_id])
     @opponents = game.opponents
     @player = game.active_player
+    @turn = Turn.new
 
     render layout: "application_no_sidebar"
   end

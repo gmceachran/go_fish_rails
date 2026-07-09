@@ -16,7 +16,8 @@
       p.bubble__text
         | You drew a 7 of Diamonds
 - if @is_clients_turn
-  form action='/ask' method='POST'
+  / - binding.irb
+  = simple_form_for @turn, url: game_turns_path(@game_id) do |f|
     .game-actions
       .game-actions__options
         .game-actions__field
@@ -24,11 +25,11 @@
             | Player
           select.form-control.form-control--small name='opponent'
             - @opponents.each do |opponent|
-              option value="#{opponent.name}" #{opponent.name}
+              option value="#{opponent.user_id}" #{opponent.name}
         .game-actions__field
           label.game-actions__label
             | Card Rank
           select.form-control.form-control--small name='rank'
             - @player.hand.uniq { |card| card.rank }.each do |card|
               option value="#{card.rank}" #{card.rank}
-      button.btn.btn--primary.btn--pill.btn--small Ask for Cards
+      = f.button :submit, "Ask for Cards", class: "btn btn--primary btn--pill btn--small"

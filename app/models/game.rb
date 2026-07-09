@@ -20,6 +20,10 @@ class Game < ApplicationRecord
     update_with_starting_game_state
   end
 
+  def play_turn(turn)
+    self.go_fish.play_turn(turn)
+  end
+
   def declare_winner!(player)
     player.update!(winner: true)
     update!(ended_at: Time.current, state: :over)
