@@ -311,4 +311,41 @@ RSpec.describe GoFish::Game, type: :model do
       end
     end
   end
+
+  describe '#winner' do
+    context 'when one or more player has cards' do
+      before { game.players.first.hand = [ GoFish::Card.new('A', 'Spades') ] }
+
+      it 'winner returns nil' do
+        expect(game.winner).to be_nil
+      end
+    end
+
+    context 'when no player has cards' do
+      let(:winner) { game.players.first }
+
+      context 'when one player has more books than the others' do
+        before do
+          game.players.first.books.push GoFish::Book.new('3'), GoFish::Book.new('4')
+          game.players.last.books.push GoFish::Book.new('5')
+        end
+
+        it 'winner returns that player name' do
+          expect(game.winner).to eq winner
+        end
+      end
+
+
+      context 'when the two players with the most books have the same amount' do
+        before do
+          game.players.first.books.push GoFish::Book.new('K')
+          game.players.last.books.push GoFish::Book.new('Q')
+        end
+
+        it 'winner returns the id of the player with the highest rank' do
+          expect(game.winner).to eq winner
+        end
+      end
+    end
+  end
 end

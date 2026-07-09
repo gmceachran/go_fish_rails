@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   resources :games do
     resources :players, only: [ :create ]
     resources :turns, only: [ :create ]
+    resources :winners, only: [ :show ]
   end
 
   root "games#index"

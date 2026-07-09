@@ -10,6 +10,10 @@ module GoFish
       5 => 5
     }
 
+    # STARTING_HAND = {
+    #   2 => 1
+    # }
+
     def initialize(players: players,
                    active_player_index: 0,
                    deck: GoFish::Deck.new,
@@ -83,6 +87,17 @@ module GoFish
       end
 
       advance_turn if players[active_player_index].cant_play
+    end
+
+    def winner
+      # return nil unless number_of_players > 1 && started?
+      return nil unless players.all? { |player| player.hand.empty? }
+
+      winner = players.max_by do |player|
+        best_book_value = player.books.map { |book| book.value }.max || -1
+        [ player.books.length, best_book_value ]
+      end
+      winner
     end
 
     private_class_method :from_json
