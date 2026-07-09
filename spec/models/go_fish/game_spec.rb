@@ -8,13 +8,15 @@ RSpec.describe GoFish::Game, type: :model do
           "user_id" => 0,
           "hand" => [],
           "books" => [],
-          "name" => "Lord Farquad"
+          "name" => "Lord Farquad",
+          "cant_play" => false
         },
         {
           "user_id" => 1,
           "hand" => [],
           "books" => [],
-          "name" => "Lord Farquad"
+          "name" => "Lord Farquad",
+          "cant_play" => false
         }
       ],
       "active_player_index" => 0,
@@ -23,7 +25,8 @@ RSpec.describe GoFish::Game, type: :model do
           { "rank" => "2", "suit" => "Spades" },
           { "rank" => "3", "suit" => "Spades" }
         ]
-      }
+      },
+      "turn_results" => []
     }
   end
   let!(:game) { GoFish::Game.load(json) }
@@ -118,6 +121,188 @@ RSpec.describe GoFish::Game, type: :model do
 
     it "returns the number of cards in the deck" do
       expect(game.deck_length).to be deck_size
+    end
+  end
+
+  describe "#play_turn" do
+    context "when the opponent holds the requested rank" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [ { "rank" => "9", "suit" => "Hearts" } ], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [ { "rank" => "9", "suit" => "Clubs" } ], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "transfers the cards to the asking player" do
+        game.play_turn(turn)
+        expect(game.players.first.hand).to include GoFish::Card.new("9", "Clubs")
+      end
+
+      it "records a non-go_fish result with go_again true" do
+        result = game.play_turn(turn)
+        expect(result.go_fish).to be false
+        expect(result.go_again).to be true
+      end
+    end
+
+    context "when the opponent does not hold the requested rank" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [ { "rank" => "9", "suit" => "Hearts" } ], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [ { "rank" => "3", "suit" => "Clubs" } ], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [ { "rank" => "9", "suit" => "Spades" } ] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "draws from the deck" do
+        game.play_turn(turn)
+        expect(game.players.first.hand).to include GoFish::Card.new("9", "Spades")
+      end
+
+      it "sets go_again true when the drawn card matches the rank" do
+        result = game.play_turn(turn)
+        expect(result.go_fish).to be true
+        expect(result.go_again).to be true
+      end
+    end
+
+    context "when the drawn card does not match the requested rank" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [ { "rank" => "9", "suit" => "Hearts" } ], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [ { "rank" => "3", "suit" => "Clubs" } ], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [ { "rank" => "4", "suit" => "Spades" } ] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "sets go_again false" do
+        result = game.play_turn(turn)
+        expect(result.go_again).to be false
+      end
+    end
+
+    context "when the asking player completes a book" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0,
+              "hand" => [
+                { "rank" => "9", "suit" => "Hearts" },
+                { "rank" => "9", "suit" => "Spades" },
+                { "rank" => "9", "suit" => "Diamonds" }
+              ],
+              "books" => [],
+              "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [ { "rank" => "9", "suit" => "Clubs" } ], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "moves the four cards into a book" do
+        game.play_turn(turn)
+        expect(game.players.first.books.map(&:rank)).to include "9"
+        expect(game.players.first.hand).to be_empty
+      end
+    end
+
+    context "when the asking player's hand is empty after the turn and the deck has cards" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [ { "rank" => "2", "suit" => "Clubs" } ] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "deals a replacement card" do
+        game.play_turn(turn)
+        expect(game.players.first.hand).not_to be_empty
+      end
+    end
+
+    context "when the asking player's hand and the deck are both empty" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [] },
+          "turn_results" => []
+        }
+      end
+      let(:turn) { Turn.new(rank: "9", opponent: 1, user_id: 0) }
+
+      it "marks the player as cant_play" do
+        game.play_turn(turn)
+        expect(game.players.first.cant_play).to be true
+      end
+    end
+  end
+
+  describe "#advance_turn" do
+    context "when there is a next player" do
+      it "moves to the next player" do
+        game.advance_turn
+        expect(game.active_player_index).to eq 1
+      end
+    end
+
+    context "when the active player is last" do
+      before { game.active_player_index = 1 }
+
+      it "wraps around to the first player" do
+        game.advance_turn
+        expect(game.active_player_index).to eq 0
+      end
+    end
+
+    context "when the next player cant_play" do
+      let(:json) do
+        {
+          "players" => [
+            { "user_id" => 0, "hand" => [], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 1, "hand" => [], "books" => [], "name" => "Lord Farquad" },
+            { "user_id" => 2, "hand" => [], "books" => [], "name" => "Lord Farquad" }
+          ],
+          "active_player_index" => 0,
+          "deck" => { "cards" => [] },
+          "turn_results" => []
+        }
+      end
+
+      before { game.players[1].cant_play = true }
+
+      it "skips them" do
+        game.advance_turn
+        expect(game.active_player_index).to eq 2
+      end
     end
   end
 end

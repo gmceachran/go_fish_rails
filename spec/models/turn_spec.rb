@@ -98,7 +98,9 @@ RSpec.describe Turn, type: :model do
   end
 
   describe "hand possession" do
-    let(:unheld_rank) { GoFish::Card::RANKS.find { |r| r != held_rank } }
+    let(:unheld_rank) do
+      GoFish::Card::RANKS.find { |r| active_player.hand.none? { |c| c.rank == r } }
+    end
 
     it "rejects a rank the asking player does not hold" do
       turn.rank = unheld_rank

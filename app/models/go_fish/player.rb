@@ -1,13 +1,19 @@
 module GoFish
   class Player
     attr_reader :user_id, :name
-    attr_accessor :hand, :books
+    attr_accessor :hand, :books, :cant_play
 
-    def initialize(user_id: user_id, hand: [], books: [], name: "Lord Farquad")
+    def initialize(user_id: user_id,
+                   hand: [],
+                   books: [],
+                   name: "Lord Farquad",
+                   cant_play: false)
+
       @user_id = user_id
       @hand = hand
       @books = books
       @name = name
+      @cant_play = cant_play
     end
 
     def self.from_json(player)
@@ -20,7 +26,8 @@ module GoFish
 
       Player.new(user_id: player["user_id"],
                 hand: hand,
-                books: books)
+                books: books,
+                cant_play: player["cant_play"] || false)
     end
 
     def hand_size = hand.length

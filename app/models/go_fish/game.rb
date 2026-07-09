@@ -1,7 +1,6 @@
 module GoFish
   class Game
-    attr_reader :active_player_index
-    attr_accessor :players, :deck
+    attr_accessor :players, :deck, :active_player_index, :turn_results
 
     STARTING_HAND = {
       1 => 7,
@@ -13,14 +12,17 @@ module GoFish
 
     def initialize(players: players,
                    active_player_index: 0,
-                   deck: GoFish::Deck.new)
+                   deck: GoFish::Deck.new,
+                   turn_results: [])
       @players = players
       @active_player_index = active_player_index
       @deck = deck
+      @turn_results = turn_results
     end
 
     def active_player = players[active_player_index]
     def deck_length = deck.cards_left
+    def turn_result = turn_results.last
     def self.dump(obj) = obj.as_json
 
     def self.load(json)
@@ -34,10 +36,12 @@ module GoFish
         Player.from_json(player)
       end
       deck = Deck.from_json(json["deck"])
+      results = (json["turn_results"] || []).map { |result| TurnResult.from_json(result) }
 
       Game.new(players: go_fish_players,
                active_player_index: json["active_player_index"],
-               deck: deck)
+               deck: deck,
+               turn_results: results)
     end
 
     def active_player?(user_id)
@@ -55,8 +59,25 @@ module GoFish
       deal(players, STARTING_HAND[number_of_players])
     end
 
-    def take_turn(turn)
-      binding.irb
+    def play_turn(turn)
+      player = players.detect { it.user_id.to_s == turn.user_id.to_s }
+      opponent = players.detect { it.user_id.to_s == turn.opponent.to_s }
+      opponent_cards = opponent.cards_of_rank_given(turn.rank)
+
+      handle_take_cards(player, opponent_cards, turn.rank)
+      handle_empty_hand
+
+      turn_result
+    end
+
+    def advance_turn
+      if active_player_index == (number_of_players - 1)
+        self.active_player_index = 0
+      else
+        self.active_player_index += 1
+      end
+
+      advance_turn if players[active_player_index].cant_play
     end
 
     private_class_method :from_json
@@ -71,6 +92,43 @@ module GoFish
           player.hand << card
         end
       end
+    end
+
+    def handle_take_cards(player, opponent_cards, rank)
+      if opponent_cards.any?
+        take_from_opponent(player, opponent_cards)
+      else
+        take_from_deck(player, rank)
+      end
+    end
+
+    def handle_empty_hand
+      players.each do |player|
+        next unless player.hand.empty?
+        deck.empty? ? player.cant_play = true : player.hand << deck.top_card
+      end
+    end
+
+    def take_from_opponent(player, cards)
+      turn_results << TurnResult.new(go_fish: false, go_again: true, cards: cards)
+      player.hand.concat(cards)
+      turn_result.book_made = player.create_book_if_possible
+    end
+
+    def take_from_deck(player, rank)
+      turn_results << TurnResult.new(go_fish: true)
+      return empty_deck if deck.empty?
+
+      card = deck.top_card
+      player.hand << card
+      turn_result.cards << card
+      turn_result.go_again = card.rank == rank
+      turn_result.book_made = player.create_book_if_possible
+    end
+
+    def empty_deck
+      turn_result.deck_empty = true
+      turn_result
     end
   end
 end

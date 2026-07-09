@@ -6,7 +6,8 @@ RSpec.describe GoFish::Player, type: :model do
     {
       "user_id" => 0,
       "hand" => [],
-      "books" => [ { "rank" => rank } ]
+      "books" => [ { "rank" => rank } ],
+      "cant_play" => false
     }
   end
 
