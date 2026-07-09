@@ -50,20 +50,21 @@ RSpec.describe :play_game, type: :system do
       end
 
       context "when user presses the turn form submit button" do
-        # change this to a helper method
-        let(:hand) { find("#player-hand") }
-        let(:cards) { hand.all(".playing-card").to_a }
-
         it "the form disappears", pending: "requires multiple commits before passing" do
           expect do
             click_on "Ask for Cards"
             visit current_path
-          end.to change { cards.length }.by 1
+          end.to change { number_of_cards }.by 1
 
           expect(page).to have_no_css ".game-actions"
           expect(page).to have_content "Opponent's Turn"
         end
       end
     end
+  end
+
+  def number_of_cards
+    hand = find("#player-hand")
+    hand.all(".playing-card").to_a.length
   end
 end

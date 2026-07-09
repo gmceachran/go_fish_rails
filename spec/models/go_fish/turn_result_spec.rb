@@ -5,10 +5,10 @@ RSpec.describe GoFish::TurnResult, type: :model do
 
   subject(:turn_result) do
     GoFish::TurnResult.new(go_fish: false,
-                            cards: cards,
-                            book_made: true,
-                            go_again: true,
-                            deck_empty: false)
+                           cards: cards,
+                           book_made: true,
+                           go_again: true,
+                           deck_empty: false)
   end
 
   describe "#initialize" do

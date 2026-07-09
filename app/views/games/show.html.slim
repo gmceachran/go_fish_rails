@@ -44,4 +44,4 @@
       .gf-section__content.gf-section__content--tray
         .card-tray
           - @player.books.each do |book|
-            = image_tag "cards_light/#{book.rank}_#{book.suit.downcase}.svg", class: "playing-card playing-card--large", alt: "#{book.rank} of #{book.suit}"
+            = image_tag "cards_light/#{book.rank}_spades.svg", class: "playing-card playing-card--large", alt: "#{book.rank} of Spades"
