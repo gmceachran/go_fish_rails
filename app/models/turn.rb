@@ -21,7 +21,7 @@ class Turn
   end
 
   def go_fish_game
-    game&.go_fish
+    game&.game_state
   end
 
   def game_is_active

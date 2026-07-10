@@ -41,6 +41,23 @@ RSpec.describe :create_game, type: :system do
         expect(page).to have_content "#{game.players.count}/#{game.max_players} players"
       end
     end
+
+    fcontext "when a user selects a game type" do
+      before do
+        visit root_path
+        click_on "New Game"
+        select "Go Fish", from: "Game type"
+        click_on "Create Game"
+      end
+
+      it "creates a Go Fish game", pending: "will drive this branches implementation" do
+        game = Game.last
+
+        expect(game).to be_a(GoFishGame)
+        expect(game.game_state).to be_a(GoFish::Game)
+        expect(game.players.count).to eq 1
+      end
+    end
   end
 
   context "when a user joins a game" do

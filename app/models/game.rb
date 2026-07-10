@@ -1,6 +1,4 @@
 class Game < ApplicationRecord
-  serialize :go_fish, coder: GoFish::Game
-
   has_many :players, dependent: :destroy
   has_many :users, through: :players
 
@@ -13,15 +11,14 @@ class Game < ApplicationRecord
 
   def joinable? = waiting? && players.count < max_players
 
-  def start_if_full!(game_id)
+  def start_if_full!
     return unless waiting? && players.count >= max_players
 
     update(started_at: Time.current, state: :active)
-    update_with_starting_game_state
   end
 
   def play_turn(turn)
-    self.go_fish.play_turn(turn)
+    self.game_state.play_turn(turn)
   end
 
   def declare_winner!(player)
@@ -42,13 +39,5 @@ class Game < ApplicationRecord
     when "active" then errors.add(:state, :invalid) unless started_at.present? && ended_at.nil?
     when "over" then errors.add(:state, :invalid) unless started_at.present? && ended_at.present?
     end
-  end
-
-  def update_with_starting_game_state
-    self.go_fish = GoFish::Game.new(players: users.map do |user|
-      GoFish::Player.new(user_id: user.id)
-    end)
-    self.go_fish.start
-    save!
   end
 end

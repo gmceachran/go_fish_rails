@@ -5,8 +5,7 @@ class TurnsController < ApplicationController
 
     if turn.valid?
       result = game.play_turn(turn)
-      game.go_fish.advance_turn unless result.go_again
-      game.go_fish_will_change!
+      game.game_state.advance_turn unless result.go_again
       game.save!
     end
 

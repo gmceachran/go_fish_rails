@@ -4,7 +4,6 @@ module GoFish
     class InvalidRank < StandardError; end
     class InvalidSuit < StandardError; end
     RANKS = %w[ 2 3 4 5 6 7 8 9 10 J Q K A ]
-    # RANKS = %w[ 2 3 4 5 ]
     # RANKS = %w[ 2 ]
     SUITS = %w[ Spades Clubs Hearts Diamonds ]
     RANKS_TO_NAMES = {
@@ -38,6 +37,7 @@ module GoFish
 
     def value = RANKS.index(rank)
     def to_s = "#{RANKS_TO_NAMES[rank]} of #{suit}"
+    # add to path name
 
     def data
       {

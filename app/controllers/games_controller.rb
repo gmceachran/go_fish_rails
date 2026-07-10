@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   def show
     @game_id = params[:id]
-    game = Game.find(@game_id).go_fish
+    game = Game.find(@game_id).game_state
     return redirect_to game_winner_path(game.winner.user_id) if game.winner
 
     user_id = Current.session[:user_id]

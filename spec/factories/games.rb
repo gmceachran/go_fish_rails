@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :game do
+  factory :game, class: "GoFishGame" do
     max_players { 5 }
 
     trait :with_players do

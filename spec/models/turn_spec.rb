@@ -5,7 +5,7 @@ RSpec.describe Turn, type: :model do
   let!(:player1) { create :player, game: game }
   let!(:player2) { create :player, game: game }
 
-  let(:go_fish_game) { game.reload.go_fish }
+  let(:go_fish_game) { game.reload.game_state }
   let(:active_player) { go_fish_game.active_player }
   let(:opponent_player) { go_fish_game.opponents.first }
   let(:held_rank) { active_player.hand.first.rank }

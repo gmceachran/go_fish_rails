@@ -90,7 +90,6 @@ module GoFish
     end
 
     def winner
-      # return nil unless number_of_players > 1 && started?
       return nil unless players.all? { |player| player.hand.empty? }
 
       winner = players.max_by do |player|

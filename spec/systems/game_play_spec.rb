@@ -7,7 +7,7 @@ RSpec.describe :play_game, type: :system do
 
   before do
     visit root_path
-    override_start game.go_fish
+    override_start game.game_state
   end
 
   context "when user clicks the Play Game button" do
@@ -57,15 +57,14 @@ RSpec.describe :play_game, type: :system do
         end
 
         it "the form disappears", pending: "can't be bothered" do
-          override_start game.go_fish
+          override_start game.game_state
           visit current_path
 
-          expect(game.go_fish.players.first.hand.length).to be 1
+          expect(game.game_state.players.first.hand.length).to be 1
           click_on "Ask for Cards"
           visit root_path
           click_on "Play Now"
-          expect(game.go_fish.players.last.hand.length).to be 2
-
+          expect(game.game_state.players.last.hand.length).to be 2
           expect(page).to have_no_css ".game-actions"
           expect(page).to have_content "Opponent's Turn"
         end
