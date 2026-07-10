@@ -42,7 +42,7 @@ RSpec.describe :create_game, type: :system do
       end
     end
 
-    fcontext "when a user selects a game type" do
+    context "when a user selects a game type" do
       before do
         visit root_path
         click_on "New Game"

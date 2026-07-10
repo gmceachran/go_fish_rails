@@ -16,6 +16,8 @@ class GamesController < ApplicationController
     @turn = Turn.new
 
     render layout: "application_no_sidebar"
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
   end
 
   def new
