@@ -1,7 +1,5 @@
 module GoFish
-  class Implementation
-    attr_accessor :players, :deck, :active_player_index, :turn_results
-
+  class Implementation < ::GameImplementation
     STARTING_HAND = {
       1 => 7,
       2 => 7,
@@ -10,16 +8,15 @@ module GoFish
       5 => 5
     }
 
-    # STARTING_HAND = {
-    #   2 => 1
-    # }
+    attr_accessor :deck, :active_player_index, :turn_results
 
-    def initialize(players: players,
+    def initialize(players: [],
                    active_player_index: 0,
                    deck: GoFish::Deck.new,
                    turn_results: [])
 
-      @players = players
+      super(players: players)
+
       @active_player_index = active_player_index
       @deck = deck
       @turn_results = turn_results
@@ -28,13 +25,6 @@ module GoFish
     def active_player = players[active_player_index]
     def deck_length = deck.cards_left
     def turn_result = turn_results.last
-    def self.dump(obj) = obj.as_json
-
-    def self.load(json)
-      return nil if json.nil?
-
-      self.from_json(json)
-    end
 
     def self.from_json(json)
       go_fish_players = json["players"].map do |player|

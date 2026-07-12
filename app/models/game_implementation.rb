@@ -8,7 +8,7 @@ class GameImplementation
   def self.load(json)
     return nil if json.nil?
 
-    self.from_json(json)
+    from_json(json)
   end
 
   def self.dump(obj)

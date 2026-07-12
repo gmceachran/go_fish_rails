@@ -1,7 +1,8 @@
 module CrazyEights
   class Implementation < ::GameImplementation
-    # ASK: file structure for abstracting a lot of this stuff
-    # into a game superclass while navigating namespacing
+    def initialize(players: [])
+      super(players: players)
+    end
 
     def self.from_json(json)
       players = CrazyEights::Player.from_json(json["players"])
