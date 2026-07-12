@@ -9,7 +9,9 @@ dev = create :user,
              email_address: "dev@example.com",
              password: "password"
 
-opponent = create :user, email_address: "opponent@example.com", password: "password"
+opponent = create :user,
+           email_address: "opponent@example.com",
+           password: "password"
 
 waiting_game = create :game
 waiting_game.players.create!(user: dev)

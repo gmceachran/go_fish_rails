@@ -6,18 +6,22 @@ class GamesController < ApplicationController
 
   def show
     @game_id = params[:id]
-    game = Game.find(@game_id).game_state
-    return redirect_to game_winner_path(game.winner.user_id) if game.winner
+    game_model = Game.find(@game_id)
 
-    user_id = Current.session[:user_id]
-    @is_clients_turn = game.active_player?(user_id)
-    @opponents = game.opponents
-    @player = game.player(user_id)
-    @turn = Turn.new
+    if game_model.save
+      return redirect_to game_winner_path(game.winner.user_id) if game_model.over?
 
-    render layout: "application_no_sidebar"
-  rescue ActiveRecord::RecordNotFound
-    head :not_found
+      game = game_model.game_state
+      user_id = Current.session[:user_id]
+      @is_clients_turn = game.active_player?(user_id)
+      @opponents = game.opponents
+      @player = game.player(user_id)
+      @turn = Turn.new
+
+      render layout: "application_no_sidebar"
+    else
+      redirect_to root_path, warning: "That game does not exist."
+    end
   end
 
   def new
@@ -25,7 +29,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new(params.require(:game).permit(:max_players))
+    @game = Game.new(params.require(:game).permit(:max_players, :type))
     @game.save
     @game.players.create(user: Current.session.user)
     redirect_to root_path

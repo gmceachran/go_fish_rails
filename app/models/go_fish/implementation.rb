@@ -1,5 +1,5 @@
 module GoFish
-  class Game
+  class Implementation
     attr_accessor :players, :deck, :active_player_index, :turn_results
 
     STARTING_HAND = {
@@ -43,7 +43,7 @@ module GoFish
       deck = Deck.from_json(json["deck"])
       results = (json["turn_results"] || []).map { |result| TurnResult.from_json(result) }
 
-      Game.new(players: go_fish_players,
+      Implementation.new(players: go_fish_players,
                active_player_index: json["active_player_index"],
                deck: deck,
                turn_results: results)

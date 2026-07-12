@@ -13,7 +13,6 @@ class Game < ApplicationRecord
 
   def start_if_full!
     return unless waiting? && players.count >= max_players
-
     update(started_at: Time.current, state: :active)
   end
 

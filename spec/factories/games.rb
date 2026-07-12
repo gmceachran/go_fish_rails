@@ -8,5 +8,15 @@ FactoryBot.define do
         create(:player, game: model)
       end
     end
+
+    # trait :finished do
+    #   max_players { 1 }
+    #   after(:create) do |model, evaluator|
+    #     create(:player, game: model, winner: true)
+    #   end
+
+    #   ended_at { Time.current }
+    #   state { :over }
+    # end
   end
 end

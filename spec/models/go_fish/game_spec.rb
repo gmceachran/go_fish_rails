@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe GoFish::Game, type: :model do
+RSpec.describe GoFish::Implementation, type: :model do
   let(:json) do
     {
       "players" => [
@@ -29,12 +29,12 @@ RSpec.describe GoFish::Game, type: :model do
       "turn_results" => []
     }
   end
-  let!(:game) { GoFish::Game.load(json) }
+  let!(:game) { GoFish::Implementation.load(json) }
 
   describe "#load" do
     context "when json is not nil" do
       it "turns the given json string into a ruby object" do
-        expect(game).to be_a_kind_of GoFish::Game
+        expect(game).to be_a_kind_of GoFish::Implementation
         expect(game.players.first.user_id).to be 0
         expect(game.players.last.user_id).to be 1
       end
@@ -42,14 +42,14 @@ RSpec.describe GoFish::Game, type: :model do
 
     context "when json is nil" do
       it "returns nil" do
-        expect(GoFish::Game.load(nil)).to be_nil
+        expect(GoFish::Implementation.load(nil)).to be_nil
       end
     end
   end
 
   describe "#dump" do
     it "turns the given hash into a json string" do
-      dumped_object = GoFish::Game.dump(game)
+      dumped_object = GoFish::Implementation.dump(game)
       expect(dumped_object).to eq json
     end
   end

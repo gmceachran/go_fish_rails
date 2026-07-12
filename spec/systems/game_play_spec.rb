@@ -40,33 +40,27 @@ RSpec.describe :play_game, type: :system do
         click_on "Play Now"
       end
 
-      it "the turn form is visible", pending: "can't be bothered" do
-        within ".game-actions" do
-          expect(page).to have_content "Card Rank"
-          expect(page).to have_content "Ask for Cards"
-          expect(page).to have_content "Player"
-        end
+      it "the turn form is visible" do
+        visit game_path(game)
+        expect(page).to have_content "Card Rank"
+        expect(page).to have_content "Player"
       end
 
       context "when user presses the turn form submit button" do
         before do
           log_out
           log_in(user1)
-          visit root_path
-          click_on "Play Now"
+          override_start game.game_state
+          game.save
+          visit game_path(game)
         end
 
-        it "the form disappears", pending: "can't be bothered" do
-          override_start game.game_state
-          visit current_path
-
-          expect(game.game_state.players.first.hand.length).to be 1
+        it "the form disappears" do
+          expect(game.game_state.players.first.hand.length).to eq 1
           click_on "Ask for Cards"
-          visit root_path
-          click_on "Play Now"
-          expect(game.game_state.players.last.hand.length).to be 2
           expect(page).to have_no_css ".game-actions"
           expect(page).to have_content "Opponent's Turn"
+          expect(game.reload.game_state.players.first.hand.length).to eq 2
         end
       end
     end

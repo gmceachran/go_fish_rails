@@ -11,6 +11,7 @@
     = simple_form_for @game, url: games_path do |f|
       .modal__body
         | Choose Number of Players
+        = f.input :type, collection: [["Go Fish", "GoFishGame"], ["Crazy Eights", "CrazyEightsGame"]], selected: "GoFish", label: "Game type"
         = f.input :max_players, collection: [2, 3, 4, 5], selected: 2, label: "Number of players"
 
       .modal__footer

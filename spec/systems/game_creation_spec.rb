@@ -41,22 +41,24 @@ RSpec.describe :create_game, type: :system do
         expect(page).to have_content "#{game.players.count}/#{game.max_players} players"
       end
     end
+  end
 
-    context "when a user selects a game type" do
-      before do
-        visit root_path
-        click_on "New Game"
-        select "Go Fish", from: "Game type"
-        click_on "Create Game"
-      end
+  context "when a user selects the crazy eights game type" do
+    before do
+      visit root_path
+      click_on "New Game"
+      select 2, from: "Number of players"
+      select "Crazy Eights", from: "Game type"
+      click_on "Create Game"
+    end
 
-      it "creates a Go Fish game", pending: "will drive this branches implementation" do
-        game = Game.last
+    it "creates a Crazy Eights game" do
+      game_model = Game.first
+      create :player, game: game_model
+      game = game_model.reload.game_state
 
-        expect(game).to be_a(GoFishGame)
-        expect(game.game_state).to be_a(GoFish::Game)
-        expect(game.players.count).to eq 1
-      end
+      expect(game_model).to be_a(CrazyEightsGame)
+      expect(game).to be_a(CrazyEights::Implementation)
     end
   end
 

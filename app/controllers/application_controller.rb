@@ -7,4 +7,5 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   def current_user = Current.session.user
+  add_flash_types :warning
 end
