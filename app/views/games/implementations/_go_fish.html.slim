@@ -1,0 +1,19 @@
+section.game-board__tray
+  .gf-section
+    header.gf-section__header.gf-section__header--tray
+      h2.header__text.header__text--tray
+        | Your Hand
+    .gf-section__content.gf-section__content--tray
+      .card-tray id='player-hand'
+        - @board.player.hand.each do |card|
+          = image_tag "cards_light/#{card.rank}_#{card.suit.downcase}.svg", class: "playing-card playing-card--large", alt: "#{card.rank} of #{card.suit}"
+
+section.game-board__tray.game-board__tray--books
+  .gf-section
+    header.gf-section__header.gf-section__header--tray
+      h2.header__text.header__text--tray
+        | Books
+    .gf-section__content.gf-section__content--tray
+      .card-tray
+        - @board.player.books.each do |book|
+          = image_tag "cards_light/#{book.rank}_spades.svg", class: "playing-card playing-card--large", alt: "#{book.rank} of Spades"

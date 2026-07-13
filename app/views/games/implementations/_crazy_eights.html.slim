@@ -1,0 +1,26 @@
+section.game-board__tray
+  .gf-section
+    header.gf-section__header
+      h2.header__text
+        | Your Hand
+    .gf-section__content
+      .card-tray#player-hand
+        - @board.player.hand.each do |card|
+          = button_to game_turns_path(@board.game_id),
+              method: :post,
+              params: { turn: { rank: card.rank, suit: card.suit } } do
+            = image_tag "cards_light/#{card.rank}_#{card.suit.downcase}.svg",
+                class: "playing-card playing-card--large",
+                alt: "#{card.rank} of #{card.suit}"
+
+section.game-board__tray
+  .gf-section
+    header.gf-section__header
+      h2.header__text
+        | Discard Pile
+    .gf-section__content
+      .card-tray
+        = image_tag "cards_light/#{@board.discard_card.rank}_#{@board.discard_card.suit.downcase}.svg",
+            class: "playing-card playing-card--large",
+            alt: "#{@board.discard_card.rank} of #{@board.discard_card.suit}"
+

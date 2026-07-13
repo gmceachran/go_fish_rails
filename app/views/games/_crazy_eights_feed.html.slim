@@ -1,0 +1,7 @@
+.feed-logs
+- if @board.is_clients_turn
+  .game-actions
+    = button_to "Draw Card", game_turns_path(@board.game_id),
+        method: :post,
+        params: { turn: { action: "draw" } },
+        class: "btn btn--primary btn--pill btn--small"

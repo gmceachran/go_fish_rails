@@ -1,0 +1,11 @@
+.gf-section
+  header.gf-section__header.gf-section__header--feed
+    h2.header__text.header__text--feed
+      | Game Feed
+    - if @board.is_clients_turn
+      .badge.badge--primary Your Turn
+    - else
+      .badge.badge--primary Opponent's Turn
+  .gf-section__content.gf-section__content--feed
+    - if @board.feed_partial
+      = render partial: @board.feed_partial

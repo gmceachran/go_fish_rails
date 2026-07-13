@@ -15,16 +15,16 @@
     .bubble.bubble--response
       p.bubble__text
         | You drew a 7 of Diamonds
-- if @is_clients_turn 
-  = simple_form_for @turn, url: game_turns_path(@game_id) do |f|
+- if @board.is_clients_turn
+  = simple_form_for @board.turn, url: game_turns_path(@board.game_id) do |f|
     .game-actions
       .game-actions__options
         .game-actions__field
           label.game-actions__label
             | Player
-          = f.input :opponent, collection: @opponents, selected: @opponents.first&.user_id, label: false, label_method: :name, value_method: :user_id, wrapper: false, input_html: { class: "form-control form-control--small" }
+          = f.input :opponent, collection: @board.opponents, selected: @board.opponents.first&.user_id, label: false, label_method: :name, value_method: :user_id, wrapper: false, input_html: { class: "form-control form-control--small" }
         .game-actions__field
           label.game-actions__label
             | Card Rank
-          = f.input :rank, collection: @player.hand.uniq { |card| card.rank }.map(&:rank), selected: @player.hand.first&.rank, label: false, wrapper: false, input_html: { class: "form-control form-control--small" }
+          = f.input :rank, collection: @board.player.hand.uniq { |card| card.rank }.map(&:rank), selected: @board.player.hand.first&.rank, label: false, wrapper: false, input_html: { class: "form-control form-control--small" }
       = f.button :submit, "Ask for Cards", class: "btn btn--primary btn--pill btn--small"
