@@ -19,10 +19,10 @@ module GoFish
       cards = json["cards"].map { |card| GoFish::Card.from_json(card) }
 
       TurnResult.new(go_fish: json["go_fish"],
-                      cards: cards,
-                      book_made: json["book_made"],
-                      go_again: json["go_again"],
-                      deck_empty: json["deck_empty"])
+                     cards: cards,
+                     book_made: json["book_made"],
+                     go_again: json["go_again"],
+                     deck_empty: json["deck_empty"])
     end
 
     def data

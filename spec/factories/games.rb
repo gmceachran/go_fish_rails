@@ -9,6 +9,8 @@ FactoryBot.define do
       end
     end
 
+    factory :crazy_eights_game, class: "CrazyEightsGame"
+
     # trait :finished do
     #   max_players { 1 }
     #   after(:create) do |model, evaluator|

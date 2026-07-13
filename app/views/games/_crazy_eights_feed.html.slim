@@ -1,7 +1,10 @@
 .feed-logs
 - if @board.is_clients_turn
   .game-actions
-    = button_to "Draw Card", game_turns_path(@board.game_id),
-        method: :post,
-        params: { turn: { action: "draw" } },
-        class: "btn btn--primary btn--pill btn--small"
+    - if @board.wild
+      = f.input :rank, collection: ["Hearts", "Spades", "Clubs", "Diamonds"], selected: "Hearts", label: false, wrapper: false, input_html: { class: "form-control form-control--small" }
+    - else 
+      = button_to "Draw Card", game_turns_path(@board.game_id),
+          method: :post,
+          params: { turn: { action: "draw" } },
+          class: "btn btn--primary btn--pill btn--small"

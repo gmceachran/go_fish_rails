@@ -1,4 +1,5 @@
 TODO:
+  - tests for crazy eights domain classes.
   
 
 DONE:

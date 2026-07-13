@@ -56,9 +56,7 @@ group :development do
   gem "web-console"
 end
 
-group :development do
-  gem "rolemodel-rails", github: "Rolemodel/rolemodel_rails"
-end
+gem "rolemodel-rails"
 
 group :development, :test do
   gem "factory_bot_rails"

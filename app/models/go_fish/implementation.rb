@@ -24,6 +24,7 @@ module GoFish
 
     def active_player = players[active_player_index]
     def deck_length = deck.cards_left
+    def implementation_key = "go_fish"
     def turn_result = turn_results.last
 
     def self.from_json(json)
@@ -51,6 +52,17 @@ module GoFish
     def opponents
       current_player = [ active_player ]
       players - current_player
+    end
+
+    def board_for(user_id:, game_id:)
+      GameBoard.new(game_id: game_id,
+                    implementation: implementation_key,
+                    is_clients_turn: active_player?(user_id),
+                    opponents: opponents,
+                    player: player(user_id),
+                    opponent_partial: opponent_partial,
+                    feed_partial: feed_partial,
+                    turn: Turn.new)
     end
 
     def start
@@ -88,6 +100,10 @@ module GoFish
       end
       winner
     end
+
+    def implementation_key = "go_fish"
+    def opponent_partial = "games/accordion"
+    def feed_partial = "games/feed"
 
     private_class_method :from_json
     private

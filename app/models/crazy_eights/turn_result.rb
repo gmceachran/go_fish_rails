@@ -1,11 +1,12 @@
 module CrazyEights
   class TurnResult
-    attr_accessor :drew_card, :played_card, :play_again
+    attr_accessor :drew_card, :played_card, :play_again, :wild
 
-    def initialize(drew_card: nil, played_card: nil, play_again: false)
+    def initialize(drew_card: nil, played_card: nil, play_again: false, wild: false)
       @drew_card = drew_card
       @played_card = played_card
       @play_again = play_again
+      @wild = wild
     end
 
     def self.from_json(json)
@@ -23,7 +24,8 @@ module CrazyEights
       {
         drew_card: drew_card&.data,
         played_card: played_card&.data,
-        play_again: play_again
+        play_again: play_again,
+        wild: wild
       }
     end
   end

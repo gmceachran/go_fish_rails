@@ -14,4 +14,12 @@ class GameImplementation
   def self.dump(obj)
     obj.as_json
   end
+
+  def implementation_key
+    raise NotImplementedError
+  end
+
+  def opponent_partial
+    "games/opponent"
+  end
 end

@@ -81,6 +81,28 @@ RSpec.describe GoFish::Implementation, type: :model do
     end
   end
 
+  describe "#board_for" do
+    let(:board) { game.board_for(user_id: 0, game_id: 42) }
+
+    it "builds a game board" do
+      expect(board).to be_a(GameBoard)
+      expect(board.game_id).to eq(42)
+      expect(board.implementation).to eq("go_fish")
+    end
+
+    it "includes turn state and player data" do
+      expect(board.is_clients_turn).to be(true)
+      expect(board.player).to eq(game.players.first)
+      expect(board.opponents).to eq([ game.players.last ])
+    end
+
+    it "includes go fish view settings" do
+      expect(board.opponent_partial).to eq("games/accordion")
+      expect(board.feed_partial).to eq("games/feed")
+      expect(board.turn).to be_a(Turn)
+    end
+  end
+
   describe "#active_player" do
     let(:active_player) { game.players.first }
     it "returns the active player" do
