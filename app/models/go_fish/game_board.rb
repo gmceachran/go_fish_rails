@@ -7,7 +7,7 @@ module GoFish
                 :player,
                 :opponent_partial,
                 :feed_partial,
-                :wild
+                :turn
 
     def initialize(game_id:,
                   implementation:,

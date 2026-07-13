@@ -19,7 +19,9 @@ RSpec.describe CrazyEights::TurnResult, type: :model do
     let(:data) do
       {
         drew_card: { rank: "3", suit: "Diamonds" },
-        played_card: nil, play_again: true
+        played_card: nil,
+        play_again: true,
+        wild: false
       }
     end
 

@@ -85,7 +85,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
     let(:board) { game.board_for(user_id: 0, game_id: 42) }
 
     it "builds a game board" do
-      expect(board).to be_a(GameBoard)
+      expect(board).to be_a(CrazyEights::GameBoard)
       expect(board.game_id).to eq(42)
       expect(board.implementation).to eq("crazy_eights")
     end
@@ -153,7 +153,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
     end
   end
 
-  fdescribe "#play_turn" do
+  describe "#play_turn" do
     context "when the player plays a matching card" do
       let(:json) do
         {
@@ -196,7 +196,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
       end
       let(:turn) { CrazyEightsTurn.new(rank: "8", suit: "Clubs", user_id: 0) }
 
-      it "allows the player to choose a new suit" do
+      xit "allows the player to choose a new suit" do
         expect()
       end
     end

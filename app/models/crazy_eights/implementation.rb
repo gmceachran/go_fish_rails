@@ -66,7 +66,8 @@ module CrazyEights
                     player: player(user_id),
                     opponent_partial: opponent_partial,
                     feed_partial: feed_partial,
-                    discard_card: discard_card)
+                    discard_card: discard_card,
+                    wild: turn_result.nil? ? false : turn_result.wild)
     end
 
     def start

@@ -85,7 +85,7 @@ RSpec.describe GoFish::Implementation, type: :model do
     let(:board) { game.board_for(user_id: 0, game_id: 42) }
 
     it "builds a game board" do
-      expect(board).to be_a(GameBoard)
+      expect(board).to be_a(GoFish::GameBoard)
       expect(board.game_id).to eq(42)
       expect(board.implementation).to eq("go_fish")
     end
