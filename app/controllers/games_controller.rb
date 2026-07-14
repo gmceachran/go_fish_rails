@@ -9,6 +9,7 @@ class GamesController < ApplicationController
     return redirect_to_winner(@game_model) if @game_model.over?
     @board = @game_model.game_state.board_for(user_id: Current.session[:user_id],
                                               game_id: @game_model.id)
+    # binding.irb
     render layout: "application_no_sidebar"
   end
 

@@ -1,0 +1,17 @@
+= turbo_stream_from user_game
+ 
+.card.card--padded.card--condensed id="game_#{user_game.id}_player_count"
+  .flex.items-center.justify-between
+    button.btn.btn--no-border
+      | Game #{user_game.id}
+    em
+      - unless user_game.joinable?
+        | Active
+      - else
+        | (#{user_game.players.count}/#{user_game.max_players} players)
+
+    - unless user_game.joinable?
+      = link_to "Play Now", game_path(user_game.id), class: "btn"
+    - else
+      button.btn.btn--disabled
+        | Waiting...

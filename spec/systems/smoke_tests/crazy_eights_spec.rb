@@ -1,19 +1,21 @@
-# spec/systems/smoke_tests/crazy_eights_spec.rb
 require "rails_helper"
 
 RSpec.describe "Crazy Eights", type: :system do
-  describe "#show" do
-    let(:user) { create_and_log_in }
-    let(:game) { create :crazy_eights_game, max_players: 1 }
+  let(:user1) { create_and_log_in }
+  let!(:game) { create :game, max_players: 2, type: "CrazyEightsGame" }
+  let!(:player1) { create :player, user: user1, game: game }
+  let(:user2) { create_and_log_in }
+  let!(:player2) { create :player, user: user2, game: game }
 
-    before do
-      create :player, game: game, user: user
-      visit game_path game
-    end
+  before { visit root_path }
 
-    it "shows the Crazy Eights game board" do
-      expect(page).to have_current_path(game_path(game))
-      expect(page).to have_content "Game #{game.id}"
+  context "when user clicks the Play Game button" do
+    it "user is redirected to games#show" do
+      click_on "Play Now"
+
+      expect(page).to have_current_path game_path(game.id)
+      expect(page).to have_content "Players"
+      expect(page).to have_content "Feed"
       expect(page).to have_content "Your Hand"
       expect(page).to have_content "Discard Pile"
     end

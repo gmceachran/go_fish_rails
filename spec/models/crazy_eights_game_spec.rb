@@ -3,9 +3,9 @@ require "rails_helper"
 RSpec.describe CrazyEightsGame, type: :model do
   describe "#start_if_full!" do
     context "when the last player joins" do
-      let(:game) { create(:crazy_eights_game, max_players: 2) }
-      let!(:player1) { create(:player, game: game) }
-      let!(:player2) { create(:player, game: game) }
+      let(:game) { create :game, max_players: 2, type: "CrazyEightsGame" }
+      let!(:player1) { create :player, game: game }
+      let!(:player2) { create :player, game: game }
       let(:starting_hand_size) { 7 }
       let(:remaining_deck_size) { 52 - (starting_hand_size * 2) - 1 }
 
@@ -58,7 +58,7 @@ RSpec.describe CrazyEightsGame, type: :model do
     end
 
     context "when the game is not yet full" do
-      let(:game) { create(:crazy_eights_game, max_players: 2) }
+      let(:game) { create :game, max_players: 2, type: "CrazyEightsGame" }
 
       before { create(:player, game: game) }
 

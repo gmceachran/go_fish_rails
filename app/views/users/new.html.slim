@@ -1,11 +1,12 @@
-= simple_form_for @user do |f|
-  = f.input :email_address
-  = f.input :password
-  = f.input :password_confirmation
-  = f.button :submit
+main.op-page__main-content
+  = simple_form_for @user do |f|
+    = f.input :email_address
+    = f.input :password
+    = f.input :password_confirmation
+    = f.button :submit
 
-  br
+    br
 
-  | Already have an account?
-  a.btn.btn--no-border href = new_session_url
-    | Log in
+    | Already have an account?
+    a.btn.btn--no-border href = new_session_url
+      | Log in
