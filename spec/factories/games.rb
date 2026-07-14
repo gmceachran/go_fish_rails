@@ -11,16 +11,13 @@ FactoryBot.define do
       end
     end
 
-  #   factory :crazy_eights_game, class: "CrazyEightsGame"
+    trait :finished do
+      max_players { 1 }
 
-  #   # trait :finished do
-  #   #   max_players { 1 }
-  #   #   after(:create) do |model, evaluator|
-  #   #     create(:player, game: model, winner: true)
-  #   #   end
-
-  #   #   ended_at { Time.current }
-  #   #   state { :over }
-  #   # end
+      after(:create) do |model, evaluator|
+        player = create(:player, game: model)
+        model.declare_winner!(player)
+      end
+    end
   end
 end

@@ -91,3 +91,5 @@ gem "simple_form"
 group :test do
   gem "capybara-screenshot"
 end
+
+gem "good_job"
