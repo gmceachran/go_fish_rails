@@ -1,4 +1,4 @@
-RSpec.describe :play_game, type: :system do
+RSpec.describe :play_go_fish, type: :system do
   let(:user1) { create_and_log_in }
   let(:game) { create :game, max_players: 2 }
   let!(:player1) { create :player, user: user1, game: game }

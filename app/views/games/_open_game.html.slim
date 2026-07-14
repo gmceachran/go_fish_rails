@@ -1,0 +1,13 @@
+= turbo_stream_from open_game
+ 
+.card.card--padded.card--condensed id="game_#{open_game.id}_player_count"
+  .flex.items-center.justify-between
+    button.btn.btn--no-border
+      | Game #{open_game.id}
+    em
+      - unless open_game.joinable?
+        | Active
+      - else
+        | (#{open_game.players.count}/#{open_game.max_players} players)
+
+    = button_to "Join", game_players_path(open_game), class: "btn"

@@ -20,7 +20,6 @@ section.game-board__tray
         | Discard Pile
     .gf-section__content
       .card-tray
-        / - binding.irb
         = image_tag "cards_light/#{@board.discard_card.rank}_#{@board.discard_card.suit.downcase}.svg",
             class: "playing-card playing-card--large",
             alt: "#{@board.discard_card.rank} of #{@board.discard_card.suit}"

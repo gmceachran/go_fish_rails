@@ -1,4 +1,6 @@
 class Game < ApplicationRecord
+  after_update_commit { broadcast_refresh_to self }
+
   has_many :players, dependent: :destroy
   has_many :users, through: :players
 

@@ -10,7 +10,7 @@
             a.btn.margin-xs.btn--primary href = new_game_path New Game
 
         .divider
-        = render partial: 'game', collection: @user_games, locals: { is_user_game: true }
+        = render partial: "user_game", collection: @user_games
 
       section.op-stack.open-games data-testid="open-games"
         header.content-header
@@ -19,4 +19,4 @@
               | Games
 
         .divider
-        = render partial: 'game', collection: @open_games, locals: { is_user_game: false }
+        = render partial: "open_game", collection: @open_games

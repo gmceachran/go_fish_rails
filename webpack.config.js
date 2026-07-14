@@ -1,6 +1,5 @@
 import path from 'path'
 import webpack from 'webpack'
-import TerserPlugin from 'terser-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 
@@ -72,7 +71,6 @@ export default {
   optimization: {
     minimize: mode === 'production',
     minimizer: [
-      new TerserPlugin(),
       new CssMinimizerPlugin()
     ]
   },
@@ -83,21 +81,6 @@ export default {
     // We're compiling all JS to a single application.js file
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
-    }),
-
-    // Replace ENV variables at build time
-    new webpack.DefinePlugin({
-      'process.env.HONEYBADGER_API_KEY': JSON.stringify(process.env.HONEYBADGER_API_KEY),
-      'process.env.HONEYBADGER_ENV': JSON.stringify(process.env.HONEYBADGER_ENV),
-      'process.env.RAILS_ENV': JSON.stringify(process.env.RAILS_ENV),
-      'process.env.SOURCE_VERSION': JSON.stringify(process.env.SOURCE_VERSION)
-    }),
-
-    // Send source maps to HoneyBadger in production for easier debugging
-    (mode === 'production' && !process.env.CI) && new HoneybadgerSourceMapPlugin({
-      apiKey: process.env.HONEYBADGER_API_KEY,
-      assetsUrl: process.env.ASSETS_URL,
-      revision: process.env.SOURCE_VERSION
     })
   ].filter(Boolean)
 }

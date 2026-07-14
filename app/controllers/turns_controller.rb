@@ -8,6 +8,11 @@ class TurnsController < ApplicationController
     end
 
     redirect_to game_path(game)
+    # respond_to do |format|
+    #   format.turbo_stream do
+    #     render turbo_stream: turbo_stream.append("thingy", partial: "stream_message")
+    #   end
+    # end
   end
 
   private

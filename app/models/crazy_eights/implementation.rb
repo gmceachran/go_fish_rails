@@ -11,7 +11,8 @@ module CrazyEights
     attr_accessor :deck,
                   :discard_pile,
                   :active_player_index,
-                  :turn_results
+                  :turn_results,
+                  :discard_pile
 
     def initialize(players: [],
                    active_player_index: 0,
@@ -35,7 +36,7 @@ module CrazyEights
     def self.from_json(json)
       players = json["players"].map { |player| Player.from_json(player) }
       deck = Deck.from_json(json["deck"])
-      discard_pile = json["discard_pile"].map { |card| Card.from_json(card) }
+      discard_pile = json["discard_pile"].nil? ? [] : json["discard_pile"].map { |card| Card.from_json(card) }
       results = json["turn_results"].map { |result| TurnResult.from_json(result) }
 
       Implementation.new(players: players,
