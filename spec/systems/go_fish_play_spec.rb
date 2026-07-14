@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe :play_go_fish, type: :system do
   let(:user1) { create_and_log_in }
   let(:game) { create :game, max_players: 2 }
