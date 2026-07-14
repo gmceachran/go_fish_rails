@@ -9,8 +9,7 @@
         | (#{game.players.count}/#{game.max_players} players)
     - if is_user_game
       - unless game.joinable?
-        button.btn
-          | Play Now
+        = link_to "Play Now", game_path(game.id), class: "btn"
       - else
         button.btn.btn--disabled
           | Waiting...

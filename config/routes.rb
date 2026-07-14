@@ -11,9 +11,12 @@ Rails.application.routes.draw do
 
   get "games/history", to: "games#history"
 
-  resources :games, only: [ :index, :new, :create, :destroy, :update ]
+  resources :games
+
   resources :games do
     resources :players, only: [ :create ]
+    resources :turns, only: [ :create ]
+    resources :winners, only: [ :show ]
   end
 
   root "games#index"

@@ -1,0 +1,12 @@
+.gf-section
+  header.gf-section__header.gf-section__header--players
+    i.ph.ph-caret-left.accordion__marker
+    h2.header__text.header__text--players
+      | Game #{@board.game_id}
+  .gf-section__content.gf-section__content--players
+    .players-content
+      .players-content__header
+        | Players
+      .players-content__accordions
+        - @board.opponents.each do |opponent|
+          = render partial: @board.opponent_partial, locals: { opponent: }

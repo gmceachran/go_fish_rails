@@ -1,0 +1,19 @@
+details.accordion
+  summary.accordion__header
+    i.ph.ph-caret-right.accordion__marker
+    span.header__content
+      | #{opponent.name}
+      .hand-info
+        p.hand-info__text
+          | Cards#{' '}
+          strong #{opponent.hand.length}
+        p.hand-info__text
+          | Books#{' '}
+          strong #{opponent.books.length}
+  .accordion__tray
+    .card-tray
+      - opponent.hand.length.times do
+        = image_tag "cards_light/card_back.svg", class: "playing-card playing-card--medium playing-card--back", alt: "Face down card"
+    .card-tray
+      - opponent.books.each do |book|
+        = image_tag "cards_light/#{book.rank}_spades.svg", class: "playing-card playing-card--small", alt: "#{book.rank} of Spades"

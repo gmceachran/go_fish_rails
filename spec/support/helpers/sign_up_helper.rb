@@ -14,6 +14,13 @@ module SignUpHelper
     click_on "Log in"
   end
 
+  def log_out
+    User.all.each do |user|
+      Current.session&.destroy!
+      cookies.delete(:session_id)
+    end
+  end
+
   def create_and_log_in
     user = create :user
     log_in(user)

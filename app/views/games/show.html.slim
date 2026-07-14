@@ -1,0 +1,8 @@
+.game-board
+  section.game-board__players
+    = render "games/shared/players"
+
+  section.game-board__feed
+    = render "games/shared/feed"
+
+  = render "games/implementations/#{@board.implementation}"

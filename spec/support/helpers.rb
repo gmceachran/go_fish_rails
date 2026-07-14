@@ -8,5 +8,6 @@ RSpec.configure do |c|
   c.include CapybaraHelper, type: :system
   c.include PlaywrightHelper, type: :system
   c.include SelectHelper, type: :system
-  c.include SignUpHelper, type: :system
+  c.include SignUpHelper
+  c.include GameControlHelper, type: :system
 end

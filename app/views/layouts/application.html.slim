@@ -5,4 +5,6 @@ html
     .op-page__sidebar = render 'sidebar'
     .op-page__main
       main.op-page__main-content
+        - flash.each do |message_type, message|
+          .alert.alert-#{message_type} #{message}
         = yield
