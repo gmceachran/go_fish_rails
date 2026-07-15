@@ -23,6 +23,10 @@ class UsersController < ApplicationController
     @country = "country"
   end
 
+  def edit
+    @user = User.find(params[:id])
+  end
+
   def user_params
     params.require(:user).permit(:email_address, :password, :password_confirmation)
   end

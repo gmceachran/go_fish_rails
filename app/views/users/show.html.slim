@@ -4,4 +4,4 @@
     .flex.flex-row.gap-xs
       p Location:
       p #{@state}, #{@country}
-      button.btn.btn-small Update
+      = button_to "Update", edit_user_path(Current.session.user), method: :get, class: "btn btn-small"
