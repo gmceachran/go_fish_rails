@@ -18,6 +18,9 @@ class UsersController < ApplicationController
   end
 
   def show
+    @email_address = current_user.email_address
+    @state = "state"
+    @country = "country"
   end
 
   def user_params

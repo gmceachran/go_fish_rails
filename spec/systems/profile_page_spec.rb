@@ -10,4 +10,10 @@ RSpec.describe :visit_profile_page, type: :system do
       expect(current_path).to eq user_path user
     end
   end
+
+  context "when the user updates location" do
+    it "opens a modal thingybajingy" do
+      
+    end
+  end
 end
