@@ -2,6 +2,8 @@ FactoryBot.define do
   factory :game do
     max_players { 5 }
     type { "GoFishGame" }
+    # updated_at { Time.current }
+
     initialize_with { type.present? ? type.constantize.new(attributes) : Game.new(attributes) }
 
     trait :with_players do

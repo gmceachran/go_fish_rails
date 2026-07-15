@@ -68,6 +68,7 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
+  config.include ActiveSupport::Testing::TimeHelpers
   # config.before :example, type: :system do
   #   unless ENV['ASSET_PRECOMPILE_SUCCESSFUL']
   #     prep_passed = system 'rails spec:prepare'

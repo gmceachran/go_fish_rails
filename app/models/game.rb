@@ -25,7 +25,7 @@ class Game < ApplicationRecord
   def declare_winner!(player)
     player.update!(winner: true)
     update!(ended_at: Time.current, state: :over)
-    ArchiveGamesJob.perform_later(self)
+    ArchiveGamesJob.perform_later
   end
 
   private
