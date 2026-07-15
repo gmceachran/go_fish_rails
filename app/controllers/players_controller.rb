@@ -3,7 +3,7 @@ class PlayersController < ApplicationController
     @game = Game.find(params[:game_id])
     @player = @game.players.new(user: Current.session.user)
     if @player.save
-      Turbo::StreamsChannel.broadcast_replace_to(
+      Turbo::StreamsChannel.broadcast_replace_later_to(
         @game,
         target: "game_#{@game.id}_player_count",
         partial: "games/user_game",
