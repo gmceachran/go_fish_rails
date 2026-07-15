@@ -1,5 +1,7 @@
 class Game < ApplicationRecord
-  broadcasts_refreshes
+  after_create_commit { broadcast_refresh_later_to self }
+  after_update_commit { broadcast_refresh_later_to self }
+
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players

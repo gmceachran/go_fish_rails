@@ -1,4 +1,6 @@
 class Player < ApplicationRecord
+  after_create_commit { broadcast_refresh_later_to "games" }
+
   belongs_to :game
   belongs_to :user
 
