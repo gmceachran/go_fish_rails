@@ -1,8 +1,12 @@
 .gf-section
   header.gf-section__header.gf-section__header--players
-    i.ph.ph-caret-left.accordion__marker
-    h2.header__text.header__text--players
-      | Game #{@board.game_id}
+    .header__left
+      i.ph.ph-caret-left.accordion__marker
+      h2.header__text.header__text--players
+        | Game #{@board.game_id}
+    .header__right
+      - if @board.implementation == "go_fish"
+        = render partial: "countdown"
   .gf-section__content.gf-section__content--players
     .players-content
       .players-content__header

@@ -65,6 +65,24 @@ RSpec.describe :play_go_fish, type: :system do
           expect(game.reload.game_state.players.first.hand.length).to eq 2
         end
       end
+
+      context "when the user does not press the form submit button within 30 seconds" do
+        let(:wait_time) { 0.1 }
+        before do
+          log_out
+          log_in(user1)
+          override_start game.game_state
+          game.save
+        end
+
+        fit "submits a response automatically", :js do
+          GoFish::GameBoard.time_duration = wait_time
+          visit game_path(game)
+
+          expect(page).to have_no_css ".game-actions", wait: (wait_time + 1)
+          expect(page).to have_content "Opponent's Turn"
+        end
+      end
     end
   end
 end
