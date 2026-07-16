@@ -1,1 +1,5 @@
-p bingus
+= simple_form_for @user, method: :patch, data: { controller: 'turbo-fetch', turbo_fetch_url_value: turbo_fetch_users_url(@user)} do |f|
+  = f.input :country, input_html: { data: { action: "turbo-fetch#perform" } }, collection: Data::Country.all, include_blank: true
+  div id="state-container"
+    = f.input :state, collection: Data::State.all, include_blank: true
+  = f.button :submit, "Update Location", class: "btn btn--primary btn--pill btn--small"

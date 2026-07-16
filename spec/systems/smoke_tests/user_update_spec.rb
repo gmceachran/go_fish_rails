@@ -7,7 +7,8 @@ RSpec.describe "Update Location", type: :system do
 
     it "shows an update location menu" do
       click_on "Update"
-      expect(page).to have_content "bingus"
+      expect(page).to have_content "State"
+      expect(page).to have_content "Country"
     end
   end
 end

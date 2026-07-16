@@ -10,12 +10,4 @@ RSpec.describe :visit_profile_page, type: :system do
       expect(current_path).to eq user_path user
     end
   end
-
-  context "when user clicks on update button" do
-    before { visit user_path user }
-    it "opens a the edit page" do
-      click_on "Update"
-      expect(page).to have_content "bingus"
-    end
-  end
 end
