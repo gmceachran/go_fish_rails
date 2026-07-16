@@ -4,4 +4,4 @@
     .flex.flex-row.gap-xs
       p Location:
       p #{@user.state}, #{@user.country}
-      = button_to "Update", edit_user_path(@user), method: :get, class: "btn btn-small"
+      = link_to "Update", edit_user_path(@user), class: "btn btn-small", data: { turbo_frame: 'modal' }

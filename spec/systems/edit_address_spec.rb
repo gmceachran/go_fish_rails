@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe :edit_address, type: :system do
   describe "#edit" do
-    let(:user) { create_and_log_in }
+    let!(:user) { create_and_log_in }
 
     before do
       visit user_path user

@@ -26,6 +26,7 @@ class UsersController < ApplicationController
 
   def edit
     @user = User.find(params[:id])
+    render layout: "modal"
   end
 
   def update
@@ -34,7 +35,7 @@ class UsersController < ApplicationController
     if @user.update update_user_params
       redirect_to @user
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_entity, layout: "modal"
     end
   end
 

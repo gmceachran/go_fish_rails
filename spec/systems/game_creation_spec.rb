@@ -55,7 +55,7 @@ RSpec.describe :create_game, type: :system do
     it "creates a Crazy Eights game" do
       game_model = Game.first
       create :player, game: game_model
-      game = game_model.reload.game_state
+      game = game_model.game_state
 
       expect(game_model).to be_a(CrazyEightsGame)
       expect(game).to be_a(CrazyEights::Implementation)

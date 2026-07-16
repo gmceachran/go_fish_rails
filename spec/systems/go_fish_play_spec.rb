@@ -75,11 +75,14 @@ RSpec.describe :play_go_fish, type: :system do
           game.save
         end
 
-        fit "submits a response automatically", :js do
+        it "submits a response automatically", :js do
           GoFish::GameBoard.time_duration = wait_time
           visit game_path(game)
 
-          expect(page).to have_no_css ".game-actions", wait: (wait_time + 1)
+          expect(page).to have_css ".game-actions"
+          expect(page).to have_content "Your Turn"
+
+          expect(page).to have_no_css ".game-actions"
           expect(page).to have_content "Opponent's Turn"
         end
       end
