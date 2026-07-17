@@ -6,6 +6,7 @@
   grid-template-columns: 1fr var(--gf-side);
   grid-template-rows: 1fr var(--gf-tray);
   overflow: hidden;
+  min-height: 100vh;
 
   .game-board__players {
     flex-grow: 1;
