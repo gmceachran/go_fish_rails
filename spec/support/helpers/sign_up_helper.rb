@@ -23,6 +23,7 @@ module SignUpHelper
 
   def create_and_log_in
     user = create :user
+    sleep 0.3
     log_in user
     user
   end
