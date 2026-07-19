@@ -18,3 +18,6 @@ application.register("turbo-fetch", TurboFetchController)
 
 import TurnTimerController from "./turn_timer_controller"
 application.register("turn-timer", TurnTimerController)
+
+import ConnectionBannerController from "./connection_banner_controller"
+application.register("connection-banner", ConnectionBannerController)

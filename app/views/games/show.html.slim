@@ -1,11 +1,15 @@
-= turbo_stream_from @game_model
+div data-controller="connection-banner"
+  .connection-banner.hidden data-connection-banner-target="banner"
+    | You're offline
 
-main id=dom_id(@game_model)
-  .game-board
-    section.game-board__players
-      = render "games/shared/players"
+  = turbo_stream_from @game_model
 
-    section.game-board__feed
-      = render "games/shared/feed"
+  main id=dom_id(@game_model)
+    .game-board
+      section.game-board__players
+        = render "games/shared/players"
 
-    = render "games/implementations/#{@board.implementation}"
+      section.game-board__feed
+        = render "games/shared/feed"
+
+      = render "games/implementations/#{@board.implementation}"
