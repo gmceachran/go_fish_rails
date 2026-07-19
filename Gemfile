@@ -76,10 +76,9 @@ group :test do
   gem "capybara-playwright-driver"
   gem "marsh_grass"
   gem "pry"
-end
-
-group :test do
+  gem "capybara-screenshot"
   gem "test-prof"
+  gem "selenium-webdriver"
 end
 
 gem "slim", "~> 5.2"
@@ -87,10 +86,6 @@ gem "slim", "~> 5.2"
 gem "slim-rails", "~> 4.0"
 
 gem "simple_form"
-
-group :test do
-  gem "capybara-screenshot"
-end
 
 gem "good_job"
 

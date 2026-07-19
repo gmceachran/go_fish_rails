@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   resources :stats, only: [ :index ]
   get "stats/index", to: "stats#index"
 
+
+  get "offline", to: "offlines#index", as: :offline
   # should be behind an admin validation
   mount GoodJob::Engine => "good_job"
 
