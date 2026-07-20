@@ -5,9 +5,9 @@ class User < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :games, through: :players
 
-  validates :email_address, presence: true, uniqueness: { case_insensitive: true }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, confirmation: true
-  validates :password_confirmation, presence: true
+  validates :email_address, presence: true, uniqueness: { case_insensitive: true }, format: { with: URI::MailTo::EMAIL_REGEXP }, on: :create
+  validates :password, presence: true, confirmation: true, on: :create
+  validates :password_confirmation, presence: true, on: :create
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

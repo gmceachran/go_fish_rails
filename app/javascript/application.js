@@ -1,9 +1,30 @@
-import "@hotwired/turbo-rails"
-import { Application } from "@hotwired/stimulus"
+import '@hotwired/turbo-rails'
+import './controllers'
 
-const application = Application.start()
+document.addEventListener("turbo:frame-missing", (event) => {
+  if (event.target.id === "modal") {
+    event.preventDefault()
+    event.detail.visit(event.detail.response.url, { action: "replace" })
+  }
+})
 
-application.debug = false
-window.Stimulus   = application
+const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("/service-worker.js", {
+        scope: "/",
+      });
+      if (registration.installing) {
+        console.log("Service worker installing");
+      } else if (registration.waiting) {
+        console.log("Service worker installed");
+      } else if (registration.active) {
+        console.log("Service worker active");
+      }
+    } catch (error) {
+      console.error(`Registration failed with ${error}`);
+    }
+  }
+};
 
-export { application }
+registerServiceWorker();

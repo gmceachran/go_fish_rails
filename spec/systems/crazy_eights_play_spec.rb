@@ -23,7 +23,9 @@ RSpec.describe :play_crazy_eights, type: :system do
     context "when it is the user's turn" do
       before do
         log_out
+        sleep 0.1
         log_in(user1)
+        sleep 0.1
         # click_on "Play Now"
       end
 

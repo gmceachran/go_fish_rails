@@ -46,16 +46,21 @@ RSpec.describe :create_game, type: :system do
   context "when a user selects the crazy eights game type" do
     before do
       visit root_path
+      sleep 0.1
       click_on "New Game"
       select 2, from: "Number of players"
       select "Crazy Eights", from: "Game type"
+      sleep 0.1
       click_on "Create Game"
+      sleep 0.1
     end
 
     it "creates a Crazy Eights game" do
       game_model = Game.first
       create :player, game: game_model
-      game = game_model.reload.game_state
+      game = game_model.game_state
+
+      sleep 0.3
 
       expect(game_model).to be_a(CrazyEightsGame)
       expect(game).to be_a(CrazyEights::Implementation)

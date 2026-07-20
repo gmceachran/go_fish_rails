@@ -11,7 +11,12 @@
     border-bottom: var(--op-border-width) solid var(--op-color-border);
     min-height: var(--gf-navbar-height);
 
+    header__left {
+      display: flex;
+    }
+
     &.gf-section__header--players {
+      justify-content: space-between;
       padding-block: var(--op-space-2x-small);
       padding-inline: var(--op-space-medium);
     }

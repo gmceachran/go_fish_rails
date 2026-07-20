@@ -9,6 +9,8 @@ module GoFish
                 :feed_partial,
                 :turn
 
+    class_attribute :time_duration, default: 2
+
     def initialize(game_id:,
                   implementation:,
                   is_clients_turn:,

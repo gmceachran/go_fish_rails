@@ -17,8 +17,7 @@
         | You drew a 7 of Diamonds
 
 - if @board.is_clients_turn
-  #thingy
-  = simple_form_for @board.turn, url: game_turns_path(@board.game_id) do |f|
+  = simple_form_for @board.turn, url: game_turns_path(@board.game_id), data: { controller: "take-turn", action: "turn-timer:ended@window->take-turn#endTurn" }  do |f|
     .game-actions
       .game-actions__options
         .game-actions__field
@@ -29,4 +28,4 @@
           label.game-actions__label
             | Card Rank
           = f.input :rank, collection: @board.player.hand.uniq { |card| card.rank }.map(&:rank), selected: @board.player.hand.first&.rank, label: false, wrapper: false, input_html: { class: "form-control form-control--small" }
-      = f.button :submit, "Ask for Cards", class: "btn btn--primary btn--pill btn--small"
+      = f.button :submit, "Ask for Cards", class: "btn btn--primary btn--pill btn--small", data: { 'take-turn_target': 'submitButton' }

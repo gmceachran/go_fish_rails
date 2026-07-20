@@ -1,0 +1,7 @@
+.op-page__main
+  main.op-page__main-content
+    p Email address: #{@user.email_address}
+    .flex.flex-row.gap-xs
+      p Location:
+      p #{@user.state}, #{@user.country}
+      = link_to "Update", edit_user_path(@user), class: "btn btn-small", data: { turbo_frame: 'modal' }

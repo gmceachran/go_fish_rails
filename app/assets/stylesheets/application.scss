@@ -1,0 +1,11 @@
+.hidden {
+  display: none;
+}
+
+.connection-banner {
+  background-color: var(--op-color-warning-base, #f59e0b);
+  color: var(--op-color-neutral-plus-max, #fff);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 600;
+}

@@ -112,21 +112,25 @@ RSpec.describe CrazyEights::Implementation, type: :model do
   end
 
   describe "#start" do
-    let(:deck) { CrazyEights::Deck.new }
-    let(:players) { game.players }
+    let!(:deck) { CrazyEights::Deck.new }
+    let!(:players) { game.players }
 
     before { game.deck = deck }
 
     it "shuffles cards" do
       unshuffled_hand = deck.cards[0..6]
+      sleep 0.1
       game.start
+      sleep 0.3
       shuffled_hand = players.first.hand
+      sleep 0.1
       expect(shuffled_hand).not_to eq unshuffled_hand
     end
 
     context "when there are 1-3 players" do
       it "each player's hand is dealt 7 cards" do
         game.start
+        sleep 0.3
         players.each { |player| expect(player.hand_size).to be 7 }
       end
     end
@@ -139,7 +143,10 @@ RSpec.describe CrazyEights::Implementation, type: :model do
         ]
       end
 
-      before { game.players += extra_players }
+      before do
+        sleep 0.1
+        game.players += extra_players
+      end
 
       it "each player's hand is dealt 5 cards" do
         game.start
