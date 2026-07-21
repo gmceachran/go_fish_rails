@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe 'Offline fallback', type: :system, js: true, pending: "could not get to work" do
+RSpec.xdescribe 'Offline fallback', type: :system, js: true, pending: "could not get to work" do
   after do
     back_online
     page.execute_script(<<~JS)

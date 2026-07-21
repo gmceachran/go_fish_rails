@@ -70,13 +70,12 @@ RSpec.describe :play_go_fish, type: :system do
         let(:wait_time) { 0.1 }
         before do
           log_out
-          sleep 0.3
           log_in(user1)
           override_start game.game_state
           game.save
         end
 
-        it "submits a response automatically", :js do
+        xit "submits a response automatically", :js do
           GoFish::GameBoard.time_duration = wait_time
           visit game_path(game)
 

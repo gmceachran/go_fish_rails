@@ -132,4 +132,6 @@ callbacks push Turbo Stream refreshes to connected clients.
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
 - `docs/roadmap.md` — known issues, tech debt, and refactors to tackle
+- `docs/roadmap-completed.md` — resolved roadmap items and what the fix was
+- `docs/spec-reliability.md` — flaky/hanging-suite investigation: root cause, ruled-out theories, and the go-forward test-architecture plan
 - `docs/questions.md` — running questions for instructors (for the developer, not agents)
