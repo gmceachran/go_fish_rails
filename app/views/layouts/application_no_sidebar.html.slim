@@ -2,6 +2,7 @@ doctype html
 html
   head = render 'head'
   body.op-page id="app"
-    = turbo_frame_tag 'modal'
+    = turbo_frame_tag 'modal' do
+      = yield :modal_content
     .op-page__main
       = yield

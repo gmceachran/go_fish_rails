@@ -1,0 +1,13 @@
+= tag.dialog class: "modal", data: { controller: "dialogue" } do
+  .modal__header
+    | Game Over
+  .modal__body
+    p= "#{@winner.user.email_address} wins!"
+    p= "Opponents: #{@game_model.players.where(winner: false).map { |player| player.user.email_address }.join(', ')}"
+    p= "Turns played: #{@game_model.game_state.turn_results.length}"
+    - if @game_model.is_a?(GoFishGame)
+      p= "Books made: #{@game_model.game_state.player(@winner.user_id).books.length}"
+    p= "Duration: #{distance_of_time_in_words(@game_model.started_at, @game_model.ended_at)}"
+  .modal__footer
+    = button_tag "Close", type: "button", class: "btn", data: { action: "dialogue#close" }
+    = link_to "Back to Games", root_path, class: "btn btn--primary btn--pill btn--small"

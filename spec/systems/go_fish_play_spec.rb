@@ -102,6 +102,10 @@ RSpec.describe :play_go_fish, type: :system do
       click_on "Ask for Cards"
 
       expect(page).to have_content "#{user1.email_address} wins!"
+      expect(page).to have_content user2.email_address
+      expect(page).to have_content "Turns played: 1"
+      expect(page).to have_content "Books made: 1"
+      expect(page).to have_content "less than a minute"
     end
   end
 end

@@ -1,0 +1,7 @@
+dialog.modal {
+  box-shadow: var(--op-border-all) var(--op-color-border), var(--op-shadow-large);
+
+  &::backdrop {
+    backdrop-filter: blur(4px);
+  }
+}

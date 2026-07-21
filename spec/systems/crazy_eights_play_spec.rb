@@ -51,6 +51,9 @@ RSpec.describe :play_crazy_eights, type: :system do
       click_on "5 of Spades"
 
       expect(page).to have_content "#{user1.email_address} wins!"
+      expect(page).to have_content user2.email_address
+      expect(page).to have_content "Turns played: 1"
+      expect(page).to have_content "less than a minute"
     end
   end
 end

@@ -60,7 +60,12 @@ Surfaced in an assessment pass; none are behind any authorization.
   The `wild` drop visibly breaks the wild/suit UI after any refresh
   (`crazy_eights/implementation.rb:71` reads it). No schema versioning, and
   missing-key guards are inconsistent between the two games.
-- **Navigation out of `games#show`** is awkward / missing a clean path back.
+- **No way to navigate out of `games#show` while a game is in progress.**
+  Neither `games/show.html.slim` nor `layouts/application_no_sidebar.html.slim`
+  has any link back to the games list — a player has to use the browser back
+  button. Card 3's win modal (`games/_winner_modal.html.slim`) added a "Back to
+  Games" button, but only for the *finished*-game case; an active game is
+  still a dead end.
 - **`GamesController#create` ignores the save result.**
   (`games_controller.rb:19-24`) calls `@game.save` without checking it, then
   `@game.players.create(...)` against a possibly-unpersisted game, and always
