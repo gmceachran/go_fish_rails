@@ -12,8 +12,10 @@ diverges from "standard" Crazy Eights, the code wins.
   (`Implementation::STARTING_HAND`):
   - 1–2 players: 7 cards each
   - 3–5 players: 5 cards each
-- The discard pile is started by flipping the top card, **skipping wild (8)
-  cards** so the game never opens on a wild (`flip_non_wild_discard`).
+- The discard pile is started by flipping the top card, **wild or not** — an
+  opening 8 is legal, since nothing in these rules actually requires the first
+  discard to be a non-wild card (an earlier version special-cased this and had
+  an infinite-loop bug doing it; see `docs/roadmap-completed.md`).
 - Turn order follows player `id` order; `active_player_index` 0 goes first.
 
 ## Taking a turn

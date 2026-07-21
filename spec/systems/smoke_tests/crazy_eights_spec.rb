@@ -11,9 +11,7 @@ RSpec.describe "Crazy Eights", type: :system do
 
   context "when user clicks the Play Game button" do
     it "user is redirected to games#show" do
-      sleep 0.1
       click_on "Play Now"
-      sleep 0.1
 
       expect(page).to have_current_path game_path(game.id)
       expect(page).to have_content "Players"

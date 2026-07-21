@@ -113,17 +113,8 @@ module CrazyEights
     def start_discard_pile
       return if deck.empty?
 
-      card = flip_non_wild_discard
-      discard_pile << card if card
-    end
-
-    def flip_non_wild_discard
       card = deck.top_card
-      while card&.wild? && !deck.empty?
-        deck.cards.unshift(card)
-        card = deck.top_card
-      end
-      card
+      discard_pile << card if card
     end
 
     def handle_play_card(player, rank, suit)
