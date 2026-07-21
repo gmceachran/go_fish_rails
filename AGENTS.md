@@ -1,6 +1,12 @@
 # AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file is the always-loaded guidance for Claude Code (claude.ai/code) in this
+repository. **Keep it lean:** include only the context an agent needs to work
+here, and keep the whole file **under 200 lines** — it loads into every session,
+so the space is expensive. Push specific or deep material into a focused doc
+under `docs/` and link it from *Key context* below instead of inlining it here;
+don't accumulate resolved bugs or finished work in this file (that's what
+`docs/roadmap-completed.md` is for).
 
 ## What this is
 
@@ -47,10 +53,9 @@ bin/turbo_tests                                 # parallelized run
 - `spec/systems/` — full-stack Capybara + Playwright browser specs;
   `spec/systems/smoke_tests/` are lightweight page-render checks.
 
-> **The system specs are currently flaky and hang regularly.** There are `sleep`
-> band-aids scattered around that do not actually fix it. Fixing the suite is the
-> top roadmap priority — see `docs/roadmap.md`. Don't trust a green/hung run at
-> face value, and don't add more `sleep`s.
+- Prefer asserting on state over `sleep`-based waits in specs. The main open
+  test-architecture item is adding a request/controller spec layer (assert turn
+  outcomes at the DB/model boundary) — see `docs/roadmap.md`.
 
 ## Linting & security
 
@@ -68,8 +73,12 @@ history** (a throwaway WIP commit you'll delete later is exempt). They cannot be
 inferred from the code and an agent will get them wrong by default:
 
 1. **TDD, always: red → green → refactor.** No production code without a failing
-   test driving it. **Never write, generate, or modify tests — the developer
-   writes all specs.** Your job is to make a failing spec pass and to refactor.
+   test driving it. You may now write specs, but only through this gated flow:
+   (a) create the spec file; (b) in `docs/spec-plans.md`, write out the logical
+   flow — what each example sets up and asserts — and agree it with the developer;
+   (c) write the spec to match; (d) the developer reviews the spec; (e) **only
+   after that review** do you write the production code to make it pass. Never
+   jump ahead to implementation before the spec is reviewed.
 2. **No method longer than 7 lines** — this includes RSpec `it` blocks and Ruby
    blocks generally.
 3. **No instance variables**, with two exceptions: initializers, and Rails
@@ -131,7 +140,10 @@ callbacks push Turbo Stream refreshes to connected clients.
 - `docs/architecture.md` — models, STI, JSONB serialization, turn/broadcast flow
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
-- `docs/roadmap.md` — known issues, tech debt, and refactors to tackle
+- `docs/roadmap.md` — **open** known issues, tech debt, and refactors to tackle;
+  keep it to outstanding work only — move resolved items out to
+  `docs/roadmap-completed.md` rather than leaving them here marked done
 - `docs/roadmap-completed.md` — resolved roadmap items and what the fix was
-- `docs/spec-reliability.md` — flaky/hanging-suite investigation: root cause, ruled-out theories, and the go-forward test-architecture plan
+- `docs/spec-reliability.md` — write-up of the (now-resolved) suite-hang investigation and the go-forward test-architecture plan
+- `docs/spec-plans.md` — where the logical flow of a spec is hashed out and agreed before the spec is written (see project rule 1)
 - `docs/questions.md` — running questions for instructors (for the developer, not agents)

@@ -20,7 +20,9 @@ discard being non-wild was never an actual Crazy Eights rule (see
 `docs/crazy-eights.md`), so the simplest correct fix was to stop enforcing a
 constraint the game doesn't have, rather than keep the skip logic and patch its
 bug. The model spec asserting "places a non-eight card on the discard pile" was
-removed along with it, since it was asserting a rule that doesn't exist.
+removed along with it, since it was asserting a rule that doesn't exist. The full
+suite now runs green over repeated back-to-back runs (~6s, 0 failures),
+confirming the hang is gone.
 
 ## `sleep`s removed from Crazy Eights model specs
 
