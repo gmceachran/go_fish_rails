@@ -86,6 +86,12 @@ TDD: driven by a deterministic, timeout-guarded spec (developer-authored) that
 forces an 8 into the opening slot and asserts `start` returns with a non-wild
 discard.
 
+**Note — this isn't the fix that shipped.** The above was the fix as first
+diagnosed. The actual fix taken was different: a non-wild opening discard
+was never a real Crazy Eights rule, so `flip_non_wild_discard` was deleted
+outright rather than patched. See `docs/roadmap-completed.md` for what
+actually landed.
+
 ## Secondary latent bug (noted, not the current freeze)
 
 `GoFish::Implementation#advance_turn` (`go_fish/implementation.rb:84-92`) recurses

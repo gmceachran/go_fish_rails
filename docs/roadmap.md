@@ -6,7 +6,7 @@ focused; if a category grows large, split it into its own doc.
 ## Top priority
 
 Fixing up the specs in general — the single biggest lever on confidence in the
-platform. Three related strands:
+platform. Two related strands:
 
 - **System suite is flaky and hangs.** The one confirmed deterministic cause
   (Crazy Eights opening-discard infinite loop) is fixed — see
