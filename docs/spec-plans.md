@@ -29,5 +29,6 @@ Keep this doc lean: prune a plan once its spec is merged and green.
 
 ## Active plans
 
-_None — Card 1's `#winner` plan is merged and green (pruned per the "keep this
-doc lean" note above). Card 2's plan goes here when it's picked up._
+None currently — Card 2's plans (`#declare_winner_if_over!` model spec, the Go
+Fish and Crazy Eights win system specs) all merged and green; see
+`docs/roadmap-completed.md`.

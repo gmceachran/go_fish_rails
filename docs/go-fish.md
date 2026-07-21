@@ -55,6 +55,11 @@ ties by highest single book value:
 players.max_by { |p| [p.books.length, best_book_value(p)] }
 ```
 
+After every turn, `Game#declare_winner_if_over!` (shared with Crazy Eights — see
+`docs/architecture.md`) maps that player to the persisted `Player` and calls
+`declare_winner!`, ending the game and redirecting to the win screen.
+End-to-end covered by `spec/systems/go_fish_play_spec.rb`.
+
 ## Turn feed
 
 Each turn produces a `TurnResult` (`go_fish`, `cards`, `book_made`, `go_again`,

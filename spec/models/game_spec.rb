@@ -97,6 +97,39 @@ RSpec.describe Game, type: :model do
     end
   end
 
+  describe "#declare_winner_if_over!" do
+    let(:game) { create(:game, max_players: 2) }
+    let!(:player1) { create :player, game: game }
+    let!(:player2) { create :player, game: game }
+
+    context "when the game state has a winner" do
+      before do
+        game.game_state.players.first.hand = []
+        game.game_state.players.first.books = [ GoFish::Book.new("3") ]
+        game.game_state.players.last.hand = []
+        game.save
+      end
+
+      it "declares the matching persisted player the winner" do
+        game.declare_winner_if_over!
+
+        expect(player1.reload.winner).to be true
+        expect(game.reload.state).to eq "over"
+        expect(game.ended_at).not_to be_nil
+      end
+    end
+
+    context "when the game state has no winner" do
+      it "leaves the game active" do
+        game.declare_winner_if_over!
+
+        expect(game.players.none?(&:winner)).to be true
+        expect(game.reload.state).to eq "active"
+        expect(game.ended_at).to be_nil
+      end
+    end
+  end
+
   describe :game_state do
     context "when game is not full" do
       let(:game) { create :game }

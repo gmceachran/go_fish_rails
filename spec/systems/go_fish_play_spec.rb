@@ -88,4 +88,20 @@ RSpec.describe :play_go_fish, type: :system do
       end
     end
   end
+
+  context "when the turn empties the last hand" do
+    before do
+      log_out
+      log_in(user1)
+      override_go_fish_win game.game_state
+      game.save
+      visit game_path(game)
+    end
+
+    it "a completed game shows the winner" do
+      click_on "Ask for Cards"
+
+      expect(page).to have_content "#{user1.email_address} wins!"
+    end
+  end
 end

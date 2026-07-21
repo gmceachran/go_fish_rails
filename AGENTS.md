@@ -144,6 +144,6 @@ callbacks push Turbo Stream refreshes to connected clients.
   keep it to outstanding work only — move resolved items out to
   `docs/roadmap-completed.md` rather than leaving them here marked done
 - `docs/roadmap-completed.md` — resolved roadmap items and what the fix was
-- `docs/spec-reliability.md` — write-up of the (now-resolved) suite-hang investigation and the go-forward test-architecture plan
+  (includes the now-resolved suite-hang investigation)
 - `docs/spec-plans.md` — where the logical flow of a spec is hashed out and agreed before the spec is written (see project rule 1)
 - `docs/questions.md` — running questions for instructors (for the developer, not agents)

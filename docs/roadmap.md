@@ -3,22 +3,23 @@
 Running list of work to do, bugs, and tech debt worth tracking. Keep this
 focused; if a category grows large, split it into its own doc.
 
-## Top priority
+## Features
 
-- **Go Fish can't finish; the winner-declaration path is still game-specific.**
-  Originally both games failed to complete; the Crazy Eights half is now resolved
-  (see `docs/roadmap-completed.md`). What remains:
-  - Go Fish: `GoFish::Implementation#winner` computes the winner correctly, but
-    **nothing ever calls `Game#declare_winner!`** — `TurnsController` only
-    advances and saves on the Go Fish path. The lone caller of `declare_winner!`
-    is the Crazy Eights branch (`turns_controller.rb:52-58`), so Go Fish never
-    reaches `over?`.
-  - The one caller that exists is `declare_crazy_eights_winner`, a game-specific
-    private method that reaches into `game.game_state.winner`. The shared fix
-    (Card 2 in `docs/cards.md`) is a `Game#declare_winner_if_over!` both turn paths
-    call — closing Go Fish and removing the reach-through in one move.
-  End-to-end coverage is still thin: no request spec exists, and
-  `crazy_eights_play_spec.rb:46` (`# it "the turn ends"`) is still commented out.
+- **Collect a username at sign-up.** `User` has no `username` column at all
+  (`db/schema.rb:149-157`); only `email_address`/`password` are collected
+  (`app/views/users/new.html.slim`). Needs a migration plus a form field and
+  uniqueness validation.
+- **Collect location at sign-up.** `country`/`state` already exist on `User`
+  and are editable after the fact via the profile edit modal
+  (`app/views/users/edit.html.slim`), but `users/new.html.slim` never asks for
+  them — sign-up only collects email/password. Add the same `country`/`state`
+  inputs to the sign-up form.
+- **Show how many cards are left in the deck.** Both engines already compute
+  this (`GoFish::Implementation#deck_length`, `deck.cards_left` on both
+  `Deck`s) but neither `GameBoard` (`go_fish/game_board.rb`,
+  `crazy_eights/game_board.rb`) carries it through, so it's never rendered.
+  Add a `deck_count` (or similar) to `board_for` and surface it in the
+  templates.
 
 ## Security
 
@@ -74,13 +75,6 @@ Surfaced in an assessment pass; none are behind any authorization.
 - **`_crazy_eights_feed.html.slim:5` references an undefined form builder `f`** →
   `NameError` whenever `@board.wild` is true. Ties into the unfinished eights/suit
   feature listed under Refactors.
-- **Winner redirect uses the wrong route params.**
-  `GamesController#redirect_to_winner` (`games_controller.rb:33`) calls
-  `game_winner_path(...winner.user_id)` — one positional arg for a nested
-  `game_id`+`id` route → `UrlGenerationError` — and `WinnersController#show`
-  (`winners_controller.rb:3`) then does `Game.find(params[:id])` on what is
-  actually a user id. Distinct from the "`declare_winner!` never called" gap
-  above; both sit on the same broken path.
 
 ## Refactors
 
@@ -91,9 +85,9 @@ Surfaced in an assessment pass; none are behind any authorization.
   design system; there's existing custom CSS to migrate.
 - **Crazy Eights is missing its namesake feature.** Suit selection on eights is
   only half-built: the `:suit`/`:action` turn params exist, `board_for` passes a
-  `wild:` flag for the UI, and `crazy_eights/implementation_spec.rb:206` is a
+  `wild:` flag for the UI, and `crazy_eights/implementation_spec.rb:196` is a
   stubbed `xit` ("plays an eight / choose a new suit"). But `playable?`
-  (`implementation.rb:150-153`) still compares against the discard's own suit, and
+  (`implementation.rb:143-146`) still compares against the discard's own suit, and
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
@@ -111,13 +105,12 @@ Surfaced in an assessment pass; none are behind any authorization.
   examples rather than filling in a documented contract.
 
 - **Finish delegating engine calls through `Game`.** `Game#play_turn`
-  (`game.rb:23-25`) already delegates to `game_state`, but every other call
-  reaches two levels deep into the serialized PORO —
-  `game.game_state.advance_turn` / `.winner` / `.board_for` in
-  `turns_controller.rb:29,47,53`, `games_controller.rb:10,33`, and
-  `winners_controller.rb:3`. Add matching one-line `Game` delegators so the web
-  layer stops depending on the internal `game_state` name and the engine's full
-  surface.
+  (`game.rb:23-25`) and `Game#declare_winner_if_over!` (Card 2) already delegate
+  to `game_state`, removing the `.winner` reach-through from the controllers. What
+  remains: `game.game_state.advance_turn` (`turns_controller.rb:29,47`) and
+  `.board_for` (`games_controller.rb:10`) still reach two levels deep into the
+  serialized PORO. Add matching one-line `Game` delegators so the web layer stops
+  depending on the internal `game_state` name and the engine's full surface.
 - **Extract a shared base for `Turn` / `CrazyEightsTurn`.** `game`,
   `game_is_active`, and `user_is_active_player` are copy-pasted between
   `app/models/turn.rb:19-21,27-30,42-45` and
@@ -151,14 +144,15 @@ confidence/quality work rather than urgent.
 
 - **No request/controller specs exist at all.** The entire turn-application flow
   — `TurnsController` dispatch, `advance_turn unless go_again`/`play_again`,
-  winner declaration — is unverified except through the browser suite. There is
-  no `type: :request` spec anywhere. A request-spec layer asserting turn outcomes
-  at the DB/model boundary (factories + `POST` a turn) is the natural place to
-  lock down the turn flow — and the winner-declaration fix in Top priority.
+  winner declaration — is unverified except through the browser suite (system
+  specs) and, for `declare_winner_if_over!` itself, a model spec. There is no
+  `type: :request` spec anywhere. A request-spec layer asserting turn outcomes at
+  the DB/model boundary (factories + `POST` a turn) is the natural place to lock
+  down the turn flow more cheaply than full browser specs.
 - **Reduce reliance on the browser suite.** Stop leaning on Capybara so heavily
   and assert game state directly via the database instead of driving the browser
-  for everything. See `docs/spec-reliability.md` for the full investigation and
-  go-forward plan.
+  for everything. See the "Suite hang" entry in `docs/roadmap-completed.md` for
+  the investigation that motivated this.
 
 ## Worth noting, not necessary
 
@@ -166,6 +160,10 @@ Low-priority items that would only matter with a significant refactor and are
 likely out of scope for the current work. If these start to pile up, give them
 their own doc.
 
+- **Show a country flag next to the username.** Once usernames exist (see
+  Features), display a flag icon for the user's `country` next to it wherever
+  the username is rendered. Tie into that refactor rather than doing it
+  separately.
 - **Branch-level task tracking.** The roadmap captures the app's trajectory and
   shared context (bugs, refactors, priorities). For individual branches, consider
   maintaining a separate checklist (e.g., `TODO.md` in the branch) with

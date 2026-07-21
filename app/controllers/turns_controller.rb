@@ -28,6 +28,7 @@ class TurnsController < ApplicationController
     result = game.play_turn(turn)
     game.game_state.advance_turn unless result.go_again
     game.save!
+    game.declare_winner_if_over!
   end
 
   def handle_crazy_eights_turn(game)
@@ -46,15 +47,7 @@ class TurnsController < ApplicationController
     result = game.play_turn(turn)
     game.game_state.advance_turn unless result.play_again
     game.save!
-    declare_crazy_eights_winner(game)
-  end
-
-  def declare_crazy_eights_winner(game)
-    winner = game.game_state.winner
-    return unless winner
-
-    player = game.players.find_by(user_id: winner.user_id)
-    game.declare_winner!(player)
+    game.declare_winner_if_over!
   end
 
   def turn_params

@@ -22,7 +22,10 @@ game rules in ordinary, fast-to-test Ruby objects with no database dependency.
   (`games_played_count`, `games_won_count`, `win_percentage`).
 - **`Game`** — single-table inheritance via the `type` column.
   - `state` enum: `waiting` / `active` / `over`.
-  - `joinable?`, `start_if_full!`, `play_turn`, `declare_winner!`.
+  - `joinable?`, `start_if_full!`, `play_turn`, `declare_winner!`,
+    `declare_winner_if_over!` (reads the engine's `winner`, maps it to the
+    persisted `Player`, and calls `declare_winner!` — a no-op if no one's won
+    yet).
   - Validations keep timestamps (`started_at`, `ended_at`) consistent with
     `state`, and `ended_at` consistent with whether a winner exists.
   - `after_create_commit` / `after_update_commit` → `broadcast_refresh_later_to`
@@ -84,7 +87,9 @@ no migrations for this data — the "schema" is the serialization code.
 3. On valid: `game.play_turn(turn)` mutates the in-memory state and returns a
    `TurnResult`; the controller calls `advance_turn` unless the result says the
    player goes again; `game.save!` persists the JSONB.
-4. Crazy Eights additionally checks `winner` and calls `declare_winner!`.
+4. Both games then call `game.declare_winner_if_over!` — a no-op unless the
+   engine's `winner` is set, in which case it flags the persisted `Player` and
+   moves the game to `state: :over`.
 5. The `after_update_commit` broadcast refreshes connected clients via Turbo.
 
 ## Views

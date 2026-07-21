@@ -47,11 +47,10 @@ re-selection after a wild is a known rough edge — see `docs/roadmap.md`.
 
 `Implementation#winner` returns the player who has emptied their hand (`nil`
 otherwise), guarded by `discard_pile.empty?` so a not-yet-dealt game names no
-winner. `TurnsController#declare_crazy_eights_winner` maps that player to the
-persisted `Player` and calls `declare_winner!`, so a Crazy Eights game now ends
-itself. The end-to-end finish is not yet covered by a test (the system example is
-still commented out). The shared/refactored declaration path is Card 2 — see
-`docs/cards.md`.
+winner. After every turn, `Game#declare_winner_if_over!` (shared with Go Fish —
+see `docs/architecture.md`) maps that player to the persisted `Player` and calls
+`declare_winner!`, ending the game and redirecting to the win screen.
+End-to-end covered by `spec/systems/crazy_eights_play_spec.rb`.
 
 ## Turn feed
 

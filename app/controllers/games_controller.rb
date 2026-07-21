@@ -30,6 +30,6 @@ class GamesController < ApplicationController
   private
 
   def redirect_to_winner(game)
-    redirect_to game_winner_path(game.game_state.winner.user_id)
+    redirect_to game_winner_path(game, game.players.find_by(winner: true))
   end
 end
