@@ -134,16 +134,48 @@ spec for `declare_winner_if_over!` itself. See `docs/roadmap-completed.md`.
 
 ---
 
-## 3. Win screen: modal styling + game data
+## 3. Win screen: modal styling + game data — DONE
 
-- **Goal:** `WinnersController#show` renders through the app's existing modal
-  layout (`layout: "modal"` — Optics `.modal`/`.modal__header`/`.modal__body`/
-  `.modal__footer`, the native `<dialog>` + `dialogue_controller` pattern already
-  used by `UsersController#edit`) instead of a bare unstyled page, and the body
-  shows more than just the winner's name: game duration, opponent(s), turns
-  played, and — Go Fish only — the number of books the winner made (the actual
-  reason they won, not just that they did).
-- **Why:** The win screen is currently one unstyled line
+**Shipped**, but the final shape diverged from the original plan below in one
+significant way: instead of reusing `layout: "modal"` on a separate
+`WinnersController#show`, the win modal now renders **inline, overlaid on the
+game board itself** (a follow-up ask after the first pass shipped). Concretely:
+
+- `GamesController#show` no longer redirects when `over?` — it sets `@winner`
+  and renders the board as usual. `WinnersController`, its view, and the
+  `resources :winners` route are deleted entirely (nothing else referenced them
+  once the redirect was gone).
+- `app/views/layouts/application_no_sidebar.html.slim`'s (already-present, was
+  empty) `turbo_frame_tag 'modal'` now yields `:modal_content` — a no-op for
+  every other page, populated by `games/show.html.slim` via `content_for` only
+  when `@game_model.over?`.
+- New `app/views/games/_winner_modal.html.slim` holds the dialog markup:
+  winner, opponents, turns played, Go-Fish-only books made, duration, and
+  Close + "Back to Games" buttons.
+- `dialogue_controller.js` switched from `.show()` to `.showModal()` (and the
+  partial no longer hardcodes `open: true`) — this is what actually centers the
+  dialog and unlocks the real native `::backdrop`, which Optics already styles.
+  `.show()` never did either.
+- New `components/optics-overrides/modal.css` adds a box-shadow (Optics's
+  `--op-shadow-large` token) and a light `backdrop-filter: blur`.
+- **Bonus find:** `application.scss` had zero `@import`s pulling in any of the
+  17 files under `components/`/`core/` — they were completely dead in the
+  build (815-byte compiled CSS). Fixed by importing them all; see
+  `docs/roadmap-completed.md`.
+- Verified with a real headless-browser screenshot (not just the `rack_test`
+  specs) — centered, shadowed, blurred, zero console errors.
+- Both win system specs needed **no assertion changes** for the overlay
+  refactor — they only ever asserted on page content, not the redirect/URL, so
+  the same text landing on one response instead of two still passes.
+
+- **Goal (original):** `WinnersController#show` renders through the app's
+  existing modal layout (`layout: "modal"` — Optics `.modal`/`.modal__header`/
+  `.modal__body`/`.modal__footer`, the native `<dialog>` + `dialogue_controller`
+  pattern already used by `UsersController#edit`) instead of a bare unstyled
+  page, and the body shows more than just the winner's name: game duration,
+  opponent(s), turns played, and — Go Fish only — the number of books the
+  winner made (the actual reason they won, not just that they did).
+- **Why (original):** The win screen is currently one unstyled line
   (`p #{@winner_name} wins!`), the only page in the app not going through
   `@rolemodel/optics` in some form. The modal layout/Stimulus/CSS already exist
   and are unused here — reusing them costs no new CSS or JS. Card 2 made the win

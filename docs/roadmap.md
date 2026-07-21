@@ -30,10 +30,11 @@ Surfaced in an assessment pass; none are behind any authorization.
   `Game.find(params[:id])` with no check that the current user is a participant,
   then builds a board for a `user_id` that may not be in the game — a
   non-participant's `player(user_id)` is `nil` (latent view crashes) and a private
-  game's state leaks. Same unscoped `Game.find` in `WinnersController#show`
-  (`winners_controller.rb:3`) and `TurnsController#create` (`turns_controller.rb:3`).
-  Scope through the current user (`Current.session.user.games.find(...)`) or a
-  membership `before_action`.
+  game's state leaks. Same unscoped `Game.find` in `TurnsController#create`
+  (`turns_controller.rb:3`) — the win-screen path no longer has its own lookup
+  (`WinnersController` is gone; it reuses the same `@game_model`) but inherits
+  this same exposure. Scope through the current user
+  (`Current.session.user.games.find(...)`) or a membership `before_action`.
 - **GoodJob dashboard mounted with no auth.** `config/routes.rb:37-38`
   (`mount GoodJob::Engine => "good_job"`) — the code's own comment says it should
   be behind admin validation. Anyone can browse `/good_job`, read job args, and

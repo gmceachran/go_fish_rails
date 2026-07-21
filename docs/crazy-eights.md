@@ -49,7 +49,9 @@ re-selection after a wild is a known rough edge — see `docs/roadmap.md`.
 otherwise), guarded by `discard_pile.empty?` so a not-yet-dealt game names no
 winner. After every turn, `Game#declare_winner_if_over!` (shared with Go Fish —
 see `docs/architecture.md`) maps that player to the persisted `Player` and calls
-`declare_winner!`, ending the game and redirecting to the win screen.
+`declare_winner!`, ending the game. The next render of `games#show` then
+overlays the win modal on the board itself (`games/_winner_modal.html.slim`) —
+no redirect to a separate screen.
 End-to-end covered by `spec/systems/crazy_eights_play_spec.rb`.
 
 ## Turn feed
