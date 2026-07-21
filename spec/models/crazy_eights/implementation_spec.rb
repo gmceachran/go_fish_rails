@@ -242,4 +242,41 @@ RSpec.describe CrazyEights::Implementation, type: :model do
       end
     end
   end
+
+  describe "#winner" do
+    let(:player) { CrazyEights::Player.new }
+    let(:game) { described_class.new }
+    before { game.players << player }
+
+    context "when the discard pile is empty (game hasn't started)" do
+      it "always returns nil" do
+        expect(game.winner).to be_nil
+      end
+    end
+
+    context "when the discard pile is not empty (game has started)" do
+      let(:deck) { game.deck }
+      before { game.discard_pile << deck.top_card }
+
+      context "when no player has an empty hand" do
+        before { player.hand << CrazyEights::Card.new("A", "Spades") }
+
+        it "returns nil" do
+          expect(game.winner).to be_nil
+        end
+      end
+
+      context "when one player has an empty hand" do
+        before do
+          player2 = CrazyEights::Player.new
+          game.players << player2
+          player2.hand << CrazyEights::Card.new("A", "Spades")
+        end
+
+        it "returns that player object" do
+          expect(game.winner).to be player
+        end
+      end
+    end
+  end
 end

@@ -45,10 +45,13 @@ re-selection after a wild is a known rough edge — see `docs/roadmap.md`.
 
 ## Ending & winner
 
-**Incomplete.** `Implementation#winner` currently returns `false` (no winner
-detection in the game engine). The `TurnsController` calls `declare_winner!`
-based on that return, so as written a Crazy Eights game does not end itself. This
-is a known gap — see `docs/roadmap.md`.
+`Implementation#winner` returns the player who has emptied their hand (`nil`
+otherwise), guarded by `discard_pile.empty?` so a not-yet-dealt game names no
+winner. `TurnsController#declare_crazy_eights_winner` maps that player to the
+persisted `Player` and calls `declare_winner!`, so a Crazy Eights game now ends
+itself. The end-to-end finish is not yet covered by a test (the system example is
+still commented out). The shared/refactored declaration path is Card 2 — see
+`docs/cards.md`.
 
 ## Turn feed
 

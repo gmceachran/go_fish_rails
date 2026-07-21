@@ -88,7 +88,9 @@ module CrazyEights
     end
 
     def winner
-      false
+      return nil if discard_pile.empty?
+
+      players.detect { it.hand.empty? }
     end
 
     private_class_method :from_json

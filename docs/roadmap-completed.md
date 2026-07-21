@@ -24,6 +24,23 @@ removed along with it, since it was asserting a rule that doesn't exist. The ful
 suite now runs green over repeated back-to-back runs (~6s, 0 failures),
 confirming the hang is gone.
 
+## Crazy Eights end-of-game detection (Card 1)
+
+**Was:** `CrazyEights::Implementation#winner` was hardcoded to `false`, so the
+engine never detected a finished game. `TurnsController#declare_crazy_eights_winner`
+already mapped `#winner` → persisted `Player` → `declare_winner!`, but was dead
+because the return was always falsey — so a Crazy Eights game never ended.
+
+**Fix:** `#winner` now returns the player whose hand is empty (`nil` otherwise),
+guarded by `return nil if discard_pile.empty?` — the discard pile is the "started"
+signal (`start` seeds it and it only grows), so an all-empty-hands *pre-deal* game
+doesn't falsely name player 1. Reviving the return value revived the existing
+controller path, so **Crazy Eights now declares a winner and ends.** Unit-tested
+by `#winner` examples in `spec/models/crazy_eights/implementation_spec.rb`. Note:
+the end-to-end CE finish is still not covered by a test (the `# it "the turn ends"`
+system example remains commented out). The shared/refactored declaration path and
+the Go Fish half stay open as Card 2 (`docs/cards.md`).
+
 ## `sleep`s removed from Crazy Eights model specs
 
 **Was:** `crazy_eights_game_spec.rb` and `crazy_eights/implementation_spec.rb`

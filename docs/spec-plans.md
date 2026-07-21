@@ -29,4 +29,5 @@ Keep this doc lean: prune a plan once its spec is merged and green.
 
 ## Active plans
 
-_None yet._
+_None — Card 1's `#winner` plan is merged and green (pruned per the "keep this
+doc lean" note above). Card 2's plan goes here when it's picked up._

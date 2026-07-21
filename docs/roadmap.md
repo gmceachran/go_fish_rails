@@ -5,21 +5,20 @@ focused; if a category grows large, split it into its own doc.
 
 ## Top priority
 
-- **No game can actually finish — for *either* game.** The core product can't
-  complete a match end-to-end, which makes this the most significant open issue.
-  Two halves of the same gap:
-  - Crazy Eights: `CrazyEights::Implementation#winner` returns `false`, so a game
-    never declares a winner or ends. Needs real end-of-game detection (a player
-    emptying their hand). See `docs/crazy-eights.md`.
+- **Go Fish can't finish; the winner-declaration path is still game-specific.**
+  Originally both games failed to complete; the Crazy Eights half is now resolved
+  (see `docs/roadmap-completed.md`). What remains:
   - Go Fish: `GoFish::Implementation#winner` computes the winner correctly, but
     **nothing ever calls `Game#declare_winner!`** — `TurnsController` only
     advances and saves on the Go Fish path. The lone caller of `declare_winner!`
-    is the Crazy Eights branch (`turns_controller.rb:57`), so Go Fish never
+    is the Crazy Eights branch (`turns_controller.rb:52-58`), so Go Fish never
     reaches `over?`.
-  Good "read the pending tests first" case: there's no `#winner` spec under
-  `crazy_eights/`, and `crazy_eights_play_spec.rb:46` has a commented-out
-  `# it "the turn ends"`. Worth deciding, in-session, where the shared
-  winner-declaration path should live (model turn-flow vs. the controller).
+  - The one caller that exists is `declare_crazy_eights_winner`, a game-specific
+    private method that reaches into `game.game_state.winner`. The shared fix
+    (Card 2 in `docs/cards.md`) is a `Game#declare_winner_if_over!` both turn paths
+    call — closing Go Fish and removing the reach-through in one move.
+  End-to-end coverage is still thin: no request spec exists, and
+  `crazy_eights_play_spec.rb:46` (`# it "the turn ends"`) is still commented out.
 
 ## Security
 
