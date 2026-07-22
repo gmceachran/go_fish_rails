@@ -9,6 +9,13 @@ Scope is the domain models (`app/models/**` POROs, the STI game classes, and the
 `Turn` form objects). Phase-level here on purpose — per-change detail is written
 per session via the `docs/spec-plans.md` gated TDD flow, one phase at a time.
 
+> **Execution in progress.** A full end-to-end spike of every phase was built and
+> verified, then stashed to serve as the destination reference while we rebuild it
+> green, one phase = one commit. The *how* — the stash, the per-commit loop, the
+> file-to-phase map, and decisions already made — lives in `docs/dedup-execution.md`
+> (a temporary doc; delete it when this refactor lands). This file stays the durable
+> strategy.
+
 ## Guiding constraints
 
 - **TDD gating (project rule 1)** applies to every phase: spec file → logical
@@ -122,6 +129,14 @@ phase number; the "easier to add a game" payoff concentrates in Phases 3–4.
 - **Depends on:** nothing. **Risk:** low — pure POROs, no request path.
 - **TDD entry:** serialization round-trip specs (`as_json` → `from_json` yields
   an equal object) for `Card`/`Deck`.
+- **Deck specifics (from the spike):** `Games::Deck` holds the whole class —
+  `cards`, `shuffle`, `top_card`, `empty?`, `cards_left`, and the 52-card build.
+  The build needs to know which card class to instantiate, so the base exposes a
+  `self.card_class` hook (`NotImplementedError`) and each subclass overrides it
+  (`GoFish::Deck.card_class = GoFish::Card`). **Micro-decision left open:** a
+  subclass currently names its card class twice — once as `card_class`, once in
+  `nested_many :cards, GoFish::Card`. Either derive one from the other, or accept
+  the two-line redundancy. Decide when the phase lands; the spike accepts it.
 
 **Why a concern, not per-field patches.** All eleven serialized POROs use the
 same drift-prone mechanism: save is automatic (`dump` = `as_json` = every ivar),
@@ -132,55 +147,63 @@ The concern makes save and load derive from **one declared field list**, so they
 can't disagree:
 
 ```ruby
-module Serializable
-  extend ActiveSupport::Concern
+module Games
+  module Serializable
+    extend ActiveSupport::Concern
 
-  included do
-    class_attribute :scalar_attrs, default: []
-    class_attribute :nested_attrs, default: {}   # name => class, rebuilt via it
-  end
-
-  class_methods do
-    def scalar(*names) = self.scalar_attrs += names
-    def nested(name, klass) = self.nested_attrs = nested_attrs.merge(name => klass)
-
-    def from_json(json)
-      scalars = scalar_attrs.index_with { |name| json[name.to_s] }
-      nested  = nested_attrs.transform_values { |klass| load_nested(klass, json) }
-      new(**scalars, **nested)
+    included do
+      class_attribute :scalar_attrs, default: []
+      class_attribute :nested_attrs, default: {}   # name => { class:, collection: }
     end
-  end
 
-  def as_json(*)
-    scalar_attrs.index_with { send(it) }
-      .merge(nested_attrs.keys.index_with { send(it).as_json })
-      .stringify_keys
+    class_methods do
+      def scalar(*names) = self.scalar_attrs += names
+      def nested_one(name, klass)  = register_nested(name, klass, false)
+      def nested_many(name, klass) = register_nested(name, klass, true)
+
+      def from_json(json)
+        new(**scalar_values(json), **nested_values(json))
+      end
+      # scalar_values / nested_values / load_nested elided — see the spike.
+    end
+
+    def as_json(*)
+      scalar_attrs.index_with { |name| send(name) }
+        .merge(nested_attrs.to_h { |name, cfg| [ name, dump_nested(send(name), cfg) ] })
+        .stringify_keys
+    end
   end
 end
 
 # usage
-class Card
-  include Serializable
-  scalar :rank, :suit
+module Games
+  class Card
+    include Games::Serializable
+    scalar :rank, :suit
+  end
 end
 
 module GoFish
-  class Player
-    include Serializable
-    scalar :user_id, :name, :cant_play
-    nested :hand, GoFish::Card
-    nested :books, GoFish::Book
+  class Player < Games::Player
+    scalar :cant_play                     # adds to inherited :user_id, :name
+    nested_many :hand, GoFish::Card       # collection
+    nested_many :books, GoFish::Book
   end
 end
 ```
 
-Inherits cleanly for the subclassing in later phases (`CrazyEights::Card < Card`
-keeps `scalar :rank, :suit`, adds `wild?`). Two consequences to plan for:
+Inherits cleanly for the subclassing in later phases (`CrazyEights::Card < Games::Card`
+keeps `scalar :rank, :suit`, adds `wild?`). Three consequences to plan for,
+**all confirmed by the spike**:
 (1) PORO initializers standardize on keyword args matching the declared names, so
-`new(**values)` works — a mechanical change to `Card#initialize` and friends;
-(2) nested types are declared once (`nested :hand, Card`), replacing the
-hand-written `.map { Card.from_json … }` loops. The dead `data` methods on
-`Card`/`TurnResult` are removed by this phase, not kept.
+`new(**values)` works — a mechanical change to `Card#initialize` and friends
+(and it ripples into `Deck`'s card build, which now uses `Card.new(rank:, suit:)`);
+(2) nested types need **two** declarations, not one — `nested_one` for a single
+nested PORO (`deck`, `drew_card`, `played_card`) and `nested_many` for a
+collection (`hand`, `books`, `players`, `turn_results`, `discard_pile`). The
+original single-`nested` sketch couldn't tell an object from an array. These
+replace the hand-written `.map { Card.from_json … }` loops;
+(3) the dead `data` methods on `Card`/`TurnResult` are removed by this phase, not kept.
 
 ### Phase 2 — Shared in-memory player base
 - **Goal:** Extract the base player (`user_id`, `name`, `hand`, `hand_size`,
@@ -205,6 +228,16 @@ hand-written `.map { Card.from_json … }` loops. The dead `data` methods on
   `advance_turn` / `winner` / `play_turn` / `STARTING_HAND` per game.
 - **TDD entry:** contract specs asserting the base raises `NotImplementedError`;
   shared-query specs.
+- **Boundary settled by the spike.** The split is: *up* → the queries
+  (`active_player`, `active_player?`, `player`, `opponents`, `number_of_players`,
+  `turn_result`), `deal`, and serialization; *per-game* → `start`, `board_for`,
+  `play_turn`, `winner`, `advance_turn`. Notably `start` and `board_for` stay
+  **fully per-game — not template methods**: both share a skeleton, but the
+  game-specific tail (CE seeds a discard pile; the `board_for` args differ) isn't
+  worth the hook indirection. The base also needs a `self.deck_class` hook for
+  the default deck. A subclass that adds state (CE's `discard_pile`) does so with
+  a `nested_many` declaration plus an `initialize(discard_pile: [], **rest);
+  super(**rest)` override — the pattern a third game would follow.
 
 ### Phase 4 — STI game-class template
 - **Goal:** Collapse the near-identical `start_if_full!` /
@@ -227,6 +260,13 @@ hand-written `.map { Card.from_json … }` loops. The dead `data` methods on
   today, so this phase is a good motivator for the request-spec layer
   (see roadmap Testing).
 - **TDD entry:** turn-validation specs at the model boundary.
+- **Rule-3 memoization is unresolved.** Removing `@game ||=` while keeping the
+  memo forces the memo through an accessor — the spike used
+  `attr_accessor :game_record` and `self.game_record ||= Game.find_by(...)`. That
+  satisfies "no raw ivar" but is arguably just the same memo wearing a getter.
+  **Open question for implementation:** accept the accessor-memo, or drop
+  memoization and look the game up each call (simplest, a couple extra queries
+  per validation pass). Decide before writing the base `Turn`.
 
 ### Phase 6 — Finish delegating engine calls through `Game`
 - **Goal:** Add `Game#advance_turn` and `Game#board_for` delegators so the web
