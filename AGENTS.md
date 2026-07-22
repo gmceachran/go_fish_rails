@@ -17,10 +17,12 @@ screen, serves an offline page with no connection).
 
 This is a **RoleModel apprenticeship training exercise**, not headed to
 production. Even so, treat it as **client-ready code** — the project rules below
-are held to that standard. Only these two games are expected to ever exist. The
-shared game interface exists for clean design, **not** as an invitation to build
-speculative multi-game features; avoid scope creep that would only pay off if
-more games were added.
+are held to that standard. At least one more game will be added, so the shared
+game interface should make adding a game straightforward: shared behavior belongs
+in a common base, and a new game should subclass a documented contract rather
+than copy an existing one. Build the abstraction to fit the games in hand, not a
+hypothetical roster — earn each shared method from real duplication, don't
+speculate.
 
 ## Tech stack
 
@@ -138,6 +140,8 @@ callbacks push Turbo Stream refreshes to connected clients.
 ## Key context
 
 - `docs/architecture.md` — models, STI, JSONB serialization, turn/broadcast flow
+- `docs/dedup-plan.md` — phased plan to remove domain-model duplication so a new
+  game subclasses a shared contract instead of copying an existing game
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
 - `docs/roadmap.md` — **open** known issues, tech debt, and refactors to tackle;

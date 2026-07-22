@@ -25,9 +25,10 @@ module GoFish
       end
 
       Player.new(user_id: player["user_id"],
-                hand: hand,
-                books: books,
-                cant_play: player["cant_play"] || false)
+                 hand: hand,
+                 books: books,
+                 cant_play: player["cant_play"] || false,
+                 name: player["name"])
     end
 
     def hand_size = hand.length

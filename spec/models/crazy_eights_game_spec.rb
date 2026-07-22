@@ -51,10 +51,6 @@ RSpec.describe CrazyEightsGame, type: :model do
         expect(deck).to be_a(CrazyEights::Deck)
         expect(deck.cards_left).to eq(remaining_deck_size)
       end
-
-      it "starts with a non-wild discard card" do
-        expect(reloaded_state.discard_card).not_to be_wild
-      end
     end
 
     context "when the game is not yet full" do

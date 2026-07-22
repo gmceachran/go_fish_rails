@@ -97,33 +97,12 @@ Surfaced in an assessment pass; none are behind any authorization.
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
-- **Massive copy-paste between the two `Implementation`s.** `active_player`,
-  `player`, `opponents`, `number_of_players`, `deal`, the `from_json`
-  players/deck-decoding shape, and the STI `start_if_full!` /
-  `update_with_starting_game_state` override are duplicated per game; `Card` and
-  `Deck` are ~90% identical across `go_fish/` and `crazy_eights/`. A third game
-  would copy all of it again. Candidate for a shared base — but only two games
-  will ever exist, so keep the abstraction conservative (see `AGENTS.md`).
-- **`GameImplementation` isn't an enforced base class.** It abstracts almost
-  nothing beyond `players` + `load`/`dump`, with no `NotImplementedError` stubs
-  for `start`/`play_turn`/`advance_turn`/`winner`/`board_for`. The interface is
-  convention-only, so a new game reverse-engineers it from the two existing
-  examples rather than filling in a documented contract.
-
-- **Finish delegating engine calls through `Game`.** `Game#play_turn`
-  (`game.rb:23-25`) and `Game#declare_winner_if_over!` (Card 2) already delegate
-  to `game_state`, removing the `.winner` reach-through from the controllers. What
-  remains: `game.game_state.advance_turn` (`turns_controller.rb:29,47`) and
-  `.board_for` (`games_controller.rb:10`) still reach two levels deep into the
-  serialized PORO. Add matching one-line `Game` delegators so the web layer stops
-  depending on the internal `game_state` name and the engine's full surface.
-- **Extract a shared base for `Turn` / `CrazyEightsTurn`.** `game`,
-  `game_is_active`, and `user_is_active_player` are copy-pasted between
-  `app/models/turn.rb:19-21,27-30,42-45` and
-  `app/models/crazy_eights_turn.rb:19-21,27-30,32-35`. The shared `game` memoizer
-  also uses `@game ||= Game.find_by(...)` — an instance variable outside an
-  initializer or controller action, which **violates project rule 3**; fold it
-  into a getter/setter in the shared base.
+- **Domain de-duplication — see `docs/dedup-plan.md`.** The copy-paste across
+  the two games (`Card`/`Deck`, the shared `Implementation` queries, the STI
+  start-up override, the `Turn` form objects), the unenforced `GameImplementation`
+  contract, and the remaining `Game` engine delegators are consolidated into a
+  single phased plan there. That doc is the entry point for this work; it also
+  absorbs several serialization bugs listed under *Known bugs*.
 
 ## Performance & cleanup
 
