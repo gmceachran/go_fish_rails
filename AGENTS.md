@@ -17,10 +17,12 @@ screen, serves an offline page with no connection).
 
 This is a **RoleModel apprenticeship training exercise**, not headed to
 production. Even so, treat it as **client-ready code** — the project rules below
-are held to that standard. Only these two games are expected to ever exist. The
-shared game interface exists for clean design, **not** as an invitation to build
-speculative multi-game features; avoid scope creep that would only pay off if
-more games were added.
+are held to that standard. At least one more game will be added, so the shared
+game interface should make adding a game straightforward: shared behavior belongs
+in a common base, and a new game should subclass a documented contract rather
+than copy an existing one. Build the abstraction to fit the games in hand, not a
+hypothetical roster — earn each shared method from real duplication, don't
+speculate.
 
 ## Tech stack
 
@@ -102,11 +104,13 @@ column): `GoFishGame` and `CrazyEightsGame`. The full game state (deck, hands,
 discard pile, turn results) is **not** relational — it is serialized as JSONB
 into the `game_state` column via `serialize ..., coder:`, round-tripping through
 plain-Ruby domain objects under `app/models/go_fish/` and
-`app/models/crazy_eights/`. Those POROs (`Implementation`, `Deck`, `Card`,
+`app/models/crazy_eights/`. Those POROs (`Engine`, `Deck`, `Card`,
 `Player`, `Book`, `TurnResult`, `GameBoard`) hold all card-game rules and know
-nothing about the database; each `Implementation` subclasses the shared
-`GameImplementation` and exposes a common interface (`start`, `play_turn`,
-`advance_turn`, `winner`, `board_for`). See `docs/architecture.md`.
+nothing about the database. Shared bases live under `app/models/games/`: `Card`,
+`Deck`, and each `Engine` subclass `Games::Card` / `Games::Deck` / `Games::Engine`,
+and the serialized POROs mix in `Games::Serializable`. `Games::Engine` exposes the
+common interface (`start`, `play_turn`, `advance_turn`, `winner`, `board_for`).
+See `docs/architecture.md`.
 
 Turn flow: a controller builds a non-persisted `ActiveModel` form object (`Turn`
 for Go Fish, `CrazyEightsTurn` for Crazy Eights), validates it, calls
@@ -116,13 +120,15 @@ callbacks push Turbo Stream refreshes to connected clients.
 ## Conventions worth knowing
 
 - **`game_state` is serialized, not relational.** To change game data, edit the
-  POROs and their `from_json` — no migrations. Serialization is *meant* to be
-  symmetric, but mind the trap: `dump` is the implicit `Object#as_json` (it
-  serializes every instance variable) while `from_json` is hand-written, so
-  **adding or renaming an ivar on a `game_state` PORO is silently dropped on
-  reload unless you also update `from_json`.** Already bitten twice
-  (`GoFish::Player#name`, `CrazyEights::TurnResult#wild`) — see `docs/roadmap.md`.
-- **New/changed game logic lives in the `Implementation` + STI subclass**; don't
+  POROs and their serialization — no migrations. `Card`, `Deck`, both
+  `TurnResult`s, `Player`, and `Engine` include `Games::Serializable`, which
+  derives `as_json` and `from_json` from one declared field list so they can't
+  drift. Only `GoFish::Book` still hand-writes `from_json`, and there the trap
+  lives: `dump` is the implicit `Object#as_json` (every ivar) while `from_json`
+  is hand-written, so **adding/renaming an ivar is silently dropped on reload
+  unless you also update `from_json`** (bit us with `GoFish::Player#name`, since
+  fixed by the concern).
+- **New/changed game logic lives in the `Engine` + STI subclass**; don't
   special-case games in shared controllers/views beyond the existing `case game`
   dispatch.
 - `Current.session` / `Current.user` carry the authenticated user (see

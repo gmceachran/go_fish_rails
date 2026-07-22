@@ -18,11 +18,15 @@ class Game < ApplicationRecord
   def start_if_full!
     return unless waiting? && players.count >= max_players
     update(started_at: Time.current, state: :active)
+    update_with_starting_game_state if active?
   end
 
   def play_turn(turn)
     self.game_state.play_turn(turn)
   end
+
+  def advance_turn = game_state.advance_turn
+  def board_for(user_id:, game_id:) = game_state.board_for(user_id: user_id, game_id: game_id)
 
   def declare_winner!(player)
     player.update!(winner: true)
@@ -37,6 +41,14 @@ class Game < ApplicationRecord
   end
 
   private
+
+  def update_with_starting_game_state
+    self.game_state = engine_class.new(players: players.order(:id).map do |player|
+      player_class.new(user_id: player.user_id)
+    end)
+    game_state.start
+    save!
+  end
 
   def ended_at_validation
     return if ended_at.present? == players.exists?(winner: true)

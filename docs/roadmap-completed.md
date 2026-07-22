@@ -4,6 +4,28 @@ Companion to `docs/roadmap.md`. That file tracks what's outstanding; this one
 is the record of what started there and is now resolved, with what the fix
 actually was — useful when a future item rhymes with one of these.
 
+## Domain de-duplication — shared `Games::` base for both card games
+
+**Was:** `GoFishGame`/`CrazyEightsGame` and their POROs (`Card`, `Deck`,
+`Player`, `Engine`, `Turn`) were near-complete copy-paste of each other, with no
+shared contract — adding a third game would have meant copying an existing one
+rather than subclassing a documented base. This duplication was also the root
+cause of several serialization bugs (`GoFish::Player#name` and
+`CrazyEights::TurnResult#wild` silently dropped on reload), and the web layer
+(`turns_controller.rb`, `games_controller.rb`) reached two levels into
+`game.game_state` directly instead of through `Game`.
+
+**Fix:** a phased extraction (`docs/completed_cards/dedup-plan.md`, phases
+0–6, all committed): a `Games::` namespace with `Serializable` (one declared
+field list drives both `as_json`/`from_json`, closing the drop-on-reload bug
+class by construction), shared `Card`/`Deck`/`Player` bases, an enforced
+`Games::Engine` contract (`start`/`play_turn`/`advance_turn`/`winner`/
+`board_for`), an STI start-up template on `Game`, a shared `Games::Turn` form
+base, and finally `Game#advance_turn`/`Game#board_for` delegators so the
+controllers no longer touch `game_state` directly. Adding the next game is now:
+subclass `Games::Card`/`Deck`/`Player`/`Engine`/`Turn`, fill in the contract
+methods, done.
+
 ## Suite hang — Crazy Eights opening discard infinite loop
 
 **Was:** `CrazyEights::Implementation#flip_non_wild_discard` `unshift`d a wild

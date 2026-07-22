@@ -29,5 +29,10 @@ Keep this doc lean: prune a plan once its spec is merged and green.
 
 ## Active plans
 
-None currently — Card 3's plans (win-screen game data for both games) merged
-and green; see `docs/roadmap-completed.md`.
+None currently — the domain de-duplication refactor's last phase
+(`Game#advance_turn` / `Game#board_for` delegators, see
+`docs/completed_cards/dedup-plan.md`) landed without a driving spec by
+developer decision: pure one-line delegators with no branching, and proving
+delegation would require stubbing `game.game_state`, which this codebase
+avoids.
+

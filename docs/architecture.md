@@ -31,8 +31,8 @@ game rules in ordinary, fast-to-test Ruby objects with no database dependency.
   - `after_create_commit` / `after_update_commit` → `broadcast_refresh_later_to`
     drive Turbo Stream updates to clients.
 - **`GoFishGame` / `CrazyEightsGame`** — STI subclasses. Each declares
-  `serialize :game_state, coder: <Game>::Implementation` and overrides
-  `start_if_full!` to build and `start` the initial `Implementation` once the
+  `serialize :game_state, coder: <Game>::Engine` and overrides
+  `start_if_full!` to build and `start` the initial `Engine` once the
   game fills up.
 - **`Player`** — join between `User` and `Game`. Uniqueness scoped to
   `[game_id, user_id]`. `after_create :start_game_if_full` triggers game start.
@@ -45,7 +45,7 @@ game rules in ordinary, fast-to-test Ruby objects with no database dependency.
 
 Under `app/models/go_fish/` and `app/models/crazy_eights/`:
 
-- **`Implementation`** (subclasses shared `GameImplementation`) — the engine.
+- **`Engine`** (subclasses shared `Games::Engine`) — the engine.
   Common interface across games:
   - `start` — shuffle + deal (+ start discard pile for Crazy Eights).
   - `play_turn(turn)` — apply a validated turn, return a `TurnResult`.
@@ -66,16 +66,18 @@ Under `app/models/go_fish/` and `app/models/crazy_eights/`:
 
 ## Serialization contract
 
-`serialize :game_state, coder: SomeImplementation` means Rails calls
-`Implementation.dump(obj)` when writing and `Implementation.load(json)` when
-reading. `GameImplementation.dump` is `obj.as_json`; `load` delegates to each
-`Implementation.from_json`.
+`serialize :game_state, coder: <Game>::Engine` means Rails calls
+`Engine.dump(obj)` when writing and `Engine.load(json)` when
+reading. `Games::Engine.dump` is `obj.as_json`; `load` delegates to each
+`Engine.from_json`.
 
-**The round trip must be symmetric**: every field `as_json` writes has to be
-read back in `from_json` (and the nested `from_json` of `Deck`, `Card`,
-`Player`, `TurnResult`, `Book`). When you add state to a PORO, update its
-`from_json`/`as_json` (or `data`) or it will silently drop on reload. There are
-no migrations for this data — the "schema" is the serialization code.
+**The round trip must be symmetric.** `Card`, `Deck`, and both `TurnResult`s now
+include `Games::Serializable` (`app/models/games/serializable.rb`): they declare
+their fields once with `scalar` / `nested_one` / `nested_many`, and both `as_json`
+and `from_json` derive from that one list, so they can't drift. The still-hand-written
+POROs (`Player`, `Engine`, `Book`) must keep `from_json` in sync with what
+`as_json`/`dump` writes by hand, or state silently drops on reload. There are no
+migrations for this data — the "schema" is the serialization code.
 
 ## Turn flow (request lifecycle)
 

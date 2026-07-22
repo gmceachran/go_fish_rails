@@ -1,11 +1,13 @@
 require "rails_helper"
 
 RSpec.describe CrazyEights::Player, type: :model do
-  let(:player) { CrazyEights::Player.new(user_id: 1, hand: [ CrazyEights::Card.new("9", "Hearts") ]) }
-
-  describe "#hand_size" do
-    it "returns the number of cards in the hand" do
-      expect(player.hand_size).to eq 1
+  it_behaves_like "a serializable round-trip" do
+    subject do
+      CrazyEights::Player.new(
+        user_id: 2,
+        name: "Player Two",
+        hand: [ CrazyEights::Card.new(rank: "9", suit: "Hearts") ]
+      )
     end
   end
 
@@ -18,15 +20,9 @@ RSpec.describe CrazyEights::Player, type: :model do
       }
     end
 
-    it "builds a player from json" do
-      loaded_player = described_class.from_json(json)
-      expect(loaded_player.user_id).to eq(2)
-      expect(loaded_player.name).to eq("Player Two")
-    end
-
-    it "loads the player's hand" do
-      loaded_player = described_class.from_json(json)
-      expect(loaded_player.hand).to eq([ CrazyEights::Card.new("K", "Diamonds") ])
+    it "rebuilds hand as CrazyEights::Card objects" do
+      player = CrazyEights::Player.from_json(json)
+      expect(player.hand).to eq([ CrazyEights::Card.new(rank: "K", suit: "Diamonds") ])
     end
   end
 end

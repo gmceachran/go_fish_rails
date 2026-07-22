@@ -9,7 +9,7 @@ this documents the code.
 - Standard 52-card deck (`GoFish::Deck`): ranks `2 3 4 5 6 7 8 9 10 J Q K A`,
   suits `Spades Clubs Hearts Diamonds`.
 - Deck is shuffled, then dealt. Starting hand size depends on player count
-  (`Implementation::STARTING_HAND`):
+  (`Engine::STARTING_HAND`):
   - 1–2 players: 7 cards each
   - 3 players: 7 cards each
   - 4–5 players: 5 cards each
@@ -25,7 +25,7 @@ only valid if (see `Turn` validations):
 - it is the asking player's turn,
 - the asking player actually holds at least one card of that rank.
 
-Resolution (`Implementation#play_turn`):
+Resolution (`Engine#play_turn`):
 - **Opponent has cards of that rank** → all of them transfer to the asker, and
   the asker **goes again** (`go_again: true`).
 - **Opponent has none** → "Go Fish": the asker draws the top card of the deck.
@@ -47,7 +47,7 @@ marked `cant_play` and is skipped by `advance_turn`.
 
 ## Ending & winner
 
-The game is over when **every player's hand is empty** (`Implementation#winner`
+The game is over when **every player's hand is empty** (`Engine#winner`
 returns nil until then). The winner is the player with the most books, breaking
 ties by highest single book value:
 

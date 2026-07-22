@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CrazyEights::Implementation, type: :model do
+RSpec.describe CrazyEights::Engine, type: :model do
   let(:json) do
     {
       "players" => [
@@ -28,56 +28,15 @@ RSpec.describe CrazyEights::Implementation, type: :model do
       "turn_results" => []
     }
   end
-  let!(:game) { CrazyEights::Implementation.load(json) }
+  let!(:game) { CrazyEights::Engine.load(json) }
 
-  describe "#load" do
-    context "when json is not nil" do
-      it "turns the given json string into a ruby object" do
-        expect(game).to be_a_kind_of CrazyEights::Implementation
-        expect(game.players.first.user_id).to be 0
-        expect(game.players.last.user_id).to be 1
-        expect(game.discard_card).to eq CrazyEights::Card.new("9", "Hearts")
-      end
-    end
 
-    context "when json is nil" do
-      it "returns nil" do
-        expect(CrazyEights::Implementation.load(nil)).to be_nil
-      end
-    end
-  end
-
-  describe "#dump" do
-    it "turns the given hash into a json string" do
-      dumped_object = CrazyEights::Implementation.dump(game)
-      expect(dumped_object).to eq json
-    end
-  end
-
-  describe "#active_player?" do
-    context "when given user_id does not match active player's user_id" do
-      it "returns false" do
-        expect(game.active_player?(1)).to be false
-      end
-    end
-
-    context "when given user_id does match active player's user_id" do
-      it "returns true" do
-        expect(game.active_player?(0)).to be true
-      end
-    end
-  end
-
-  describe "#player" do
-    it "returns the appropriate player by the given id" do
-      expect(game.player(0)).to be game.players.first
-    end
-  end
-
-  describe "#opponents" do
-    it "returns the round's opponents" do
-      opponents = [ game.players.last ]
-      expect(game.opponents).to eq opponents
+  describe ".load" do
+    it "rebuilds players, deck, and discard_pile as CrazyEights types" do
+      expect(game.players).to all be_a CrazyEights::Player
+      expect(game.players.map(&:user_id)).to eq [ 0, 1 ]
+      expect(game.deck).to be_a CrazyEights::Deck
+      expect(game.discard_card).to eq CrazyEights::Card.new(rank: "9", suit: "Hearts")
     end
   end
 
@@ -100,14 +59,6 @@ RSpec.describe CrazyEights::Implementation, type: :model do
       expect(board.opponent_partial).to eq("games/opponent")
       expect(board.feed_partial).to eq("games/crazy_eights_feed")
       expect(board.discard_card).to eq(game.discard_card)
-    end
-  end
-
-  describe "#active_player" do
-    let(:active_player) { game.players.first }
-
-    it "returns the active player" do
-      expect(game.active_player).to be active_player
     end
   end
 
@@ -168,7 +119,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
 
       it "moves the card to the discard pile" do
         game.play_turn(turn)
-        expect(game.discard_card).to eq CrazyEights::Card.new("9", "Clubs")
+        expect(game.discard_card).to eq CrazyEights::Card.new(rank: "9", suit: "Clubs")
         expect(game.players.first.hand).to be_empty
       end
 
@@ -215,7 +166,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
 
       it "adds the drawn card to the player's hand" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include CrazyEights::Card.new("9", "Spades")
+        expect(game.players.first.hand).to include CrazyEights::Card.new(rank: "9", suit: "Spades")
       end
 
       it "allows another turn" do
@@ -259,7 +210,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
       before { game.discard_pile << deck.top_card }
 
       context "when no player has an empty hand" do
-        before { player.hand << CrazyEights::Card.new("A", "Spades") }
+        before { player.hand << CrazyEights::Card.new(rank: "A", suit: "Spades") }
 
         it "returns nil" do
           expect(game.winner).to be_nil
@@ -270,7 +221,7 @@ RSpec.describe CrazyEights::Implementation, type: :model do
         before do
           player2 = CrazyEights::Player.new
           game.players << player2
-          player2.hand << CrazyEights::Card.new("A", "Spades")
+          player2.hand << CrazyEights::Card.new(rank: "A", suit: "Spades")
         end
 
         it "returns that player object" do

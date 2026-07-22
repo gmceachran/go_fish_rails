@@ -58,7 +58,7 @@ RSpec.describe :create_game, type: :system do
       game = game_model.game_state
 
       expect(game_model).to be_a(CrazyEightsGame)
-      expect(game).to be_a(CrazyEights::Implementation)
+      expect(game).to be_a(CrazyEights::Engine)
     end
   end
 

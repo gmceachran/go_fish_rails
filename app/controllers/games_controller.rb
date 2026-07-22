@@ -7,8 +7,8 @@ class GamesController < ApplicationController
   def show
     @game_model = Game.find(params[:id])
     @winner = @game_model.players.find_by(winner: true) if @game_model.over?
-    @board = @game_model.game_state.board_for(user_id: Current.session[:user_id],
-                                              game_id: @game_model.id)
+    @board = @game_model.board_for(user_id: Current.session[:user_id],
+                                    game_id: @game_model.id)
     render layout: "application_no_sidebar"
   end
 

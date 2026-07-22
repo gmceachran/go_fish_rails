@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe GoFish::Implementation, type: :model do
+RSpec.describe GoFish::Engine, type: :model do
   let(:json) do
     {
       "players" => [
@@ -29,55 +29,13 @@ RSpec.describe GoFish::Implementation, type: :model do
       "turn_results" => []
     }
   end
-  let!(:game) { GoFish::Implementation.load(json) }
+  let!(:game) { GoFish::Engine.load(json) }
 
-  describe "#load" do
-    context "when json is not nil" do
-      it "turns the given json string into a ruby object" do
-        expect(game).to be_a_kind_of GoFish::Implementation
-        expect(game.players.first.user_id).to be 0
-        expect(game.players.last.user_id).to be 1
-      end
-    end
-
-    context "when json is nil" do
-      it "returns nil" do
-        expect(GoFish::Implementation.load(nil)).to be_nil
-      end
-    end
-  end
-
-  describe "#dump" do
-    it "turns the given hash into a json string" do
-      dumped_object = GoFish::Implementation.dump(game)
-      expect(dumped_object).to eq json
-    end
-  end
-
-  describe "#active_player?" do
-    context "when given user_id does not match active player's user_id" do
-      it "returns false" do
-        expect(game.active_player?(1)).to be false
-      end
-    end
-
-    context "when given user_id does match active player's user_id" do
-      it "returns true" do
-        expect(game.active_player?(0)).to be true
-      end
-    end
-  end
-
-  describe "#player" do
-    it "returns the appropriate player by the given id" do
-      expect(game.player(0)).to be game.players.first
-    end
-  end
-
-  describe "#opponents" do
-    it "returns the round's opponents" do
-      opponents = [ game.players.last ]
-      expect(game.opponents).to eq opponents
+  describe ".load" do
+    it "rebuilds players and deck as GoFish types" do
+      expect(game.players).to all be_a GoFish::Player
+      expect(game.players.map(&:user_id)).to eq [ 0, 1 ]
+      expect(game.deck).to be_a GoFish::Deck
     end
   end
 
@@ -100,13 +58,6 @@ RSpec.describe GoFish::Implementation, type: :model do
       expect(board.opponent_partial).to eq("games/accordion")
       expect(board.feed_partial).to eq("games/feed")
       expect(board.turn).to be_a(Turn)
-    end
-  end
-
-  describe "#active_player" do
-    let(:active_player) { game.players.first }
-    it "returns the active player" do
-      expect(game.active_player).to be active_player
     end
   end
 
@@ -169,7 +120,7 @@ RSpec.describe GoFish::Implementation, type: :model do
 
       it "transfers the cards to the asking player" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include GoFish::Card.new("9", "Clubs")
+        expect(game.players.first.hand).to include GoFish::Card.new(rank: "9", suit: "Clubs")
       end
 
       it "records a non-go_fish result with go_again true" do
@@ -195,7 +146,7 @@ RSpec.describe GoFish::Implementation, type: :model do
 
       it "draws from the deck" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include GoFish::Card.new("9", "Spades")
+        expect(game.players.first.hand).to include GoFish::Card.new(rank: "9", suit: "Spades")
       end
 
       it "sets go_again true when the drawn card matches the rank" do
@@ -336,7 +287,7 @@ RSpec.describe GoFish::Implementation, type: :model do
 
   describe '#winner' do
     context 'when one or more player has cards' do
-      before { game.players.first.hand = [ GoFish::Card.new('A', 'Spades') ] }
+      before { game.players.first.hand = [ GoFish::Card.new(rank: 'A', suit: 'Spades') ] }
 
       it 'winner returns nil' do
         expect(game.winner).to be_nil

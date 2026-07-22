@@ -14,18 +14,12 @@ RSpec.describe CrazyEightsGame, type: :model do
       end
 
       def dumped_state
-        CrazyEights::Implementation.dump(reloaded_state)
+        CrazyEights::Engine.dump(reloaded_state)
       end
 
-      it "transitions to active and sets started_at" do
-        game.reload
-        expect(game.state).to eq("active")
-        expect(game.started_at).not_to be_nil
-      end
-
-      it "reloads a CrazyEights implementation from the database" do
-        expect(reloaded_state).to be_a(CrazyEights::Implementation)
-      end
+      it_behaves_like "a game that starts when full",
+        engine_class: CrazyEights::Engine,
+        player_class: CrazyEights::Player
 
       it "persists the deck and discard pile" do
         expect(dumped_state.keys).to include("deck", "discard_pile")
@@ -39,21 +33,14 @@ RSpec.describe CrazyEightsGame, type: :model do
         end
       end
 
-      it "persists turn order and player identities" do
-        state = reloaded_state
-        expect(state.active_player_index).to eq(0)
-        expect(state.players.first.user_id).to eq(player1.user_id)
-        expect(state.players.last.user_id).to eq(player2.user_id)
+      it "starts with the first player active" do
+        expect(reloaded_state.active_player_index).to eq(0)
       end
 
       it "persists a drawable deck" do
         deck = reloaded_state.deck
         expect(deck).to be_a(CrazyEights::Deck)
         expect(deck.cards_left).to eq(remaining_deck_size)
-      end
-
-      it "starts with a non-wild discard card" do
-        expect(reloaded_state.discard_card).not_to be_wild
       end
     end
 
@@ -62,12 +49,7 @@ RSpec.describe CrazyEightsGame, type: :model do
 
       before { create(:player, game: game) }
 
-      it "stays waiting without persisting game state" do
-        game.reload
-        expect(game.state).to eq("waiting")
-        expect(game.started_at).to be_nil
-        expect(game.game_state).to be_nil
-      end
+      it_behaves_like "a game that stays waiting until full"
     end
   end
 end

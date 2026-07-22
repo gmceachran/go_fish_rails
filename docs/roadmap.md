@@ -15,7 +15,7 @@ focused; if a category grows large, split it into its own doc.
   them — sign-up only collects email/password. Add the same `country`/`state`
   inputs to the sign-up form.
 - **Show how many cards are left in the deck.** Both engines already compute
-  this (`GoFish::Implementation#deck_length`, `deck.cards_left` on both
+  this (`GoFish::Engine#deck_length`, `deck.cards_left` on both
   `Deck`s) but neither `GameBoard` (`go_fish/game_board.rb`,
   `crazy_eights/game_board.rb`) carries it through, so it's never rendered.
   Add a `deck_count` (or similar) to `board_for` and surface it in the
@@ -48,19 +48,18 @@ Surfaced in an assessment pass; none are behind any authorization.
 ## Known bugs
 
 - **Go Fish `advance_turn` unbounded recursion (latent).**
-  `GoFish::Implementation#advance_turn` (`go_fish/implementation.rb:84-92`)
-  recurses (l.91) whenever the next player `cant_play`, with no base case for
+  `GoFish::Engine#advance_turn` (`go_fish/engine.rb:36-39`)
+  recurses (l.38) whenever the next player `cant_play`, with no base case for
   when *every* player is stuck — an all-`cant_play` end-game state recurses until
   `SystemStackError`. Not the current suite freeze (that's Crazy Eights), but a
   real crash waiting on certain deck-exhausted states.
-- **`game_state` silently loses data on reload.** `dump` is the implicit
-  `Object#as_json` (every ivar) while `from_json` is hand-written, so the two
-  drift by construction — and already have: `GoFish::Player#name`
-  (`go_fish/player.rb:19-31`) and `CrazyEights::TurnResult#wild`
-  (`crazy_eights/turn_result.rb:12-21`) are written on save but dropped on load.
-  The `wild` drop visibly breaks the wild/suit UI after any refresh
-  (`crazy_eights/implementation.rb:71` reads it). No schema versioning, and
-  missing-key guards are inconsistent between the two games.
+- **`game_state` silently loses data on reload (mostly resolved).** Where a
+  PORO hand-writes `from_json`, it can drift from `dump` (the implicit
+  `Object#as_json`, every ivar). `Card`, `Deck`, both `TurnResult`s, `Player`,
+  and `Engine` now include `Games::Serializable` and are safe by construction —
+  this fixed the `CrazyEights::TurnResult#wild` drop that broke the wild/suit UI
+  after a refresh and the `GoFish::Player#name` drop. Only `GoFish::Book` still
+  hand-writes `from_json`. Still no schema versioning.
 - **No way to navigate out of `games#show` while a game is in progress.**
   Neither `games/show.html.slim` nor `layouts/application_no_sidebar.html.slim`
   has any link back to the games list — a player has to use the browser back
@@ -75,7 +74,7 @@ Surfaced in an assessment pass; none are behind any authorization.
 - **Go Fish feed shows hardcoded fake data.**
   `app/views/games/_feed.html.slim:1-17` is static placeholder markup (a fictional
   "Joby asked Natalie for 9s…") shown to every player; the real `turn_results`
-  machinery (`go_fish/implementation.rb:138,144`) is populated but ignored. The
+  machinery (`go_fish/engine.rb:68,74`) is populated but ignored. The
   Crazy Eights feed (`_crazy_eights_feed.html.slim`) likewise never iterates
   `turn_results`.
 - **`_crazy_eights_feed.html.slim:5` references an undefined form builder `f`** →
@@ -91,39 +90,12 @@ Surfaced in an assessment pass; none are behind any authorization.
   design system; there's existing custom CSS to migrate.
 - **Crazy Eights is missing its namesake feature.** Suit selection on eights is
   only half-built: the `:suit`/`:action` turn params exist, `board_for` passes a
-  `wild:` flag for the UI, and `crazy_eights/implementation_spec.rb:196` is a
+  `wild:` flag for the UI, and `crazy_eights/engine_spec.rb:147` is a
   stubbed `xit` ("plays an eight / choose a new suit"). But `playable?`
-  (`implementation.rb:143-146`) still compares against the discard's own suit, and
+  (`crazy_eights/engine.rb:82-83`) still compares against the discard's own suit, and
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
-- **Massive copy-paste between the two `Implementation`s.** `active_player`,
-  `player`, `opponents`, `number_of_players`, `deal`, the `from_json`
-  players/deck-decoding shape, and the STI `start_if_full!` /
-  `update_with_starting_game_state` override are duplicated per game; `Card` and
-  `Deck` are ~90% identical across `go_fish/` and `crazy_eights/`. A third game
-  would copy all of it again. Candidate for a shared base — but only two games
-  will ever exist, so keep the abstraction conservative (see `AGENTS.md`).
-- **`GameImplementation` isn't an enforced base class.** It abstracts almost
-  nothing beyond `players` + `load`/`dump`, with no `NotImplementedError` stubs
-  for `start`/`play_turn`/`advance_turn`/`winner`/`board_for`. The interface is
-  convention-only, so a new game reverse-engineers it from the two existing
-  examples rather than filling in a documented contract.
-
-- **Finish delegating engine calls through `Game`.** `Game#play_turn`
-  (`game.rb:23-25`) and `Game#declare_winner_if_over!` (Card 2) already delegate
-  to `game_state`, removing the `.winner` reach-through from the controllers. What
-  remains: `game.game_state.advance_turn` (`turns_controller.rb:29,47`) and
-  `.board_for` (`games_controller.rb:10`) still reach two levels deep into the
-  serialized PORO. Add matching one-line `Game` delegators so the web layer stops
-  depending on the internal `game_state` name and the engine's full surface.
-- **Extract a shared base for `Turn` / `CrazyEightsTurn`.** `game`,
-  `game_is_active`, and `user_is_active_player` are copy-pasted between
-  `app/models/turn.rb:19-21,27-30,42-45` and
-  `app/models/crazy_eights_turn.rb:19-21,27-30,32-35`. The shared `game` memoizer
-  also uses `@game ||= Game.find_by(...)` — an instance variable outside an
-  initializer or controller action, which **violates project rule 3**; fold it
-  into a getter/setter in the shared base.
 
 ## Performance & cleanup
 
@@ -188,11 +160,7 @@ their own doc.
   row-by-row — collapse to a single relation + `update_all`.
 - **Small latent cleanups.** `GoFish::GameBoard#discard_card`
   (`go_fish/game_board.rb:29`) reads an unassigned `@extras` — would raise if ever
-  called. `implementation_key` is defined twice in `GoFish::Implementation`. The
-  `Card#data` / `TurnResult#data` methods look like serializers but aren't in the
-  dump/load path — dead lookalikes that can mislead a maintainer editing
-  persistence. The `pages#index` route (`config/routes.rb:29`,
+  called. The
+  `pages#index` route (`config/routes.rb:29`,
   `resources :pages, only: [:index]`) points at an action/view that don't exist
-  (`PagesController` has only `rules`) — a route to a 500. `GoFish::Player#initialize`'s
-  default `user_id: user_id` (`go_fish/player.rb:6`) is self-referential (resolves
-  to `nil`), while `CrazyEights::Player` defaults to `0` — pick one.
+  (`PagesController` has only `rules`) — a route to a 500.

@@ -21,31 +21,7 @@ RSpec.describe Turn, type: :model do
 
   subject(:turn) { described_class.new(valid_attributes) }
 
-  it "is valid with valid attributes" do
-    expect(turn).to be_valid
-  end
-
-  describe "presence" do
-    it "requires a rank" do
-      turn.rank = nil
-      expect(turn).not_to be_valid
-    end
-
-    it "requires an opponent" do
-      turn.opponent = nil
-      expect(turn).not_to be_valid
-    end
-
-    it "requires a game_id" do
-      turn.game_id = nil
-      expect(turn).not_to be_valid
-    end
-
-    it "requires a user_id" do
-      turn.user_id = nil
-      expect(turn).not_to be_valid
-    end
-  end
+  it_behaves_like "a turn for an active game and the active player's turn"
 
   describe "rank inclusion" do
     let(:invalid_rank) { "11" }
@@ -53,26 +29,6 @@ RSpec.describe Turn, type: :model do
     it "rejects a rank not in GoFish::Card::RANKS" do
       turn.rank = invalid_rank
       expect(turn).not_to be_valid
-    end
-  end
-
-  describe "game state" do
-    context "when the game does not exist" do
-      let(:nonexistent_game_id) { -1 }
-
-      it "is invalid" do
-        turn.game_id = nonexistent_game_id
-        expect(turn).not_to be_valid
-      end
-    end
-
-    context "when the game is not active" do
-      let(:waiting_game) { create :game, max_players: 2 }
-
-      it "is invalid" do
-        turn.game_id = waiting_game.id
-        expect(turn).not_to be_valid
-      end
     end
   end
 
@@ -86,13 +42,6 @@ RSpec.describe Turn, type: :model do
 
     it "rejects the asking player as their own opponent" do
       turn.opponent = turn.user_id
-      expect(turn).not_to be_valid
-    end
-  end
-
-  describe "turn order" do
-    it "rejects a user who is not the active player" do
-      turn.user_id = opponent_player.user_id
       expect(turn).not_to be_valid
     end
   end
