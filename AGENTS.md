@@ -120,14 +120,14 @@ callbacks push Turbo Stream refreshes to connected clients.
 ## Conventions worth knowing
 
 - **`game_state` is serialized, not relational.** To change game data, edit the
-  POROs and their serialization — no migrations. `Card`, `Deck`, and both
-  `TurnResult`s now include `Games::Serializable`, which derives `as_json` and
-  `from_json` from one declared field list so they can't drift. The rest
-  (`Player`, `Engine`, `Book`) still hand-write `from_json`, and there the trap
+  POROs and their serialization — no migrations. `Card`, `Deck`, both
+  `TurnResult`s, `Player`, and `Engine` include `Games::Serializable`, which
+  derives `as_json` and `from_json` from one declared field list so they can't
+  drift. Only `GoFish::Book` still hand-writes `from_json`, and there the trap
   lives: `dump` is the implicit `Object#as_json` (every ivar) while `from_json`
   is hand-written, so **adding/renaming an ivar is silently dropped on reload
-  unless you also update `from_json`** (bit us with `GoFish::Player#name`). The
-  dedup refactor is extending the concern to those POROs — see `docs/roadmap.md`.
+  unless you also update `from_json`** (bit us with `GoFish::Player#name`, since
+  fixed by the concern).
 - **New/changed game logic lives in the `Engine` + STI subclass**; don't
   special-case games in shared controllers/views beyond the existing `case game`
   dispatch.

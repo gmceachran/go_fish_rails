@@ -1,68 +1,23 @@
 module GoFish
   class Engine < Games::Engine
-    STARTING_HAND = {
-      1 => 7,
-      2 => 7,
-      3 => 7,
-      4 => 5,
-      5 => 5
-    }
+    STARTING_HAND = { 1 => 7, 2 => 7, 3 => 7, 4 => 5, 5 => 5 }
 
-    attr_accessor :deck, :active_player_index, :turn_results
+    nested_many :players, GoFish::Player
+    nested_one  :deck, GoFish::Deck
+    nested_many :turn_results, GoFish::TurnResult
 
-    def initialize(players: [],
-                   active_player_index: 0,
-                   deck: GoFish::Deck.new,
-                   turn_results: [])
+    def self.deck_class = GoFish::Deck
 
-      super(players: players)
-
-      @active_player_index = active_player_index
-      @deck = deck
-      @turn_results = turn_results
-    end
-
-    def active_player = players[active_player_index]
-    def deck_length = deck.cards_left
     def implementation_key = "go_fish"
-    def turn_result = turn_results.last
-
-    def self.from_json(json)
-      go_fish_players = json["players"].map do |player|
-        Player.from_json(player)
-      end
-      deck = Deck.from_json(json["deck"])
-      results = (json["turn_results"] || []).map { |result| TurnResult.from_json(result) }
-
-      Engine.new(players: go_fish_players,
-               active_player_index: json["active_player_index"],
-               deck: deck,
-               turn_results: results)
-    end
-
-    def active_player?(user_id)
-      player = player(user_id)
-      active_player_index == players.index(player)
-    end
-
-    def player(user_id)
-      players.detect { it.user_id == user_id }
-    end
-
-    def opponents
-      current_player = [ active_player ]
-      players - current_player
-    end
+    def opponent_partial = "games/accordion"
+    def feed_partial = "games/feed"
+    def deck_length = deck.cards_left
 
     def board_for(user_id:, game_id:)
-      GameBoard.new(game_id: game_id,
-                    implementation: implementation_key,
-                    is_clients_turn: active_player?(user_id),
-                    opponents: opponents,
-                    player: player(user_id),
-                    opponent_partial: opponent_partial,
-                    feed_partial: feed_partial,
-                    turn: Turn.new)
+      GameBoard.new(game_id: game_id, implementation: implementation_key,
+                    is_clients_turn: active_player?(user_id), opponents: opponents,
+                    player: player(user_id), opponent_partial: opponent_partial,
+                    feed_partial: feed_partial, turn: Turn.new)
     end
 
     def start
@@ -73,51 +28,26 @@ module GoFish
     def play_turn(turn)
       player = players.detect { it.user_id.to_s == turn.user_id.to_s }
       opponent = players.detect { it.user_id.to_s == turn.opponent.to_s }
-      opponent_cards = opponent.cards_of_rank_given(turn.rank)
-
-      handle_take_cards(player, opponent_cards, turn.rank)
+      handle_take_cards(player, opponent.cards_of_rank_given(turn.rank), turn.rank)
       handle_empty_hand
-
       turn_result
     end
 
     def advance_turn
-      if active_player_index == (number_of_players - 1)
-        self.active_player_index = 0
-      else
-        self.active_player_index += 1
-      end
-
+      self.active_player_index = (active_player_index + 1) % number_of_players
       advance_turn if players[active_player_index].cant_play
     end
 
     def winner
       return nil unless players.all? { |player| player.hand.empty? }
 
-      winner = players.max_by do |player|
+      players.max_by do |player|
         best_book_value = player.books.map { |book| book.value }.max || -1
         [ player.books.length, best_book_value ]
       end
-      winner
     end
 
-    def implementation_key = "go_fish"
-    def opponent_partial = "games/accordion"
-    def feed_partial = "games/feed"
-
-    private_class_method :from_json
     private
-
-    def number_of_players = players.length
-
-    def deal(players, num)
-      players.each do |player|
-        num.times do
-          card = deck.top_card
-          player.hand << card
-        end
-      end
-    end
 
     def handle_take_cards(player, opponent_cards, rank)
       if opponent_cards.any?

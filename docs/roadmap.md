@@ -48,19 +48,18 @@ Surfaced in an assessment pass; none are behind any authorization.
 ## Known bugs
 
 - **Go Fish `advance_turn` unbounded recursion (latent).**
-  `GoFish::Engine#advance_turn` (`go_fish/engine.rb:84-92`)
-  recurses (l.91) whenever the next player `cant_play`, with no base case for
+  `GoFish::Engine#advance_turn` (`go_fish/engine.rb:36-39`)
+  recurses (l.38) whenever the next player `cant_play`, with no base case for
   when *every* player is stuck — an all-`cant_play` end-game state recurses until
   `SystemStackError`. Not the current suite freeze (that's Crazy Eights), but a
   real crash waiting on certain deck-exhausted states.
-- **`game_state` silently loses data on reload (partially resolved).** Where a
+- **`game_state` silently loses data on reload (mostly resolved).** Where a
   PORO hand-writes `from_json`, it can drift from `dump` (the implicit
-  `Object#as_json`, every ivar). `Card`/`Deck`/`TurnResult` now include
-  `Games::Serializable` and are safe by construction — this fixed the
-  `CrazyEights::TurnResult#wild` drop that broke the wild/suit UI after a refresh.
-  Still hand-written and vulnerable: `Player`, `Engine`, `Book` — e.g. the
-  `GoFish::Player#name` risk (`go_fish/player.rb:19-31`). Dedup Phase 2 extends
-  the concern to `Player`; see `docs/dedup-plan.md`. Still no schema versioning.
+  `Object#as_json`, every ivar). `Card`, `Deck`, both `TurnResult`s, `Player`,
+  and `Engine` now include `Games::Serializable` and are safe by construction —
+  this fixed the `CrazyEights::TurnResult#wild` drop that broke the wild/suit UI
+  after a refresh and the `GoFish::Player#name` drop. Only `GoFish::Book` still
+  hand-writes `from_json`. Still no schema versioning.
 - **No way to navigate out of `games#show` while a game is in progress.**
   Neither `games/show.html.slim` nor `layouts/application_no_sidebar.html.slim`
   has any link back to the games list — a player has to use the browser back
@@ -75,7 +74,7 @@ Surfaced in an assessment pass; none are behind any authorization.
 - **Go Fish feed shows hardcoded fake data.**
   `app/views/games/_feed.html.slim:1-17` is static placeholder markup (a fictional
   "Joby asked Natalie for 9s…") shown to every player; the real `turn_results`
-  machinery (`go_fish/engine.rb:138,144`) is populated but ignored. The
+  machinery (`go_fish/engine.rb:68,74`) is populated but ignored. The
   Crazy Eights feed (`_crazy_eights_feed.html.slim`) likewise never iterates
   `turn_results`.
 - **`_crazy_eights_feed.html.slim:5` references an undefined form builder `f`** →
@@ -91,18 +90,18 @@ Surfaced in an assessment pass; none are behind any authorization.
   design system; there's existing custom CSS to migrate.
 - **Crazy Eights is missing its namesake feature.** Suit selection on eights is
   only half-built: the `:suit`/`:action` turn params exist, `board_for` passes a
-  `wild:` flag for the UI, and `crazy_eights/engine_spec.rb:196` is a
+  `wild:` flag for the UI, and `crazy_eights/engine_spec.rb:147` is a
   stubbed `xit` ("plays an eight / choose a new suit"). But `playable?`
-  (`engine.rb:143-146`) still compares against the discard's own suit, and
+  (`crazy_eights/engine.rb:82-83`) still compares against the discard's own suit, and
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
-- **Domain de-duplication — see `docs/dedup-plan.md`.** The copy-paste across
-  the two games (`Card`/`Deck`, the shared `Engine` queries, the STI
-  start-up override, the `Turn` form objects), the unenforced `Games::Engine`
-  contract, and the remaining `Game` engine delegators are consolidated into a
-  single phased plan there. That doc is the entry point for this work; it also
-  absorbs several serialization bugs listed under *Known bugs*.
+- **Domain de-duplication — see `docs/dedup-plan.md`.** Phases 0–3 are landed:
+  `Card`/`Deck`, the in-memory `Player`, the shared `Engine` queries, and the
+  enforced `Games::Engine` contract are all consolidated. Remaining: the STI
+  start-up override (Phase 4), the `Turn` form objects (Phase 5), and the
+  remaining `Game` engine delegators (Phase 6). That doc is the entry point for
+  this work; it also absorbs several serialization bugs listed under *Known bugs*.
 
 ## Performance & cleanup
 
@@ -167,7 +166,7 @@ their own doc.
   row-by-row — collapse to a single relation + `update_all`.
 - **Small latent cleanups.** `GoFish::GameBoard#discard_card`
   (`go_fish/game_board.rb:29`) reads an unassigned `@extras` — would raise if ever
-  called. `implementation_key` is defined twice in `GoFish::Engine`. The
+  called. The
   `pages#index` route (`config/routes.rb:29`,
   `resources :pages, only: [:index]`) points at an action/view that don't exist
   (`PagesController` has only `rules`) — a route to a 500. `GoFish::Player#initialize`'s
