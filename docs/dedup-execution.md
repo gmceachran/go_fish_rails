@@ -10,14 +10,19 @@ stays the durable strategy; this is throwaway scaffolding for the in-flight work
 A **full end-to-end spike** of every phase (0–6) was built directly in
 `app/models/` and verified: it eager-loads, round-trips through serialization,
 and both target bugs are fixed by construction (`GoFish::Player#name` and
-`CrazyEights::TurnResult#wild` now survive reload). The spike is **not committed**
-— it's deliberately red against the current specs (they still reference
-`GoFish::Implementation`, call the removed `data` methods, etc.), and we don't
-commit on red.
+`CrazyEights::TurnResult#wild` now survive reload). The spike itself was never
+committed — it was deliberately red against the specs of the time, and we don't
+commit on red. It remains the **destination reference**, consulted while
+rebuilding each phase green, one phase = one commit.
 
-The spike is the **destination reference**. We now rebuild it green, **one phase
-= one commit**, in dependency order, lifting code back out of the spike as each
-phase's implementation step.
+**Progress:** Phases 0–4 are committed (rename, `Serializable` + `Card`/`Deck`,
+`Games::Player`, `Games::Engine` + contract, STI start-up template). **Phase 5**
+(shared `Turn` base) has its spec plan agreed, specs written and reviewed, and
+the production code (`games/turn.rb`, `turn.rb`, `crazy_eights_turn.rb`)
+implemented and green in the working tree — not yet committed. Phase 6
+(`Game#advance_turn` / `Game#board_for` delegators) has not been started;
+`turns_controller.rb` / `games_controller.rb` still reach two levels into
+`game.game_state` directly.
 
 ## The spike lives in a stash
 
@@ -114,12 +119,15 @@ directly.
   `advance_turn` stay per-game. `start`/`board_for` are deliberately *not*
   template methods.
 
-## Open questions to resolve during implementation
+## Decisions resolved during implementation
 
-- **Deck card-class redundancy** (Phase 1): subclass names its card class twice
-  (`card_class` + `nested_many :cards`). Derive one from the other, or accept it.
-- **Turn rule-3 memoization** (Phase 5): accessor-memo (`game_record`) vs. drop
-  the memo and look up each call. See `dedup-plan.md` Phase 5.
+- **Deck card-class redundancy** (Phase 1): accepted the two-line redundancy —
+  each subclass still declares both `self.card_class` and
+  `nested_many :cards, ...` (see `go_fish/deck.rb` / `crazy_eights/deck.rb`).
+  Not derived from one another.
+- **Turn rule-3 memoization** (Phase 5): accessor-memo adopted, matching the
+  spike — `Games::Turn#game` does `self.game_record ||= Game.find_by(...)`
+  through a public `attr_accessor :game_record`, not a raw ivar.
 
 ## Pointers (read these before starting)
 

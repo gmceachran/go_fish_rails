@@ -133,10 +133,10 @@ phase number; the "easier to add a game" payoff concentrates in Phases 3–4.
   `cards`, `shuffle`, `top_card`, `empty?`, `cards_left`, and the 52-card build.
   The build needs to know which card class to instantiate, so the base exposes a
   `self.card_class` hook (`NotImplementedError`) and each subclass overrides it
-  (`GoFish::Deck.card_class = GoFish::Card`). **Micro-decision left open:** a
-  subclass currently names its card class twice — once as `card_class`, once in
-  `nested_many :cards, GoFish::Card`. Either derive one from the other, or accept
-  the two-line redundancy. Decide when the phase lands; the spike accepts it.
+  (`GoFish::Deck.card_class = GoFish::Card`). **Decided:** a subclass names its
+  card class twice — once as `card_class`, once in `nested_many :cards,
+  GoFish::Card` — and this redundancy is accepted rather than derived from one
+  another, matching the spike.
 
 **Why a concern, not per-field patches.** All eleven serialized POROs use the
 same drift-prone mechanism: save is automatic (`dump` = `as_json` = every ivar),
@@ -250,7 +250,7 @@ replace the hand-written `.map { Card.from_json … }` loops;
   the declared classes.
 
 ### Phase 5 — Shared `Turn` form-object base
-- **Goal:** Extract `GameTurn` (ActiveModel) holding `game`, `game_state`,
+- **Goal:** Extract `Games::Turn` (ActiveModel) holding `game`, `game_state`,
   `game_is_active`, `user_is_active_player`; `Turn` / `CrazyEightsTurn` subclass
   and add only game-specific validations. Fold `@game ||=` into a getter/setter.
 - **Absorbs:** `Turn`/`CrazyEightsTurn` copy-paste; the **rule-3 violation** in
@@ -260,13 +260,10 @@ replace the hand-written `.map { Card.from_json … }` loops;
   today, so this phase is a good motivator for the request-spec layer
   (see roadmap Testing).
 - **TDD entry:** turn-validation specs at the model boundary.
-- **Rule-3 memoization is unresolved.** Removing `@game ||=` while keeping the
-  memo forces the memo through an accessor — the spike used
-  `attr_accessor :game_record` and `self.game_record ||= Game.find_by(...)`. That
-  satisfies "no raw ivar" but is arguably just the same memo wearing a getter.
-  **Open question for implementation:** accept the accessor-memo, or drop
-  memoization and look the game up each call (simplest, a couple extra queries
-  per validation pass). Decide before writing the base `Turn`.
+- **Rule-3 memoization: resolved — accessor-memo.** `@game ||=` is replaced
+  with `attr_accessor :game_record` plus `self.game_record ||= Game.find_by(...)`
+  in `Games::Turn#game`, matching the spike. Decided over dropping memoization
+  and looking the game up on every validation call.
 
 ### Phase 6 — Finish delegating engine calls through `Game`
 - **Goal:** Add `Game#advance_turn` and `Game#board_for` delegators so the web
