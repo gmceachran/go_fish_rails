@@ -45,10 +45,14 @@ re-selection after a wild is a known rough edge — see `docs/roadmap.md`.
 
 ## Ending & winner
 
-**Incomplete.** `Implementation#winner` currently returns `false` (no winner
-detection in the game engine). The `TurnsController` calls `declare_winner!`
-based on that return, so as written a Crazy Eights game does not end itself. This
-is a known gap — see `docs/roadmap.md`.
+`Implementation#winner` returns the player who has emptied their hand (`nil`
+otherwise), guarded by `discard_pile.empty?` so a not-yet-dealt game names no
+winner. After every turn, `Game#declare_winner_if_over!` (shared with Go Fish —
+see `docs/architecture.md`) maps that player to the persisted `Player` and calls
+`declare_winner!`, ending the game. The next render of `games#show` then
+overlays the win modal on the board itself (`games/_winner_modal.html.slim`) —
+no redirect to a separate screen.
+End-to-end covered by `spec/systems/crazy_eights_play_spec.rb`.
 
 ## Turn feed
 

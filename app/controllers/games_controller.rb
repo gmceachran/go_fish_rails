@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   def show
     @game_model = Game.find(params[:id])
-    return redirect_to_winner(@game_model) if @game_model.over?
+    @winner = @game_model.players.find_by(winner: true) if @game_model.over?
     @board = @game_model.game_state.board_for(user_id: Current.session[:user_id],
                                               game_id: @game_model.id)
     render layout: "application_no_sidebar"
@@ -25,11 +25,5 @@ class GamesController < ApplicationController
 
   def history
     @completed_games = Current.session.user.games.where(state: :over).order(ended_at: :desc)
-  end
-
-  private
-
-  def redirect_to_winner(game)
-    redirect_to game_winner_path(game.game_state.winner.user_id)
   end
 end

@@ -1,3 +1,24 @@
+@import "core/theme/game-theme-core.css";
+@import "core/layout/game-board.css";
+@import "core/layout/gf-section.css";
+@import "core/utilities.css";
+
+@import "components/accordion.css";
+@import "components/authentication-form.css";
+@import "components/bubble.css";
+@import "components/card-tray.css";
+@import "components/feed-logs.css";
+@import "components/game-actions.css";
+@import "components/game-card.css";
+@import "components/players-content.css";
+@import "components/playing-card.css";
+@import "components/rule-card.css";
+@import "components/stat-card.css";
+
+@import "components/optics-overrides/content-header.css";
+@import "components/optics-overrides/op-page.css";
+@import "components/optics-overrides/modal.css";
+
 .hidden {
   display: none;
 }

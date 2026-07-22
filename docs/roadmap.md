@@ -3,40 +3,50 @@
 Running list of work to do, bugs, and tech debt worth tracking. Keep this
 focused; if a category grows large, split it into its own doc.
 
-## Top priority
+## Features
 
-Fixing up the specs in general — the single biggest lever on confidence in the
-platform. Two related strands:
+- **Collect a username at sign-up.** `User` has no `username` column at all
+  (`db/schema.rb:149-157`); only `email_address`/`password` are collected
+  (`app/views/users/new.html.slim`). Needs a migration plus a form field and
+  uniqueness validation.
+- **Collect location at sign-up.** `country`/`state` already exist on `User`
+  and are editable after the fact via the profile edit modal
+  (`app/views/users/edit.html.slim`), but `users/new.html.slim` never asks for
+  them — sign-up only collects email/password. Add the same `country`/`state`
+  inputs to the sign-up form.
+- **Show how many cards are left in the deck.** Both engines already compute
+  this (`GoFish::Implementation#deck_length`, `deck.cards_left` on both
+  `Deck`s) but neither `GameBoard` (`go_fish/game_board.rb`,
+  `crazy_eights/game_board.rb`) carries it through, so it's never rendered.
+  Add a `deck_count` (or similar) to `board_for` and surface it in the
+  templates.
 
-- **System suite is flaky and hangs.** The one confirmed deterministic cause
-  (Crazy Eights opening-discard infinite loop) is fixed — see
-  `docs/roadmap-completed.md`. The broader strategy is still open: stop leaning
-  on Capybara so heavily and assert game state directly via the database
-  (queries and factories) instead of driving the browser for everything. See
-  `docs/spec-reliability.md` for the full investigation and go-forward plan.
-- **No request/controller specs exist at all** (most severe). The entire
-  turn-application flow — `TurnsController` dispatch, `advance_turn unless
-  go_again`/`play_again`, winner declaration — is unverified except through the
-  flaky browser suite. There is no `type: :request` spec anywhere. This is also
-  the missing middle layer the flakiness fix wants: assert turn outcomes at the
-  DB/model boundary (factories + `POST` a turn) instead of driving Capybara.
+## Security
+
+Surfaced in an assessment pass; none are behind any authorization.
+
+- **Any authenticated user can view any game's board (IDOR).**
+  `GamesController#show` (`app/controllers/games_controller.rb:7-13`) does
+  `Game.find(params[:id])` with no check that the current user is a participant,
+  then builds a board for a `user_id` that may not be in the game — a
+  non-participant's `player(user_id)` is `nil` (latent view crashes) and a private
+  game's state leaks. Same unscoped `Game.find` in `TurnsController#create`
+  (`turns_controller.rb:3`) — the win-screen path no longer has its own lookup
+  (`WinnersController` is gone; it reuses the same `@game_model`) but inherits
+  this same exposure. Scope through the current user
+  (`Current.session.user.games.find(...)`) or a membership `before_action`.
+- **GoodJob dashboard mounted with no auth.** `config/routes.rb:37-38`
+  (`mount GoodJob::Engine => "good_job"`) — the code's own comment says it should
+  be behind admin validation. Anyone can browse `/good_job`, read job args, and
+  retry/discard jobs. Wrap in an authenticated constraint or basic auth.
+- **Joining a game skips the `joinable?` guard.** `PlayersController#create`
+  (`players_controller.rb:2-15`) never calls `Game#joinable?` (`game.rb:16`), so a
+  user can join a game that is already full/active/over. There is also no
+  save-failure branch, so a failed `save` (e.g. re-join uniqueness) falls through
+  to a missing `create` template.
 
 ## Known bugs
 
-- **No game can actually finish — for *either* game.** Two halves of the same
-  gap:
-  - Crazy Eights: `CrazyEights::Implementation#winner` returns `false`, so a game
-    never declares a winner or ends. Needs real end-of-game detection (a player
-    emptying their hand). See `docs/crazy-eights.md`.
-  - Go Fish: `GoFish::Implementation#winner` computes the winner correctly, but
-    **nothing ever calls `Game#declare_winner!`** — `TurnsController` only
-    advances and saves on the Go Fish path. The lone caller of `declare_winner!`
-    is the Crazy Eights branch (`turns_controller.rb:57`), so Go Fish never
-    reaches `over?`.
-  Good "read the pending tests first" case: there's no `#winner` spec under
-  `crazy_eights/`, and `crazy_eights_play_spec.rb:46` has a commented-out
-  `# it "the turn ends"`. Worth deciding, in-session, where the shared
-  winner-declaration path should live (model turn-flow vs. the controller).
 - **Go Fish `advance_turn` unbounded recursion (latent).**
   `GoFish::Implementation#advance_turn` (`go_fish/implementation.rb:84-92`)
   recurses (l.91) whenever the next player `cant_play`, with no base case for
@@ -51,7 +61,26 @@ platform. Two related strands:
   The `wild` drop visibly breaks the wild/suit UI after any refresh
   (`crazy_eights/implementation.rb:71` reads it). No schema versioning, and
   missing-key guards are inconsistent between the two games.
-- **Navigation out of `games#show`** is awkward / missing a clean path back.
+- **No way to navigate out of `games#show` while a game is in progress.**
+  Neither `games/show.html.slim` nor `layouts/application_no_sidebar.html.slim`
+  has any link back to the games list — a player has to use the browser back
+  button. Card 3's win modal (`games/_winner_modal.html.slim`) added a "Back to
+  Games" button, but only for the *finished*-game case; an active game is
+  still a dead end.
+- **`GamesController#create` ignores the save result.**
+  (`games_controller.rb:19-24`) calls `@game.save` without checking it, then
+  `@game.players.create(...)` against a possibly-unpersisted game, and always
+  redirects to root — a validation failure is silently swallowed. Branch on
+  `@game.save`.
+- **Go Fish feed shows hardcoded fake data.**
+  `app/views/games/_feed.html.slim:1-17` is static placeholder markup (a fictional
+  "Joby asked Natalie for 9s…") shown to every player; the real `turn_results`
+  machinery (`go_fish/implementation.rb:138,144`) is populated but ignored. The
+  Crazy Eights feed (`_crazy_eights_feed.html.slim`) likewise never iterates
+  `turn_results`.
+- **`_crazy_eights_feed.html.slim:5` references an undefined form builder `f`** →
+  `NameError` whenever `@board.wild` is true. Ties into the unfinished eights/suit
+  feature listed under Refactors.
 
 ## Refactors
 
@@ -62,9 +91,9 @@ platform. Two related strands:
   design system; there's existing custom CSS to migrate.
 - **Crazy Eights is missing its namesake feature.** Suit selection on eights is
   only half-built: the `:suit`/`:action` turn params exist, `board_for` passes a
-  `wild:` flag for the UI, and `crazy_eights/implementation_spec.rb:206` is a
+  `wild:` flag for the UI, and `crazy_eights/implementation_spec.rb:196` is a
   stubbed `xit` ("plays an eight / choose a new suit"). But `playable?`
-  (`implementation.rb:150-153`) still compares against the discard's own suit, and
+  (`implementation.rb:143-146`) still compares against the discard's own suit, and
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
@@ -81,12 +110,66 @@ platform. Two related strands:
   convention-only, so a new game reverse-engineers it from the two existing
   examples rather than filling in a documented contract.
 
+- **Finish delegating engine calls through `Game`.** `Game#play_turn`
+  (`game.rb:23-25`) and `Game#declare_winner_if_over!` (Card 2) already delegate
+  to `game_state`, removing the `.winner` reach-through from the controllers. What
+  remains: `game.game_state.advance_turn` (`turns_controller.rb:29,47`) and
+  `.board_for` (`games_controller.rb:10`) still reach two levels deep into the
+  serialized PORO. Add matching one-line `Game` delegators so the web layer stops
+  depending on the internal `game_state` name and the engine's full surface.
+- **Extract a shared base for `Turn` / `CrazyEightsTurn`.** `game`,
+  `game_is_active`, and `user_is_active_player` are copy-pasted between
+  `app/models/turn.rb:19-21,27-30,42-45` and
+  `app/models/crazy_eights_turn.rb:19-21,27-30,32-35`. The shared `game` memoizer
+  also uses `@game ||= Game.find_by(...)` — an instance variable outside an
+  initializer or controller action, which **violates project rule 3**; fold it
+  into a getter/setter in the shared base.
+
+## Performance & cleanup
+
+- **N+1 on the games index.** `GamesController#index` (`games_controller.rb:2-5`)
+  does `Game.waiting - @user_games`, loading every waiting game and diffing arrays
+  in Ruby; then each row (`_open_game.html.slim:8-11`, `_user_game.slim:8-11`)
+  calls `joinable?` / `players.count`, firing a `COUNT` per game. Exclude the
+  user's games in SQL and preload/counter-cache the player counts.
+- **Stimulus `turn_timer` leaks its interval.**
+  `app/javascript/controllers/turn_timer_controller.js:8-13` starts a
+  `setInterval` in `connect()` with no `disconnect()` to clear it. Because the
+  board is driven by `broadcast_refresh_later_to` Turbo refreshes, the view is
+  torn down/re-rendered often, so intervals accumulate and the countdown
+  accelerates. Add `disconnect() { clearInterval(this.timer) }`.
+- **Missing indexes on `games.type` and `games.state`** (`db/schema.rb:17-27`).
+  STI filters on `type` and the app filters on `state` constantly (`Game.waiting`,
+  `not_over`, `ArchiveGamesJob`, `User#games_played_count`). Cheap migration.
+
+## Testing
+
+Lower priority now that the suite is green. These were elevated when the browser
+layer was suspected of causing the hang; that's resolved, so treat them as
+confidence/quality work rather than urgent.
+
+- **No request/controller specs exist at all.** The entire turn-application flow
+  — `TurnsController` dispatch, `advance_turn unless go_again`/`play_again`,
+  winner declaration — is unverified except through the browser suite (system
+  specs) and, for `declare_winner_if_over!` itself, a model spec. There is no
+  `type: :request` spec anywhere. A request-spec layer asserting turn outcomes at
+  the DB/model boundary (factories + `POST` a turn) is the natural place to lock
+  down the turn flow more cheaply than full browser specs.
+- **Reduce reliance on the browser suite.** Stop leaning on Capybara so heavily
+  and assert game state directly via the database instead of driving the browser
+  for everything. See the "Suite hang" entry in `docs/roadmap-completed.md` for
+  the investigation that motivated this.
+
 ## Worth noting, not necessary
 
 Low-priority items that would only matter with a significant refactor and are
 likely out of scope for the current work. If these start to pile up, give them
 their own doc.
 
+- **Show a country flag next to the username.** Once usernames exist (see
+  Features), display a flag icon for the user's `country` next to it wherever
+  the username is rendered. Tie into that refactor rather than doing it
+  separately.
 - **Branch-level task tracking.** The roadmap captures the app's trajectory and
   shared context (bugs, refactors, priorities). For individual branches, consider
   maintaining a separate checklist (e.g., `TODO.md` in the branch) with
@@ -98,15 +181,18 @@ their own doc.
 - **`ArchiveGamesJob` / `archived_at`.** Built to satisfy an assignment
   requirement; it stamps `archived_at` but isn't doing anything genuinely useful
   yet. Making it worthwhile would take a meaningful refactor — probably out of
-  scope for the near term.
+  scope for the near term. It also has a latent correctness/perf bug:
+  `Game.where(state: :over) + Game.where("updated_at <= ?", …)`
+  (`app/jobs/archive_games_job.rb:5-10`) unions two relations into a Ruby Array,
+  so a game that is both over and stale gets stamped twice, then updates
+  row-by-row — collapse to a single relation + `update_all`.
 - **Small latent cleanups.** `GoFish::GameBoard#discard_card`
   (`go_fish/game_board.rb:29`) reads an unassigned `@extras` — would raise if ever
   called. `implementation_key` is defined twice in `GoFish::Implementation`. The
   `Card#data` / `TurnResult#data` methods look like serializers but aren't in the
   dump/load path — dead lookalikes that can mislead a maintainer editing
-  persistence.
-
-## Done
-
-Resolved items move to `docs/roadmap-completed.md`, with what the fix actually
-was, instead of piling up here.
+  persistence. The `pages#index` route (`config/routes.rb:29`,
+  `resources :pages, only: [:index]`) points at an action/view that don't exist
+  (`PagesController` has only `rules`) — a route to a 500. `GoFish::Player#initialize`'s
+  default `user_id: user_id` (`go_fish/player.rb:6`) is self-referential (resolves
+  to `nil`), while `CrazyEights::Player` defaults to `0` — pick one.

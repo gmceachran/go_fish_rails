@@ -32,27 +32,28 @@ RSpec.describe :play_crazy_eights, type: :system do
         expect(page).to have_content "Draw Card"
       end
 
-      # context "when the user has a playable card and clicks on it" do
-      #   before do
-      #     log_out
-      #     log_in(user1)
-      #     override_start game.game_state
-      #     game.save
-      #     visit game_path(game)
-      #   end
-
-      #   it "the turn ends" do
-      #     expect(game.game_state.players.first.hand.length).to eq 1
-      #     click_on "Ask for Cards"
-      #     expect(page).to have_no_css ".game-actions"
-      #     expect(page).to have_content "Opponent's Turn"
-      #     expect(game.reload.game_state.players.first.hand.length).to eq 2
-      #   end
-      # end
-
       # context "when the user does not have a playable card" do
 
       # end
+    end
+  end
+
+  context "when the turn empties the last hand" do
+    before do
+      log_out
+      log_in(user1)
+      override_crazy_eights_win game.game_state
+      game.save
+      visit game_path(game)
+    end
+
+    it "a completed game shows the winner" do
+      click_on "5 of Spades"
+
+      expect(page).to have_content "#{user1.email_address} wins!"
+      expect(page).to have_content user2.email_address
+      expect(page).to have_content "Turns played: 1"
+      expect(page).to have_content "less than a minute"
     end
   end
 end

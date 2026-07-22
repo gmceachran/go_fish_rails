@@ -29,6 +29,13 @@ class Game < ApplicationRecord
     update!(ended_at: Time.current, state: :over)
   end
 
+  def declare_winner_if_over!
+    winner = game_state.winner
+    return unless winner
+
+    declare_winner!(players.find_by(user_id: winner.user_id))
+  end
+
   private
 
   def ended_at_validation

@@ -4,6 +4,10 @@ div data-controller="connection-banner"
 
   = turbo_stream_from @game_model
 
+  - if @game_model.over?
+    - content_for :modal_content do
+      = render "games/winner_modal"
+
   main id=dom_id(@game_model)
     .game-board
       section.game-board__players
