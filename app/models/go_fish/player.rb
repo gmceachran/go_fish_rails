@@ -1,37 +1,16 @@
 module GoFish
-  class Player
-    attr_reader :user_id, :name
-    attr_accessor :hand, :books, :cant_play
+  class Player < Games::Player
+    scalar :cant_play
+    nested_many :hand, GoFish::Card
+    nested_many :books, GoFish::Book
 
-    def initialize(user_id: user_id,
-                   hand: [],
-                   books: [],
-                   name: "Lord Farquad",
-                   cant_play: false)
+    attr_accessor :books, :cant_play
 
-      @user_id = user_id
-      @hand = hand
+    def initialize(books: [], cant_play: false, **rest)
+      super(**rest)
       @books = books
-      @name = name
       @cant_play = cant_play
     end
-
-    def self.from_json(player)
-      hand = player["hand"].map do |card|
-        GoFish::Card.from_json(card)
-      end
-      books = player["books"].map do |book|
-        GoFish::Book.from_json(book)
-      end
-
-      Player.new(user_id: player["user_id"],
-                 hand: hand,
-                 books: books,
-                 cant_play: player["cant_play"] || false,
-                 name: player["name"])
-    end
-
-    def hand_size = hand.length
 
     def cards_of_rank_given(rank)
       cards = hand.select { |card| card.rank == rank }
@@ -41,11 +20,10 @@ module GoFish
     end
 
     def create_book_if_possible
-      cards_by_rank = hand.group_by(&:rank)
-      cards_by_rank.each do |rank, cards|
+      hand.group_by(&:rank).each do |_rank, cards|
         next unless cards.length == 4
 
-        books << GoFish::Book.new(rank)
+        books << GoFish::Book.new(cards.first.rank)
         cards.each { |card| hand.delete(card) }
         return true
       end
