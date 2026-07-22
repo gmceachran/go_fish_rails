@@ -9,12 +9,13 @@ Scope is the domain models (`app/models/**` POROs, the STI game classes, and the
 `Turn` form objects). Phase-level here on purpose — per-change detail is written
 per session via the `docs/spec-plans.md` gated TDD flow, one phase at a time.
 
-> **Execution in progress.** A full end-to-end spike of every phase was built and
-> verified, then stashed to serve as the destination reference while we rebuild it
-> green, one phase = one commit. The *how* — the stash, the per-commit loop, the
-> file-to-phase map, and decisions already made — lives in `docs/dedup-execution.md`
-> (a temporary doc; delete it when this refactor lands). This file stays the durable
-> strategy.
+> **Shipped.** All phases (0–6) are committed. A full end-to-end spike of every
+> phase was built and verified first, then stashed to serve as the destination
+> reference while each phase was rebuilt green, one phase = one commit; the
+> stash was dropped once every phase had been lifted from it. See
+> `docs/roadmap-completed.md` ("Domain de-duplication") for the summary. This
+> file is kept as the durable record of the strategy and the per-phase
+> decisions made along the way.
 
 ## Guiding constraints
 

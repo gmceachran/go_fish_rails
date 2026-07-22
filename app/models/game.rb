@@ -25,6 +25,9 @@ class Game < ApplicationRecord
     self.game_state.play_turn(turn)
   end
 
+  def advance_turn = game_state.advance_turn
+  def board_for(user_id:, game_id:) = game_state.board_for(user_id: user_id, game_id: game_id)
+
   def declare_winner!(player)
     player.update!(winner: true)
     update!(ended_at: Time.current, state: :over)

@@ -26,7 +26,7 @@ class TurnsController < ApplicationController
 
   def apply_go_fish_turn(game, turn)
     result = game.play_turn(turn)
-    game.game_state.advance_turn unless result.go_again
+    game.advance_turn unless result.go_again
     game.save!
     game.declare_winner_if_over!
   end
@@ -45,7 +45,7 @@ class TurnsController < ApplicationController
 
   def apply_crazy_eights_turn(game, turn)
     result = game.play_turn(turn)
-    game.game_state.advance_turn unless result.play_again
+    game.advance_turn unless result.play_again
     game.save!
     game.declare_winner_if_over!
   end

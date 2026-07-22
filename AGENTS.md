@@ -144,8 +144,6 @@ callbacks push Turbo Stream refreshes to connected clients.
 ## Key context
 
 - `docs/architecture.md` — models, STI, JSONB serialization, turn/broadcast flow
-- `docs/dedup-plan.md` — phased plan to remove domain-model duplication so a new
-  game subclasses a shared contract instead of copying an existing game
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
 - `docs/roadmap.md` — **open** known issues, tech debt, and refactors to tackle;
