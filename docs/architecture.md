@@ -71,11 +71,13 @@ Under `app/models/go_fish/` and `app/models/crazy_eights/`:
 reading. `Games::Engine.dump` is `obj.as_json`; `load` delegates to each
 `Engine.from_json`.
 
-**The round trip must be symmetric**: every field `as_json` writes has to be
-read back in `from_json` (and the nested `from_json` of `Deck`, `Card`,
-`Player`, `TurnResult`, `Book`). When you add state to a PORO, update its
-`from_json`/`as_json` (or `data`) or it will silently drop on reload. There are
-no migrations for this data — the "schema" is the serialization code.
+**The round trip must be symmetric.** `Card`, `Deck`, and both `TurnResult`s now
+include `Games::Serializable` (`app/models/games/serializable.rb`): they declare
+their fields once with `scalar` / `nested_one` / `nested_many`, and both `as_json`
+and `from_json` derive from that one list, so they can't drift. The still-hand-written
+POROs (`Player`, `Engine`, `Book`) must keep `from_json` in sync with what
+`as_json`/`dump` writes by hand, or state silently drops on reload. There are no
+migrations for this data — the "schema" is the serialization code.
 
 ## Turn flow (request lifecycle)
 

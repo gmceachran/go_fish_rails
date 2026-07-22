@@ -53,14 +53,14 @@ Surfaced in an assessment pass; none are behind any authorization.
   when *every* player is stuck — an all-`cant_play` end-game state recurses until
   `SystemStackError`. Not the current suite freeze (that's Crazy Eights), but a
   real crash waiting on certain deck-exhausted states.
-- **`game_state` silently loses data on reload.** `dump` is the implicit
-  `Object#as_json` (every ivar) while `from_json` is hand-written, so the two
-  drift by construction — and already have: `GoFish::Player#name`
-  (`go_fish/player.rb:19-31`) and `CrazyEights::TurnResult#wild`
-  (`crazy_eights/turn_result.rb:12-21`) are written on save but dropped on load.
-  The `wild` drop visibly breaks the wild/suit UI after any refresh
-  (`crazy_eights/engine.rb:71` reads it). No schema versioning, and
-  missing-key guards are inconsistent between the two games.
+- **`game_state` silently loses data on reload (partially resolved).** Where a
+  PORO hand-writes `from_json`, it can drift from `dump` (the implicit
+  `Object#as_json`, every ivar). `Card`/`Deck`/`TurnResult` now include
+  `Games::Serializable` and are safe by construction — this fixed the
+  `CrazyEights::TurnResult#wild` drop that broke the wild/suit UI after a refresh.
+  Still hand-written and vulnerable: `Player`, `Engine`, `Book` — e.g. the
+  `GoFish::Player#name` risk (`go_fish/player.rb:19-31`). Dedup Phase 2 extends
+  the concern to `Player`; see `docs/dedup-plan.md`. Still no schema versioning.
 - **No way to navigate out of `games#show` while a game is in progress.**
   Neither `games/show.html.slim` nor `layouts/application_no_sidebar.html.slim`
   has any link back to the games list — a player has to use the browser back
@@ -168,9 +168,7 @@ their own doc.
 - **Small latent cleanups.** `GoFish::GameBoard#discard_card`
   (`go_fish/game_board.rb:29`) reads an unassigned `@extras` — would raise if ever
   called. `implementation_key` is defined twice in `GoFish::Engine`. The
-  `Card#data` / `TurnResult#data` methods look like serializers but aren't in the
-  dump/load path — dead lookalikes that can mislead a maintainer editing
-  persistence. The `pages#index` route (`config/routes.rb:29`,
+  `pages#index` route (`config/routes.rb:29`,
   `resources :pages, only: [:index]`) points at an action/view that don't exist
   (`PagesController` has only `rules`) — a route to a 500. `GoFish::Player#initialize`'s
   default `user_id: user_id` (`go_fish/player.rb:6`) is self-referential (resolves

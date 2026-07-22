@@ -36,7 +36,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
         expect(game).to be_a_kind_of CrazyEights::Engine
         expect(game.players.first.user_id).to be 0
         expect(game.players.last.user_id).to be 1
-        expect(game.discard_card).to eq CrazyEights::Card.new("9", "Hearts")
+        expect(game.discard_card).to eq CrazyEights::Card.new(rank: "9", suit: "Hearts")
       end
     end
 
@@ -168,7 +168,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
 
       it "moves the card to the discard pile" do
         game.play_turn(turn)
-        expect(game.discard_card).to eq CrazyEights::Card.new("9", "Clubs")
+        expect(game.discard_card).to eq CrazyEights::Card.new(rank: "9", suit: "Clubs")
         expect(game.players.first.hand).to be_empty
       end
 
@@ -215,7 +215,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
 
       it "adds the drawn card to the player's hand" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include CrazyEights::Card.new("9", "Spades")
+        expect(game.players.first.hand).to include CrazyEights::Card.new(rank: "9", suit: "Spades")
       end
 
       it "allows another turn" do
@@ -259,7 +259,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
       before { game.discard_pile << deck.top_card }
 
       context "when no player has an empty hand" do
-        before { player.hand << CrazyEights::Card.new("A", "Spades") }
+        before { player.hand << CrazyEights::Card.new(rank: "A", suit: "Spades") }
 
         it "returns nil" do
           expect(game.winner).to be_nil
@@ -270,7 +270,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
         before do
           player2 = CrazyEights::Player.new
           game.players << player2
-          player2.hand << CrazyEights::Card.new("A", "Spades")
+          player2.hand << CrazyEights::Card.new(rank: "A", suit: "Spades")
         end
 
         it "returns that player object" do

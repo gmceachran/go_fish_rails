@@ -169,7 +169,7 @@ RSpec.describe GoFish::Engine, type: :model do
 
       it "transfers the cards to the asking player" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include GoFish::Card.new("9", "Clubs")
+        expect(game.players.first.hand).to include GoFish::Card.new(rank: "9", suit: "Clubs")
       end
 
       it "records a non-go_fish result with go_again true" do
@@ -195,7 +195,7 @@ RSpec.describe GoFish::Engine, type: :model do
 
       it "draws from the deck" do
         game.play_turn(turn)
-        expect(game.players.first.hand).to include GoFish::Card.new("9", "Spades")
+        expect(game.players.first.hand).to include GoFish::Card.new(rank: "9", suit: "Spades")
       end
 
       it "sets go_again true when the drawn card matches the rank" do
@@ -336,7 +336,7 @@ RSpec.describe GoFish::Engine, type: :model do
 
   describe '#winner' do
     context 'when one or more player has cards' do
-      before { game.players.first.hand = [ GoFish::Card.new('A', 'Spades') ] }
+      before { game.players.first.hand = [ GoFish::Card.new(rank: 'A', suit: 'Spades') ] }
 
       it 'winner returns nil' do
         expect(game.winner).to be_nil

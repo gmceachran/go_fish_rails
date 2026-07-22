@@ -28,7 +28,7 @@ RSpec.describe GoFish::Player, type: :model do
   end
 
   describe '#hand_size' do
-    before { player.hand << GoFish::Card.new('A', 'Spades') }
+    before { player.hand << GoFish::Card.new(rank: 'A', suit: 'Spades') }
 
     it "returns the length of player's hand" do
       one_card = 1
@@ -37,8 +37,8 @@ RSpec.describe GoFish::Player, type: :model do
   end
 
   describe "#cards_of_rank_given" do
-    let(:matching_card) { GoFish::Card.new("4", "Spades") }
-    let(:other_card) { GoFish::Card.new("7", "Hearts") }
+    let(:matching_card) { GoFish::Card.new(rank: "4", suit: "Spades") }
+    let(:other_card) { GoFish::Card.new(rank: "7", suit: "Hearts") }
 
     before { player.hand = [ matching_card, other_card ] }
 
@@ -63,13 +63,13 @@ RSpec.describe GoFish::Player, type: :model do
     let(:rank) { "4" }
     let(:matching_cards) do
       [
-        GoFish::Card.new(rank, "Spades"),
-        GoFish::Card.new(rank, "Clubs"),
-        GoFish::Card.new(rank, "Hearts"),
-        GoFish::Card.new(rank, "Diamonds")
+        GoFish::Card.new(rank: rank, suit: "Spades"),
+        GoFish::Card.new(rank: rank, suit: "Clubs"),
+        GoFish::Card.new(rank: rank, suit: "Hearts"),
+        GoFish::Card.new(rank: rank, suit: "Diamonds")
       ]
     end
-    let(:other_card) { GoFish::Card.new("7", "Hearts") }
+    let(:other_card) { GoFish::Card.new(rank: "7", suit: "Hearts") }
 
     context "when hand contains four cards of the same rank" do
       before { player.hand = matching_cards + [ other_card ] }
