@@ -96,12 +96,13 @@ Surfaced in an assessment pass; none are behind any authorization.
   the chosen suit is never persisted anywhere — so a played 8 doesn't actually
   change the required suit. Finish the flow (persist the chosen suit; have
   `playable?` honor it).
-- **Domain de-duplication — see `docs/dedup-plan.md`.** Phases 0–3 are landed:
-  `Card`/`Deck`, the in-memory `Player`, the shared `Engine` queries, and the
-  enforced `Games::Engine` contract are all consolidated. Remaining: the STI
-  start-up override (Phase 4), the `Turn` form objects (Phase 5), and the
-  remaining `Game` engine delegators (Phase 6). That doc is the entry point for
-  this work; it also absorbs several serialization bugs listed under *Known bugs*.
+- **Domain de-duplication — see `docs/dedup-plan.md`.** Phases 0–4 are landed:
+  `Card`/`Deck`, the in-memory `Player`, the shared `Engine` queries, the
+  enforced `Games::Engine` contract, and the STI start-up template (subclasses
+  now declare only `serialize` + `engine_class`/`player_class`) are all
+  consolidated. Remaining: the `Turn` form objects (Phase 5) and the remaining
+  `Game` engine delegators (Phase 6). That doc is the entry point for this work;
+  it also absorbs several serialization bugs listed under *Known bugs*.
 
 ## Performance & cleanup
 
@@ -169,6 +170,4 @@ their own doc.
   called. The
   `pages#index` route (`config/routes.rb:29`,
   `resources :pages, only: [:index]`) points at an action/view that don't exist
-  (`PagesController` has only `rules`) — a route to a 500. `GoFish::Player#initialize`'s
-  default `user_id: user_id` (`go_fish/player.rb:6`) is self-referential (resolves
-  to `nil`), while `CrazyEights::Player` defaults to `0` — pick one.
+  (`PagesController` has only `rules`) — a route to a 500.

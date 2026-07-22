@@ -48,22 +48,15 @@ RSpec.describe Game, type: :model do
       let!(:player1) { create :player, game: game }
       let!(:player2) { create :player, game: game }
 
-      it "transitions to active and sets started_at" do
-        game.reload
-        expect(game.state).to eq("active")
-        expect(game.started_at).not_to be_nil
-      end
+      it_behaves_like "a game that starts when full",
+        engine_class: GoFish::Engine,
+        player_class: GoFish::Player
 
       let(:dealt_deck_length) { 38 }
       let(:starting_hand_size) { 7 }
 
-      it "populates the database with opening game state as json" do
+      it "deals a starting hand to each player from the deck" do
         go_fish_game = Game.find(game.id).game_state
-
-        expect(go_fish_game).to be_a_kind_of GoFish::Engine
-        expect(go_fish_game.players.first.user_id).to be player1.user_id
-        expect(go_fish_game.players.last.user_id).to be player2.user_id
-
         expect(go_fish_game.deck_length).to be dealt_deck_length
         go_fish_game.players.each do |player|
           expect(player.hand_size).to be starting_hand_size
@@ -76,11 +69,7 @@ RSpec.describe Game, type: :model do
 
       before { create(:player, game: game) }
 
-      it "stays waiting" do
-        game.reload
-        expect(game.state).to eq("waiting")
-        expect(game.started_at).to be_nil
-      end
+      it_behaves_like "a game that stays waiting until full"
     end
   end
 

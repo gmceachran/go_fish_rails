@@ -29,4 +29,4 @@ Keep this doc lean: prune a plan once its spec is merged and green.
 
 ## Active plans
 
-(None — Phase 3 spec merged and green.)
+(None — Phase 4 spec merged and green.)
