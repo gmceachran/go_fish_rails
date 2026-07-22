@@ -9,7 +9,7 @@ diverges from "standard" Crazy Eights, the code wins.
   suits `Spades Clubs Hearts Diamonds`.
 - **8s are wild** (`Card#wild?`, `WILD_RANK = "8"`).
 - Deck is shuffled, then dealt. Starting hand size by player count
-  (`Implementation::STARTING_HAND`):
+  (`Engine::STARTING_HAND`):
   - 1–2 players: 7 cards each
   - 3–5 players: 5 cards each
 - The discard pile is started by flipping the top card, **wild or not** — an
@@ -28,7 +28,7 @@ the `action` field). Validity (see `CrazyEightsTurn` validations):
   hold that exact card, and the card must be **wild (an 8), or match the rank or
   suit of the top discard**.
 
-Resolution (`Implementation#play_turn`):
+Resolution (`Engine#play_turn`):
 - **Play** → the card moves from hand to the discard pile; `TurnResult` records
   `played_card` and whether it was `wild`.
 - **Draw** → the player takes the top deck card and **plays again**
@@ -45,7 +45,7 @@ re-selection after a wild is a known rough edge — see `docs/roadmap.md`.
 
 ## Ending & winner
 
-`Implementation#winner` returns the player who has emptied their hand (`nil`
+`Engine#winner` returns the player who has emptied their hand (`nil`
 otherwise), guarded by `discard_pile.empty?` so a not-yet-dealt game names no
 winner. After every turn, `Game#declare_winner_if_over!` (shared with Go Fish —
 see `docs/architecture.md`) maps that player to the persisted `Player` and calls

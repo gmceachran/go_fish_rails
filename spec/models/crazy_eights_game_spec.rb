@@ -14,7 +14,7 @@ RSpec.describe CrazyEightsGame, type: :model do
       end
 
       def dumped_state
-        CrazyEights::Implementation.dump(reloaded_state)
+        CrazyEights::Engine.dump(reloaded_state)
       end
 
       it "transitions to active and sets started_at" do
@@ -24,7 +24,7 @@ RSpec.describe CrazyEightsGame, type: :model do
       end
 
       it "reloads a CrazyEights implementation from the database" do
-        expect(reloaded_state).to be_a(CrazyEights::Implementation)
+        expect(reloaded_state).to be_a(CrazyEights::Engine)
       end
 
       it "persists the deck and discard pile" do

@@ -1,5 +1,5 @@
 module CrazyEights
-  class Implementation < ::GameImplementation
+  class Engine < Games::Engine
     STARTING_HAND = {
       1 => 7,
       2 => 7,
@@ -39,7 +39,7 @@ module CrazyEights
       discard_pile = json["discard_pile"].nil? ? [] : json["discard_pile"].map { |card| Card.from_json(card) }
       results = json["turn_results"].map { |result| TurnResult.from_json(result) }
 
-      Implementation.new(players: players,
+      Engine.new(players: players,
                          active_player_index: json["active_player_index"],
                          deck: deck,
                          discard_pile: discard_pile,

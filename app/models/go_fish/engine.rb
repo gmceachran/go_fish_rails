@@ -1,5 +1,5 @@
 module GoFish
-  class Implementation < ::GameImplementation
+  class Engine < Games::Engine
     STARTING_HAND = {
       1 => 7,
       2 => 7,
@@ -34,7 +34,7 @@ module GoFish
       deck = Deck.from_json(json["deck"])
       results = (json["turn_results"] || []).map { |result| TurnResult.from_json(result) }
 
-      Implementation.new(players: go_fish_players,
+      Engine.new(players: go_fish_players,
                active_player_index: json["active_player_index"],
                deck: deck,
                turn_results: results)

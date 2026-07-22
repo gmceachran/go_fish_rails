@@ -104,10 +104,10 @@ column): `GoFishGame` and `CrazyEightsGame`. The full game state (deck, hands,
 discard pile, turn results) is **not** relational — it is serialized as JSONB
 into the `game_state` column via `serialize ..., coder:`, round-tripping through
 plain-Ruby domain objects under `app/models/go_fish/` and
-`app/models/crazy_eights/`. Those POROs (`Implementation`, `Deck`, `Card`,
+`app/models/crazy_eights/`. Those POROs (`Engine`, `Deck`, `Card`,
 `Player`, `Book`, `TurnResult`, `GameBoard`) hold all card-game rules and know
-nothing about the database; each `Implementation` subclasses the shared
-`GameImplementation` and exposes a common interface (`start`, `play_turn`,
+nothing about the database; each `Engine` subclasses the shared
+`Games::Engine` and exposes a common interface (`start`, `play_turn`,
 `advance_turn`, `winner`, `board_for`). See `docs/architecture.md`.
 
 Turn flow: a controller builds a non-persisted `ActiveModel` form object (`Turn`
@@ -124,7 +124,7 @@ callbacks push Turbo Stream refreshes to connected clients.
   **adding or renaming an ivar on a `game_state` PORO is silently dropped on
   reload unless you also update `from_json`.** Already bitten twice
   (`GoFish::Player#name`, `CrazyEights::TurnResult#wild`) — see `docs/roadmap.md`.
-- **New/changed game logic lives in the `Implementation` + STI subclass**; don't
+- **New/changed game logic lives in the `Engine` + STI subclass**; don't
   special-case games in shared controllers/views beyond the existing `case game`
   dispatch.
 - `Current.session` / `Current.user` carry the authenticated user (see
