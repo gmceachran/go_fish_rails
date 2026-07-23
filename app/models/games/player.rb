@@ -7,7 +7,7 @@ module Games
     attr_accessor :hand
 
     def initialize(user_id: nil, hand: [], name: "Lord Farquad")
-      @user_id = user_id
+      @user_id = user_id&.to_i
       @hand = hand
       @name = name
     end

@@ -3,6 +3,21 @@
 Running list of work to do, bugs, and tech debt worth tracking. Keep this
 focused; if a category grows large, split it into its own doc.
 
+## Currently implementing: Rummy
+
+Pre-Rummy architecture prep (unify the turn-advance signal, push turn dispatch
+onto the Game model, standardize `user_id` comparison) is complete — see
+`docs/pre-rummy-architecture.md` and `docs/roadmap-completed.md`.
+
+**Next step: implement Rummy itself** — the confirmed third
+game. The work is broken down in **`docs/rummy-breakdown.md`** (BRAVE breakdown:
+scope, approach, risks, ~16pt estimate, and a build-ordered implementation
+checklist), with the design rationale in **`docs/rummy-decisions.md`** (D1–D5).
+In short: build bottom-up — `Rummy::Card`/`Deck` (ace-low runs) → `Meld` rules →
+`Player` → `Engine` (multi-step turn, communal melds, break-in, stock flip,
+win-by-empty-hand) → `RummyGame` STI + `RummyTurn` → views. Scoring is descoped
+to a single hand (D4).
+
 ## Features
 
 - **Collect a username at sign-up.** `User` has no `username` column at all
@@ -121,7 +136,7 @@ layer was suspected of causing the hang; that's resolved, so treat them as
 confidence/quality work rather than urgent.
 
 - **No request/controller specs exist at all.** The entire turn-application flow
-  — `TurnsController` dispatch, `advance_turn unless go_again`/`play_again`,
+  — `TurnsController` dispatch, `advance_turn unless result.go_again?`,
   winner declaration — is unverified except through the browser suite (system
   specs) and, for `declare_winner_if_over!` itself, a model spec. There is no
   `type: :request` spec anywhere. A request-spec layer asserting turn outcomes at

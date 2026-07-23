@@ -43,7 +43,9 @@ their hand.
 ## Laying off
 
 A player may add cards from their hand to **any meld already on the table**
-(their own or an opponent's):
+(their own or an opponent's) — **but only once they have laid down at least one
+meld of their own this game** ("breaking in"). A player who has not yet melded
+may not lay off onto anyone's meld.
 
 - Add a fourth card to a three-of-a-kind group.
 - Extend a sequence at either end (e.g. with `10 9 8` showing, add `J`, or

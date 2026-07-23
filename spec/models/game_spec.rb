@@ -50,7 +50,9 @@ RSpec.describe Game, type: :model do
 
       it_behaves_like "a game that starts when full",
         engine_class: GoFish::Engine,
-        player_class: GoFish::Player
+        player_class: GoFish::Player,
+        turn_class: Turn,
+        turn_params_keys: [ :rank, :opponent ]
 
       let(:dealt_deck_length) { 38 }
       let(:starting_hand_size) { 7 }

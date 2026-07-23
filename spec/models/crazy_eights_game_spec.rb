@@ -19,7 +19,9 @@ RSpec.describe CrazyEightsGame, type: :model do
 
       it_behaves_like "a game that starts when full",
         engine_class: CrazyEights::Engine,
-        player_class: CrazyEights::Player
+        player_class: CrazyEights::Player,
+        turn_class: CrazyEightsTurn,
+        turn_params_keys: [ :rank, :suit, :action ]
 
       it "persists the deck and discard pile" do
         expect(dumped_state.keys).to include("deck", "discard_pile")

@@ -5,6 +5,12 @@ module GameControlHelper
     game.players.last.hand = [ GoFish::Card.new(rank: "4", suit: "Spades") ]
   end
 
+  def override_go_fish_match(game)
+    game.deck.cards = [ GoFish::Card.new(rank: "2", suit: "Spades") ]
+    game.players.first.hand = [ GoFish::Card.new(rank: "3", suit: "Spades") ]
+    game.players.last.hand = [ GoFish::Card.new(rank: "3", suit: "Hearts") ]
+  end
+
   def override_go_fish_win(game)
     game.deck.cards = []
     game.players.first.hand = [ GoFish::Card.new(rank: "3", suit: "Spades"),

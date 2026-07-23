@@ -16,6 +16,13 @@ RSpec.describe Games::Player, type: :model do
     end
   end
 
+  describe "#user_id" do
+    it "coerces a string user_id to an integer" do
+      player = Games::Player.new(user_id: "7", name: "Ana")
+      expect(player.user_id).to eq 7
+    end
+  end
+
   describe ".from_json" do
     let(:player) { Games::Player.new(user_id: 7, name: "Ana") }
 

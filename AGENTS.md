@@ -107,9 +107,12 @@ plain-Ruby domain objects under `app/models/go_fish/` and
 `app/models/crazy_eights/`. Those POROs (`Engine`, `Deck`, `Card`,
 `Player`, `Book`, `TurnResult`, `GameBoard`) hold all card-game rules and know
 nothing about the database. Shared bases live under `app/models/games/`: `Card`,
-`Deck`, and each `Engine` subclass `Games::Card` / `Games::Deck` / `Games::Engine`,
-and the serialized POROs mix in `Games::Serializable`. `Games::Engine` exposes the
-common interface (`start`, `play_turn`, `advance_turn`, `winner`, `board_for`).
+`Deck`, `TurnResult`, and each `Engine` subclass `Games::Card` / `Games::Deck` /
+`Games::TurnResult` / `Games::Engine`, and the serialized POROs mix in
+`Games::Serializable`. `Games::Engine` exposes the common interface (`start`,
+`play_turn`, `advance_turn`, `winner`, `board_for`); `Games::TurnResult` exposes
+the shared `go_again?` predicate the controller uses to decide whether a turn
+advances.
 See `docs/architecture.md`.
 
 Turn flow: a controller builds a non-persisted `ActiveModel` form object (`Turn`
@@ -129,8 +132,9 @@ callbacks push Turbo Stream refreshes to connected clients.
   unless you also update `from_json`** (bit us with `GoFish::Player#name`, since
   fixed by the concern).
 - **New/changed game logic lives in the `Engine` + STI subclass**; don't
-  special-case games in shared controllers/views beyond the existing `case game`
-  dispatch.
+  special-case games in shared controllers/views. `TurnsController` has no
+  per-game branching — it reads `game.turn_class`/`game.turn_params_keys`,
+  mirroring the existing `engine_class`/`player_class` pattern.
 - `Current.session` / `Current.user` carry the authenticated user (see
   `app/controllers/concerns/authentication.rb`) — no Devise.
 - The `Player` join model auto-starts the game once full (`start_if_full!` via an
@@ -146,6 +150,10 @@ callbacks push Turbo Stream refreshes to connected clients.
 - `docs/architecture.md` — models, STI, JSONB serialization, turn/broadcast flow
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
+- `docs/rummy.md` — Rummy target rules (the in-progress third game); design
+  rationale in `docs/rummy-decisions.md`, build plan in
+  `docs/rummy-breakdown.md`, prerequisite platform prep in
+  `docs/pre-rummy-architecture.md`
 - `docs/roadmap.md` — **open** known issues, tech debt, and refactors to tackle;
   keep it to outstanding work only — move resolved items out to
   `docs/roadmap-completed.md` rather than leaving them here marked done

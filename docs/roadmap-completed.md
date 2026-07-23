@@ -4,6 +4,31 @@ Companion to `docs/roadmap.md`. That file tracks what's outstanding; this one
 is the record of what started there and is now resolved, with what the fix
 actually was — useful when a future item rhymes with one of these.
 
+## Pre-Rummy architecture prep
+
+**Was:** three seams in the shared `Games::` abstraction (see the de-duplication
+entry below) would have forced Rummy into a bespoke fourth branch or replicated
+a latent bug: Go Fish's `TurnResult` exposed `go_again` while Crazy Eights'
+exposed `play_again` for the same "does this action end the turn" idea, driving
+two near-identical apply methods in `TurnsController`; that same controller
+hardcoded a `case game when GoFishGame / CrazyEightsGame` for form-object class,
+permitted params, and the advance predicate; and `user_id` comparisons were
+inconsistent — the base `Games::Engine#player`/`#active_player?` compared with
+no coercion at all while every engine and turn form object defensively used
+`.to_s ==`.
+
+**Fix:** phased in `docs/pre-rummy-architecture.md` (all three phases done).
+Phase 1 introduced a single shared `go_again?` predicate on both `TurnResult`s.
+Phase 2 added `Game#turn_class`/`#turn_params_keys` on each STI subclass
+(mirroring `engine_class`/`player_class`) and collapsed `TurnsController#create`
+to one generic path. Phase 3 picked one identity convention — coerce
+`user_id`-shaped values to `Integer` once, at the boundary where they enter a
+domain object (`Games::Player#initialize`, `Games::Turn#user_id=`,
+`Turn#opponent=`, all via `&.to_i` so a missing id stays `nil` rather than
+becoming `0`) — so every comparison site downstream could drop `.to_s` and use
+plain `==`. Rummy's constant player/meld lookups now build on one proven,
+tested identity convention instead of multiplying the old inconsistency.
+
 ## Domain de-duplication — shared `Games::` base for both card games
 
 **Was:** `GoFishGame`/`CrazyEightsGame` and their POROs (`Card`, `Deck`,

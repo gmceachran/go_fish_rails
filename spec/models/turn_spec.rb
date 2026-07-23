@@ -44,6 +44,16 @@ RSpec.describe Turn, type: :model do
       turn.opponent = turn.user_id
       expect(turn).not_to be_valid
     end
+
+    it "requires an opponent" do
+      turn.opponent = nil
+      expect(turn).not_to be_valid
+    end
+
+    it "is valid when opponent arrives as a string" do
+      turn.opponent = opponent_player.user_id.to_s
+      expect(turn).to be_valid
+    end
   end
 
   describe "hand possession" do

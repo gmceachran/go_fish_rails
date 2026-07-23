@@ -1,11 +1,18 @@
 RSpec.shared_examples "a game that starts when full" do |classes|
   let(:engine_class) { classes.fetch(:engine_class) }
   let(:player_class) { classes.fetch(:player_class) }
+  let(:turn_class) { classes.fetch(:turn_class) }
+  let(:turn_params_keys) { classes.fetch(:turn_params_keys) }
   let(:started_state) { Game.find(game.id).game_state }
 
   it "exposes the declared engine_class and player_class" do
     expect(game.engine_class).to eq engine_class
     expect(game.player_class).to eq player_class
+  end
+
+  it "exposes the declared turn_class and turn_params_keys" do
+    expect(game.turn_class).to eq turn_class
+    expect(game.turn_params_keys).to eq turn_params_keys
   end
 
   it "transitions to active and sets started_at" do

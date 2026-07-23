@@ -13,6 +13,13 @@ RSpec.describe Games::Turn, type: :model do
 
   it_behaves_like "a turn for an active game and the active player's turn"
 
+  describe "#user_id=" do
+    it "matches the active player when the id arrives as a string" do
+      subject.user_id = active_player.user_id.to_s
+      expect(subject).to be_valid
+    end
+  end
+
   describe "#game" do
     it "memoizes the lookup" do
       allow(Game).to receive(:find_by).and_call_original

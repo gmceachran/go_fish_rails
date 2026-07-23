@@ -66,6 +66,22 @@ RSpec.describe :play_go_fish, type: :system do
         end
       end
 
+      context "when the opponent holds the requested rank" do
+        before do
+          log_out
+          log_in(user1)
+          override_go_fish_match(game.game_state)
+          game.save
+          visit game_path(game)
+        end
+
+        it "the turn does not advance" do
+          click_on "Ask for Cards"
+          expect(page).to have_css ".game-actions"
+          expect(page).to have_content "Your Turn"
+        end
+      end
+
       context "when the user does not press the form submit button within 30 seconds" do
         let(:wait_time) { 0.1 }
         before do

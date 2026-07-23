@@ -3,4 +3,6 @@ class GoFishGame < Game
 
   def engine_class = GoFish::Engine
   def player_class = GoFish::Player
+  def turn_class = Turn
+  def turn_params_keys = [ :rank, :opponent ]
 end
