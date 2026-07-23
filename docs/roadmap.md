@@ -3,6 +3,23 @@
 Running list of work to do, bugs, and tech debt worth tracking. Keep this
 focused; if a category grows large, split it into its own doc.
 
+## Currently implementing: pre-Rummy architecture prep
+
+We're on a branch making minor, targeted architecture changes to streamline the
+upcoming Rummy implementation, now that we have the actual game rules
+(`docs/rummy.md`) in hand. See **`docs/pre-rummy-architecture.md`** for the
+phased plan (unify the turn-advance signal, push turn dispatch onto the Game
+model, standardize `user_id` comparison).
+
+**Next step after this branch: implement Rummy itself** — the confirmed third
+game. The work is broken down in **`docs/rummy-breakdown.md`** (BRAVE breakdown:
+scope, approach, risks, ~16pt estimate, and a build-ordered implementation
+checklist), with the design rationale in **`docs/rummy-decisions.md`** (D1–D5).
+In short: build bottom-up — `Rummy::Card`/`Deck` (ace-low runs) → `Meld` rules →
+`Player` → `Engine` (multi-step turn, communal melds, break-in, stock flip,
+win-by-empty-hand) → `RummyGame` STI + `RummyTurn` → views. Scoring is descoped
+to a single hand (D4).
+
 ## Features
 
 - **Collect a username at sign-up.** `User` has no `username` column at all

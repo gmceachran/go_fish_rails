@@ -146,6 +146,10 @@ callbacks push Turbo Stream refreshes to connected clients.
 - `docs/architecture.md` — models, STI, JSONB serialization, turn/broadcast flow
 - `docs/go-fish.md` — Go Fish rules as implemented
 - `docs/crazy-eights.md` — Crazy Eights rules as implemented
+- `docs/rummy.md` — Rummy target rules (the in-progress third game); design
+  rationale in `docs/rummy-decisions.md`, build plan in
+  `docs/rummy-breakdown.md`, prerequisite platform prep in
+  `docs/pre-rummy-architecture.md`
 - `docs/roadmap.md` — **open** known issues, tech debt, and refactors to tackle;
   keep it to outstanding work only — move resolved items out to
   `docs/roadmap-completed.md` rather than leaving them here marked done
