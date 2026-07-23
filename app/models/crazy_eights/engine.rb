@@ -35,7 +35,7 @@ module CrazyEights
     end
 
     def play_turn(turn)
-      player = players.detect { it.user_id.to_s == turn.user_id.to_s }
+      player = players.detect { it.user_id == turn.user_id }
       turn.draw? ? handle_draw(player) : handle_play_card(player, turn.rank, turn.suit)
       turn_result
     end

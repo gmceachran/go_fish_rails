@@ -26,8 +26,8 @@ module GoFish
     end
 
     def play_turn(turn)
-      player = players.detect { it.user_id.to_s == turn.user_id.to_s }
-      opponent = players.detect { it.user_id.to_s == turn.opponent.to_s }
+      player = players.detect { it.user_id == turn.user_id }
+      opponent = players.detect { it.user_id == turn.opponent }
       handle_take_cards(player, opponent.cards_of_rank_given(turn.rank), turn.rank)
       handle_empty_hand
       turn_result

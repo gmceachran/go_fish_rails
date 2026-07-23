@@ -29,10 +29,12 @@ Keep this doc lean: prune a plan once its spec is merged and green.
 
 ## Active plans
 
-None currently — the domain de-duplication refactor's last phase
-(`Game#advance_turn` / `Game#board_for` delegators, see
-`docs/completed_cards/dedup-plan.md`) landed without a driving spec by
-developer decision: pure one-line delegators with no branching, and proving
-delegation would require stubbing `game.game_state`, which this codebase
-avoids.
+None currently — Pre-Rummy Phase 3 (`user_id` identity coercion) landed; see
+`docs/pre-rummy-architecture.md`.
+
+The domain de-duplication refactor's last phase (`Game#advance_turn` /
+`Game#board_for` delegators, see `docs/completed_cards/dedup-plan.md`) landed
+without a driving spec by developer decision: pure one-line delegators with no
+branching, and proving delegation would require stubbing `game.game_state`,
+which this codebase avoids.
 

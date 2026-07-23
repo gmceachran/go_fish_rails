@@ -59,7 +59,7 @@ rather than by copy.
 
 ---
 
-## Phase 3 — Standardize `user_id` identity comparison
+## Phase 3 — Standardize `user_id` identity comparison (done)
 
 The base `Games::Engine#player` / `active_player?` compare `it.user_id ==
 user_id` with no coercion (`app/models/games/engine.rb:22-23`), but every engine

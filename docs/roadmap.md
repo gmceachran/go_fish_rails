@@ -3,15 +3,13 @@
 Running list of work to do, bugs, and tech debt worth tracking. Keep this
 focused; if a category grows large, split it into its own doc.
 
-## Currently implementing: pre-Rummy architecture prep
+## Currently implementing: Rummy
 
-We're on a branch making minor, targeted architecture changes to streamline the
-upcoming Rummy implementation, now that we have the actual game rules
-(`docs/rummy.md`) in hand. See **`docs/pre-rummy-architecture.md`** for the
-phased plan (unify the turn-advance signal, push turn dispatch onto the Game
-model, standardize `user_id` comparison).
+Pre-Rummy architecture prep (unify the turn-advance signal, push turn dispatch
+onto the Game model, standardize `user_id` comparison) is complete — see
+`docs/pre-rummy-architecture.md` and `docs/roadmap-completed.md`.
 
-**Next step after this branch: implement Rummy itself** — the confirmed third
+**Next step: implement Rummy itself** — the confirmed third
 game. The work is broken down in **`docs/rummy-breakdown.md`** (BRAVE breakdown:
 scope, approach, risks, ~16pt estimate, and a build-ordered implementation
 checklist), with the design rationale in **`docs/rummy-decisions.md`** (D1–D5).

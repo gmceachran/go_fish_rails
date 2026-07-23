@@ -35,7 +35,7 @@ class CrazyEightsTurn < Games::Turn
   end
 
   def validate_player_holds_card
-    player = game_state.players.detect { |p| p.user_id.to_s == user_id.to_s }
+    player = game_state.players.detect { |p| p.user_id == user_id }
     return errors.add(:user_id, "is not a player in this game") if player.nil?
 
     card = player.hand.find { |hand_card| hand_card.rank == rank && hand_card.suit == suit }
@@ -53,7 +53,7 @@ class CrazyEightsTurn < Games::Turn
   end
 
   def held_card
-    player = game_state.players.detect { |p| p.user_id.to_s == user_id.to_s }
+    player = game_state.players.detect { |p| p.user_id == user_id }
     player.hand.find { |hand_card| hand_card.rank == rank && hand_card.suit == suit }
   end
 end
