@@ -153,3 +153,9 @@ callbacks push Turbo Stream refreshes to connected clients.
   (includes the now-resolved suite-hang investigation)
 - `docs/spec-plans.md` — where the logical flow of a spec is hashed out and agreed before the spec is written (see project rule 1)
 - `docs/questions.md` — running questions for instructors (for the developer, not agents)
+- `PRODUCT.md` — durable product truth (users, purpose, scope: Go Fish + Crazy
+  Eights shipped, Rummy the confirmed third game)
+- `DESIGN.md` — the visual system for UI work. Its **reference of record** is
+  `docs/rummy-concepting/optics/piles-in-board-accent.html`; the whole app should
+  converge on it, and the shipped Go Fish / Crazy Eights styling is treated as
+  legacy to bring in line (sidecar: `.impeccable/design.json`)

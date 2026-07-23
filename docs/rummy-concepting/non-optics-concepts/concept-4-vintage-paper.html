@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rummy — Concept 4: Vintage Paper</title>
+<style>
+  :root {
+    --paper: #e9e0cb;
+    --paper-2: #f2ebda;
+    --card: #fbf7ec;
+    --ink: #2a251d;
+    --muted: #7a6f57;
+    --oxblood: #8c2f27;
+    --rule: #cfc4a6;
+    --gold: #9c7c2f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Iowan Old Style", "Hoefler Text", Georgia, "Times New Roman", serif;
+    color: var(--ink);
+    height: 100vh;
+    background:
+      radial-gradient(120% 100% at 50% 0%, var(--paper-2), var(--paper));
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 258px;
+    height: 100vh;
+    padding: 24px;
+    gap: 0;
+  }
+  .table {
+    display: grid;
+    grid-template-columns: 1fr 196px;
+    grid-template-rows: 1fr auto;
+    gap: 22px;
+    min-height: 0;
+    padding-right: 24px;
+    border-right: 2px solid var(--ink);
+  }
+
+  /* ---- melds ---- */
+  .melds { grid-column: 1; grid-row: 1; overflow-y: auto; padding-right: 6px; }
+  .player { padding: 4px 0 20px; }
+  .player + .player { border-top: 1px solid var(--rule); padding-top: 18px; }
+  .player h3 {
+    font-size: 15px; font-weight: 600; font-style: italic;
+    color: var(--oxblood); margin-bottom: 13px;
+    letter-spacing: 0.01em;
+  }
+  .melds-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .meld {
+    display: flex; align-items: center; gap: 5px;
+    padding: 8px 8px 8px 10px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  /* ---- cards ---- */
+  .card {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 34px; height: 48px; padding: 0 7px;
+    font-size: 18px; font-weight: 600;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid #d8ccac;
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 rgba(42,37,29,0.12);
+  }
+  .card.red { color: var(--oxblood); }
+  .card.lg { min-width: 44px; height: 64px; font-size: 22px; }
+  .card.big { min-width: 58px; height: 84px; font-size: 30px; }
+
+  .layoff {
+    width: 26px; height: 26px; margin-left: 3px;
+    font-family: Georgia, serif; font-size: 18px; line-height: 1;
+    color: var(--paper-2); background: var(--oxblood);
+    border: 0; border-radius: 3px; cursor: pointer;
+  }
+  .layoff:hover { background: #6f231d; }
+
+  /* ---- piles ---- */
+  .piles { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 20px; }
+  .pile { flex: 1; display: flex; flex-direction: column; }
+  .pile-label {
+    font-size: 12px; font-weight: 600; font-style: italic;
+    color: var(--muted); margin-bottom: 8px; letter-spacing: 0.04em;
+  }
+  .pile-card { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 108px; border-radius: 3px; }
+  .pile-card.back {
+    color: var(--paper-2); font-size: 26px; font-weight: 700;
+    background:
+      repeating-linear-gradient(45deg, #7d2a23 0 7px, #8c2f27 7px 14px);
+    border: 4px double var(--paper-2);
+    box-shadow: 1px 1px 0 rgba(42,37,29,0.18);
+  }
+  .pile-card:not(.back) { background: var(--card); border: 1px solid var(--rule); }
+
+  /* ---- hand ---- */
+  .hand { grid-column: 1 / -1; grid-row: 2; padding-top: 18px; border-top: 2px solid var(--ink); }
+  .hand h3 {
+    font-size: 15px; font-weight: 600; font-style: italic;
+    color: var(--oxblood); margin-bottom: 12px;
+  }
+  .hand-cards { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 18px; }
+  .actions { display: flex; gap: 12px; }
+  .btn {
+    font-family: inherit; font-size: 15px; font-style: italic; padding: 10px 20px;
+    color: var(--ink); cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--ink); border-radius: 3px;
+  }
+  .btn:hover { background: rgba(42,37,29,0.06); }
+  .btn.primary {
+    color: var(--paper-2); font-style: normal; font-weight: 600;
+    background: var(--oxblood); border-color: var(--oxblood);
+  }
+  .btn.primary:hover { background: #6f231d; }
+
+  /* ---- rail ---- */
+  .rail {
+    display: flex; flex-direction: column; gap: 24px;
+    padding: 8px 4px 8px 24px;
+  }
+  .brand {
+    font-size: 32px; font-weight: 700; font-style: italic;
+    color: var(--ink); letter-spacing: 0.01em;
+    border-bottom: 3px double var(--ink); padding-bottom: 12px;
+  }
+  .rail-block h4 {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .round { font-size: 15px; font-style: italic; color: var(--ink); }
+  .turn-list, .score-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .turn-list li { display: flex; align-items: center; gap: 10px; font-size: 16px; color: var(--muted); }
+  .turn-list li::before {
+    content: "○"; color: var(--muted); font-size: 14px;
+  }
+  .turn-list li.active { color: var(--oxblood); font-weight: 700; }
+  .turn-list li.active::before { content: "●"; color: var(--oxblood); }
+  .score-list li {
+    display: flex; justify-content: space-between; font-size: 16px;
+    padding: 8px 0; border-bottom: 1px solid var(--rule);
+  }
+  .score-list li span:last-child { font-weight: 700; font-variant-numeric: oldstyle-nums; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="table">
+      <div class="melds">
+        <section class="player">
+          <h3>Your melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">4♠</span><span class="card">5♠</span><span class="card">6♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">J♦</span><span class="card">J♣</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Dana's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">7♣</span><span class="card red">7♦</span><span class="card red">7♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">2♠</span><span class="card">3♠</span><span class="card">4♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">9♥</span><span class="card red">10♥</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">Q♣</span><span class="card red">Q♦</span><span class="card red">Q♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Tom's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">K♠</span><span class="card red">K♦</span><span class="card">K♣</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+      </div>
+      <div class="piles">
+        <div class="pile">
+          <span class="pile-label">Stock</span>
+          <div class="pile-card back"><span>31</span></div>
+        </div>
+        <div class="pile">
+          <span class="pile-label">Discard</span>
+          <div class="pile-card"><span class="card red big">9♦</span></div>
+        </div>
+      </div>
+      <div class="hand">
+        <h3>Your hand</h3>
+        <div class="hand-cards">
+          <span class="card lg">A♠</span><span class="card lg">3♠</span><span class="card lg red">7♥</span><span class="card lg red">7♦</span><span class="card lg">7♣</span><span class="card lg red">10♦</span><span class="card lg red">J♦</span><span class="card lg red">Q♦</span><span class="card lg">K♣</span>
+        </div>
+        <div class="actions">
+          <button class="btn primary">Draw stock</button>
+          <button class="btn">Take discard</button>
+          <button class="btn">Discard ▾</button>
+        </div>
+      </div>
+    </div>
+    <aside class="rail">
+      <div class="brand">Rummy</div>
+      <div class="rail-block">
+        <div class="round">Round 3 · Deal: Sam</div>
+      </div>
+      <div class="rail-block">
+        <h4>Turn</h4>
+        <ul class="turn-list">
+          <li class="active">You</li>
+          <li>Dana</li>
+          <li>Tom</li>
+        </ul>
+      </div>
+      <div class="rail-block">
+        <h4>Scores</h4>
+        <ul class="score-list">
+          <li><span>You</span><span>19</span></li>
+          <li><span>Dana</span><span>30</span></li>
+          <li><span>Tom</span><span>23</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
