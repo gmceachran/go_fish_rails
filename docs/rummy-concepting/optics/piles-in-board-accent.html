@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rummy — Optics Theme (warm accent)</title>
+<!--
+  Adapts the locked layout to the app's existing Optics theme.
+  Tokens below are copied from @rolemodel/optics + core/theme/game-theme-core.css
+  so the file renders faithfully on its own (the real app pulls them from Optics).
+  Card faces reference the app's own cards_light/*.svg art via relative paths.
+-->
+<style>
+  :root {
+    color-scheme: light dark;
+
+    /* --- project theme (core/theme/game-theme-core.css) --- */
+    --op-color-primary-h: 200;
+    --op-color-primary-s: 50%;
+    --op-color-primary-l: 32%;
+    --op-radius-small: 8px;
+    --op-radius-medium: 16px;
+    --op-radius-large: 24px;
+    --op-radius-x-large: 32px;
+
+    /* --- neutral derives from primary hue (Optics) --- */
+    --op-color-neutral-h: var(--op-color-primary-h);
+    --op-color-neutral-s: 4%;
+
+    /* --- primary scale --- */
+    --op-color-primary-base: light-dark(hsl(200 50% 40%), hsl(200 50% 38%));
+    --op-color-primary-plus-five: light-dark(hsl(200 50% 90%), hsl(200 50% 24%));
+    --op-color-primary-plus-six:  light-dark(hsl(200 50% 94%), hsl(200 50% 20%));
+    --op-color-primary-plus-seven:light-dark(hsl(200 50% 96%), hsl(200 50% 16%));
+    --op-color-primary-plus-eight:light-dark(hsl(200 50% 98%), hsl(200 50% 14%));
+    --op-color-primary-plus-max:  light-dark(hsl(200 50% 100%),hsl(200 50% 12%));
+    --op-color-primary-on-plus-seven: light-dark(hsl(200 50% 8%), hsl(200 50% 80%));
+    --op-color-primary-on-plus-eight: light-dark(hsl(200 50% 4%), hsl(200 50% 88%));
+    --op-color-primary-on-base: light-dark(hsl(200 50% 100%), hsl(200 50% 100%));
+
+    /* --- neutral scale --- */
+    --op-color-neutral-plus-max:  light-dark(hsl(200 4% 100%), hsl(200 4% 8%));
+    --op-color-neutral-plus-eight:light-dark(hsl(200 4% 98%),  hsl(200 4% 10%));
+    --op-color-neutral-plus-seven:light-dark(hsl(200 4% 96%),  hsl(200 4% 14%));
+    --op-color-neutral-plus-six:  light-dark(hsl(200 4% 94%),  hsl(200 4% 16%));
+    --op-color-neutral-plus-five: light-dark(hsl(200 4% 90%),  hsl(200 4% 18%));
+    --op-color-neutral-plus-four: light-dark(hsl(200 4% 84%),  hsl(200 4% 20%));
+    --op-color-neutral-on-plus-eight:  light-dark(hsl(200 4% 4%),  hsl(200 4% 88%));
+    --op-color-neutral-on-plus-five:   light-dark(hsl(200 4% 20%), hsl(200 4% 80%));
+    --op-color-neutral-on-plus-five-alt:light-dark(hsl(200 4% 40%),hsl(200 4% 94%));
+
+    --op-color-background: var(--op-color-neutral-plus-eight);
+    --op-color-border: var(--op-color-neutral-plus-five);
+
+    /* --- spacing (scale unit 1rem, root is 62.5% => 10px) --- */
+    --op-space-scale-unit: 1rem;
+    --op-space-2x-small: calc(var(--op-space-scale-unit) * 0.4);
+    --op-space-x-small:  calc(var(--op-space-scale-unit) * 0.8);
+    --op-space-small:    calc(var(--op-space-scale-unit) * 1.2);
+    --op-space-medium:   calc(var(--op-space-scale-unit) * 1.6);
+    --op-space-large:    calc(var(--op-space-scale-unit) * 2);
+    --op-space-x-large:  calc(var(--op-space-scale-unit) * 2.4);
+
+    /* --- type --- */
+    --op-font-scale-unit: 1rem;
+    --op-font-x-small: calc(var(--op-font-scale-unit) * 1.2);
+    --op-font-small:   calc(var(--op-font-scale-unit) * 1.4);
+    --op-font-medium:  calc(var(--op-font-scale-unit) * 1.6);
+    --op-font-large:   calc(var(--op-font-scale-unit) * 1.8);
+    --op-font-x-large: calc(var(--op-font-scale-unit) * 2);
+    --op-font-weight-normal: 400;
+    --op-font-weight-medium: 500;
+    --op-font-weight-semi-bold: 600;
+    --op-line-height-base: 1.5;
+
+    /* --- borders & shadow --- */
+    --op-border-width: 1px;
+    --op-shadow-x-small: 0 1px 2px hsl(0deg 0% 0% / 3%), 0 1px 3px hsl(0deg 0% 0% / 15%);
+    --op-shadow-small: 0 1px 2px hsl(0deg 0% 0% / 3%), 0 2px 6px hsl(0deg 0% 0% / 15%);
+    --op-shadow-medium: 0 4px 8px hsl(0deg 0% 0% / 15%), 0 1px 3px hsl(0deg 0% 0% / 3%);
+
+    /* --- warm accent: the go-fish feed's brown/amber (alerts-warning, hue 47) --- */
+    --op-color-alerts-warning-h: 47;
+    --op-color-alerts-warning-s: 100%;
+    --op-color-alerts-warning-base:         light-dark(hsl(47 100% 40%), hsl(47 100% 32%));
+    --op-color-alerts-warning-plus-eight:   light-dark(hsl(47 100% 98%), hsl(47 100% 4%));
+    --op-color-alerts-warning-on-plus-eight:light-dark(hsl(47 100% 4%),  hsl(47 100% 88%));
+    /* go-fish theme's custom warm-bubble pair (game-theme-core.css) */
+    --op-color-alerts-warning-plus-seven:   light-dark(hsl(47 100% 14%), hsl(47 100% 8%));
+    --op-color-alerts-warning-on-plus-seven:light-dark(hsl(47 100% 60%), hsl(47 100% 45%));
+  }
+
+  html { font-size: 62.5%; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: var(--op-font-medium);
+    line-height: var(--op-line-height-base);
+    color: var(--op-color-neutral-on-plus-eight);
+    background-color: var(--op-color-background);
+    height: 100vh;
+  }
+
+  /* ---- board grid: work area + full-height rail; hand tray across bottom ---- */
+  .game-board {
+    --gf-side: 334px;
+    --gf-tray: 256px;
+    display: grid;
+    grid-template-columns: 1fr var(--gf-side);
+    grid-template-rows: 1fr var(--gf-tray);
+    height: 100vh;
+    overflow: hidden;
+  }
+  .game-board__main {
+    grid-column: 1; grid-row: 1;
+    min-height: 0;
+    background-color: var(--op-color-neutral-plus-max);
+  }
+  .game-board__main-body {
+    flex: 1; min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 210px;
+    grid-template-rows: minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .game-board__feed {
+    grid-column: 2; grid-row: 1 / span 2;
+    background-color: var(--op-color-primary-plus-eight);
+    border-left: var(--op-border-width) solid var(--op-color-border);
+  }
+  .game-board__feed .gf-section__header { border-bottom-color: var(--op-color-primary-plus-six); }
+  .game-board__feed .header__text { color: var(--op-color-primary-on-plus-eight); }
+  .game-board__feed .gf-section__content {
+    padding: var(--op-space-large);
+  }
+  .game-board__tray {
+    grid-column: 1; grid-row: 2;
+    background-color: var(--op-color-neutral-plus-eight);
+    border-top: var(--op-border-width) solid var(--op-color-border);
+  }
+  .game-board__tray .gf-section__content {
+    padding: var(--op-space-large);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--op-space-medium);
+  }
+
+  /* ---- panel section + header bar (mirrors gf-section / gf-section__header) ---- */
+  .gf-section { display: flex; flex-direction: column; overflow: hidden; height: 100%; min-height: 0; }
+  .gf-section__header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--op-space-x-small); flex-shrink: 0;
+    min-height: calc(var(--op-space-scale-unit) * 6); /* 60px — matches app navbar height */
+    padding-block: var(--op-space-small);
+    padding-inline: var(--op-space-large);
+    border-bottom: var(--op-border-width) solid var(--op-color-border);
+  }
+  .header__text {
+    font-size: var(--op-font-large);
+    font-weight: var(--op-font-weight-semi-bold);
+    color: var(--op-color-neutral-on-plus-eight);
+  }
+  .gf-section__content { overflow: auto; min-height: 0; }
+
+  /* small per-player / per-pile caption */
+  .player__label {
+    font-size: var(--op-font-small);
+    font-weight: var(--op-font-weight-semi-bold);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--op-color-neutral-on-plus-five);
+    margin-bottom: var(--op-space-small);
+  }
+
+  /* ---- melds ---- */
+  .melds {
+    overflow-y: auto; min-height: 0;
+    padding: var(--op-space-large);
+    display: flex; flex-direction: column; gap: var(--op-space-medium);
+  }
+  .player + .player {
+    border-top: var(--op-border-width) solid var(--op-color-border);
+    padding-top: var(--op-space-medium);
+  }
+  .meld-row { display: flex; flex-wrap: wrap; gap: var(--op-space-medium); }
+  .meld {
+    display: flex; align-items: center; gap: var(--op-space-2x-small);
+    padding: var(--op-space-x-small);
+    background-color: var(--op-color-primary-plus-seven);
+    border: var(--op-border-width) solid var(--op-color-primary-plus-six);
+    border-radius: var(--op-radius-medium);
+  }
+  /* warm accent: the meld the player is focused on */
+  .meld--accent {
+    background-color: var(--op-color-alerts-warning-plus-eight);
+    border-color: var(--op-color-alerts-warning-base);
+  }
+  .meld--accent .layoff { /* dark-amber, matching the Round badge */
+    background-color: var(--op-color-alerts-warning-plus-seven);
+    color: var(--op-color-alerts-warning-on-plus-seven);
+  }
+
+  /* ---- playing cards (mirrors playing-card.css) ---- */
+  .playing-card {
+    display: block;
+    box-shadow: var(--op-shadow-x-small);
+    border-radius: calc(var(--op-radius-small) * 0.75);
+  }
+  .playing-card--meld { width: 54px; }
+  .playing-card--medium { width: 82px; }
+  .playing-card--large { width: 54px; } /* hand cards match meld cards */
+  .playing-card--back { border-radius: calc(var(--op-radius-small) * 1.5); }
+
+  .layoff {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; margin-left: var(--op-space-2x-small);
+    font-size: var(--op-font-medium); line-height: 1;
+    color: var(--op-color-primary-on-base);
+    background-color: var(--op-color-primary-base);
+    border: 0; border-radius: var(--op-radius-small);
+    cursor: pointer;
+  }
+  .layoff:hover { filter: brightness(1.08); }
+
+  /* ---- piles column ---- */
+  .piles {
+    border-left: var(--op-border-width) solid var(--op-color-border);
+    background-color: var(--op-color-neutral-plus-eight);
+    padding: var(--op-space-large) var(--op-space-medium);
+    display: flex; flex-direction: column; gap: var(--op-space-large);
+  }
+  .pile { text-align: center; }
+  .pile__stack { position: relative; display: flex; justify-content: center; }
+  .pile__count {
+    display: inline-block; margin-top: var(--op-space-x-small);
+    font-size: var(--op-font-small); color: var(--op-color-neutral-on-plus-five);
+  }
+
+  /* ---- hand tray ---- */
+  .card-tray { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--op-space-x-small); }
+  /* cards picked from the hand to form a meld — warm-focused, grouped on the left */
+  .hand-selection {
+    display: flex; align-items: center; gap: var(--op-space-2x-small);
+    padding: var(--op-space-2x-small);
+    margin-right: var(--op-space-medium);
+    background-color: var(--op-color-alerts-warning-plus-eight);
+    border: var(--op-border-width) solid var(--op-color-alerts-warning-base);
+    border-radius: var(--op-radius-small);
+  }
+  .tray__actions {
+    display: flex; gap: var(--op-space-medium);
+    width: 100%; max-width: 760px;
+  }
+  .btn {
+    flex: 1;
+    font: inherit; font-size: var(--op-font-medium); font-weight: var(--op-font-weight-medium);
+    padding: var(--op-space-small) var(--op-space-medium);
+    border-radius: var(--op-radius-small); cursor: pointer;
+    border: var(--op-border-width) solid var(--op-color-border);
+    background-color: var(--op-color-neutral-plus-max);
+    color: var(--op-color-neutral-on-plus-five);
+  }
+  .btn:hover { background-color: var(--op-color-neutral-plus-seven); }
+  .btn--primary {
+    flex: 1.66;
+    font-weight: var(--op-font-weight-semi-bold);
+    background-color: var(--op-color-primary-base);
+    color: var(--op-color-primary-on-base);
+    border-color: transparent;
+  }
+  .btn--primary:hover { filter: brightness(1.08); background-color: var(--op-color-primary-base); }
+
+  /* ---- rail ---- */
+  .bubble {
+    padding-block: var(--op-space-2x-small); padding-inline: var(--op-space-medium);
+    border-radius: var(--op-radius-x-large);
+    background-color: var(--op-color-alerts-warning-plus-seven); /* warm accent */
+    color: var(--op-color-alerts-warning-on-plus-seven);
+    font-size: var(--op-font-small); font-weight: var(--op-font-weight-medium);
+    width: fit-content;
+  }
+  .rail-block__title {
+    font-size: var(--op-font-x-small); font-weight: var(--op-font-weight-semi-bold);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--op-color-primary-on-plus-seven); opacity: 0.75;
+    margin-bottom: var(--op-space-small);
+  }
+
+  /* combined turn + score column */
+  .player-list { list-style: none; display: flex; flex-direction: column; gap: var(--op-space-x-small); }
+  .player-list li {
+    display: flex; align-items: center; gap: var(--op-space-small);
+    padding: var(--op-space-small) var(--op-space-medium);
+    border: var(--op-border-width) solid var(--op-color-border);
+    border-radius: var(--op-radius-small);
+    background-color: var(--op-color-neutral-plus-max);
+    box-shadow: var(--op-shadow-x-small);
+  }
+  .player-list__turn {
+    width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    background-color: var(--op-color-primary-plus-five);
+  }
+  .player-list__name {
+    flex: 1; font-size: var(--op-font-medium);
+    color: var(--op-color-neutral-on-plus-five);
+  }
+  .player-list__score {
+    font-size: var(--op-font-small);
+    color: var(--op-color-neutral-on-plus-five);
+  }
+  .player-list__score strong {
+    font-size: var(--op-font-medium); font-weight: var(--op-font-weight-semi-bold);
+    color: var(--op-color-neutral-on-plus-five-alt);
+  }
+  .player-list li.is-active { /* warm accent marks whose turn it is */
+    border-color: var(--op-color-alerts-warning-base);
+    background-color: var(--op-color-alerts-warning-plus-eight);
+  }
+  .player-list li.is-active .player-list__turn {
+    background-color: var(--op-color-alerts-warning-base);
+  }
+  .player-list li.is-active .player-list__name {
+    font-weight: var(--op-font-weight-semi-bold);
+    color: var(--op-color-alerts-warning-on-plus-eight);
+  }
+</style>
+</head>
+<body>
+  <div class="game-board">
+
+    <div class="game-board__main gf-section">
+      <header class="gf-section__header"><h2 class="header__text">Board</h2></header>
+      <div class="game-board__main-body">
+        <div class="melds">
+        <section class="player">
+          <h3 class="player__label">Your melds</h3>
+          <div class="meld-row">
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/4_spades.svg" alt="4 of Spades">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/5_spades.svg" alt="5 of Spades">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/6_spades.svg" alt="6 of Spades">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/J_diamonds.svg" alt="J of Diamonds">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/J_clubs.svg" alt="J of Clubs">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/J_hearts.svg" alt="J of Hearts">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="player">
+          <h3 class="player__label">Dana's melds</h3>
+          <div class="meld-row">
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/7_clubs.svg" alt="7 of Clubs">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/7_diamonds.svg" alt="7 of Diamonds">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/7_hearts.svg" alt="7 of Hearts">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/2_spades.svg" alt="2 of Spades">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/3_spades.svg" alt="3 of Spades">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/4_spades.svg" alt="4 of Spades">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+            <div class="meld meld--accent">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/9_hearts.svg" alt="9 of Hearts">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/10_hearts.svg" alt="10 of Hearts">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/J_hearts.svg" alt="J of Hearts">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/Q_clubs.svg" alt="Q of Clubs">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/Q_diamonds.svg" alt="Q of Diamonds">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/Q_hearts.svg" alt="Q of Hearts">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="player">
+          <h3 class="player__label">Tom's melds</h3>
+          <div class="meld-row">
+            <div class="meld">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/K_spades.svg" alt="K of Spades">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/K_diamonds.svg" alt="K of Diamonds">
+              <img class="playing-card playing-card--meld" src="../../../app/assets/images/cards_light/K_clubs.svg" alt="K of Clubs">
+              <button class="layoff" title="Lay off">+</button>
+            </div>
+          </div>
+        </section>
+        </div>
+        <div class="piles">
+          <div class="pile">
+            <h3 class="player__label">Stock</h3>
+            <div class="pile__stack">
+              <img class="playing-card playing-card--medium playing-card--back" src="../../../app/assets/images/cards_light/card_back.svg" alt="Stock">
+            </div>
+            <span class="pile__count">31 left</span>
+          </div>
+          <div class="pile">
+            <h3 class="player__label">Discard</h3>
+            <div class="pile__stack">
+              <img class="playing-card playing-card--medium" src="../../../app/assets/images/cards_light/9_diamonds.svg" alt="9 of Diamonds">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="game-board__tray gf-section">
+      <header class="gf-section__header"><h2 class="header__text">Your Hand</h2></header>
+      <div class="gf-section__content">
+      <div class="card-tray">
+        <div class="hand-selection" title="Selected for a meld">
+          <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/6_hearts.svg" alt="6 of Hearts">
+          <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/7_hearts.svg" alt="7 of Hearts">
+          <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/8_hearts.svg" alt="8 of Hearts">
+        </div>
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/A_spades.svg" alt="A of Spades">
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/3_spades.svg" alt="3 of Spades">
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/10_diamonds.svg" alt="10 of Diamonds">
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/J_diamonds.svg" alt="J of Diamonds">
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/Q_diamonds.svg" alt="Q of Diamonds">
+        <img class="playing-card playing-card--large" src="../../../app/assets/images/cards_light/K_clubs.svg" alt="K of Clubs">
+      </div>
+      <div class="tray__actions">
+        <button class="btn">Take discard</button>
+        <button class="btn btn--primary">Draw stock</button>
+        <button class="btn">Discard ▾</button>
+      </div>
+      </div>
+    </section>
+
+    <aside class="game-board__feed gf-section">
+      <header class="gf-section__header">
+        <h2 class="header__text">Rummy</h2>
+        <span class="bubble">Round 3</span>
+      </header>
+      <div class="gf-section__content">
+        <div class="rail-block">
+          <h3 class="rail-block__title">Players</h3>
+          <ul class="player-list">
+            <li class="is-active">
+              <span class="player-list__turn" aria-hidden="true"></span>
+              <span class="player-list__name">You</span>
+              <span class="player-list__score">Score: <strong>19</strong></span>
+            </li>
+            <li>
+              <span class="player-list__turn" aria-hidden="true"></span>
+              <span class="player-list__name">Dana</span>
+              <span class="player-list__score">Score: <strong>30</strong></span>
+            </li>
+            <li>
+              <span class="player-list__turn" aria-hidden="true"></span>
+              <span class="player-list__name">Tom</span>
+              <span class="player-list__score">Score: <strong>23</strong></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</body>
+</html>

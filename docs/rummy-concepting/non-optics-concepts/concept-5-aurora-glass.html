@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rummy — Concept 5: Aurora Glass</title>
+<style>
+  :root {
+    --glass: rgba(255,255,255,0.14);
+    --glass-2: rgba(255,255,255,0.22);
+    --stroke: rgba(255,255,255,0.35);
+    --ink: #ffffff;
+    --muted: rgba(255,255,255,0.72);
+    --card-ink: #2a2350;
+    --red: #e23d6d;
+    --accent: #ffd66b;
+    --shadow: 0 10px 40px rgba(31,10,60,0.28);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    height: 100vh;
+    background:
+      radial-gradient(90% 80% at 10% 0%, #7c5cff 0%, transparent 55%),
+      radial-gradient(80% 80% at 95% 15%, #ff5c8a 0%, transparent 50%),
+      radial-gradient(90% 90% at 80% 100%, #2ad0c4 0%, transparent 55%),
+      linear-gradient(150deg, #5b3bd6, #8a3bd6 55%, #2a9bd6);
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 264px;
+    height: 100vh;
+    padding: 26px;
+    gap: 22px;
+  }
+  .table {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    grid-template-rows: 1fr auto;
+    gap: 22px;
+    min-height: 0;
+  }
+  .panel {
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    border-radius: 24px;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  /* ---- melds ---- */
+  .melds { grid-column: 1; grid-row: 1; overflow-y: auto; padding: 10px 24px 24px; }
+  .player { padding: 16px 0; }
+  .player + .player { border-top: 1px solid rgba(255,255,255,0.18); }
+  .player h3 {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  .melds-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .meld {
+    display: flex; align-items: center; gap: 5px;
+    padding: 9px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+  }
+
+  /* ---- cards ---- */
+  .card {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 34px; height: 48px; padding: 0 7px;
+    font-size: 17px; font-weight: 700;
+    color: var(--card-ink);
+    background: linear-gradient(180deg, #ffffff, #f0ecff);
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 11px;
+    box-shadow: 0 6px 14px rgba(31,10,60,0.22);
+  }
+  .card.red { color: var(--red); }
+  .card.lg { min-width: 46px; height: 66px; font-size: 22px; border-radius: 14px; }
+  .card.big { min-width: 62px; height: 90px; font-size: 30px; border-radius: 16px; }
+
+  .layoff {
+    width: 30px; height: 30px; margin-left: 4px;
+    font-size: 19px; line-height: 1; font-weight: 700; color: var(--card-ink);
+    background: linear-gradient(180deg, #fff2c9, var(--accent));
+    border: 0; border-radius: 50%;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(31,10,60,0.28);
+  }
+  .layoff:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+  /* ---- piles ---- */
+  .piles { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 18px; padding: 20px 18px; }
+  .pile { flex: 1; display: flex; flex-direction: column; }
+  .pile-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .pile-card { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 108px; border-radius: 18px; }
+  .pile-card.back {
+    color: #fff; font-size: 26px; font-weight: 800;
+    background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.12));
+    border: 1px solid rgba(255,255,255,0.5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .pile-card:not(.back) {
+    background: rgba(255,255,255,0.1);
+    border: 1px dashed rgba(255,255,255,0.45);
+  }
+
+  /* ---- hand ---- */
+  .hand { grid-column: 1 / -1; grid-row: 2; padding: 18px 24px 22px; }
+  .hand h3 {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  .hand-cards { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .actions { display: flex; gap: 12px; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600; padding: 12px 22px;
+    color: var(--ink); cursor: pointer;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 14px;
+    backdrop-filter: blur(6px);
+  }
+  .btn:hover { background: rgba(255,255,255,0.26); }
+  .btn.primary {
+    color: var(--card-ink); font-weight: 700; border-color: transparent;
+    background: linear-gradient(180deg, #fff2c9, var(--accent));
+    box-shadow: 0 6px 18px rgba(255,214,107,0.5);
+  }
+
+  /* ---- rail ---- */
+  .rail {
+    display: flex; flex-direction: column; gap: 24px;
+    padding: 24px 22px;
+    background: var(--glass-2);
+    border: 1px solid var(--stroke);
+    border-radius: 24px;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .brand {
+    font-size: 30px; font-weight: 800; letter-spacing: -0.01em; color: #fff;
+    text-shadow: 0 2px 12px rgba(31,10,60,0.4);
+  }
+  .rail-block h4 {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .round {
+    font-size: 14px; font-weight: 600; padding: 12px 16px; border-radius: 14px;
+    background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3);
+  }
+  .turn-list, .score-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .turn-list li {
+    display: flex; align-items: center; gap: 10px; font-size: 14px;
+    padding: 9px 12px; border-radius: 12px; color: var(--muted);
+  }
+  .turn-list li::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .turn-list li.active {
+    color: #fff; font-weight: 700;
+    background: rgba(255,255,255,0.2);
+  }
+  .turn-list li.active::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .score-list li {
+    display: flex; justify-content: space-between; font-size: 14px;
+    padding: 10px 2px; border-bottom: 1px solid rgba(255,255,255,0.16);
+  }
+  .score-list li span:first-child { color: var(--muted); }
+  .score-list li span:last-child { font-weight: 800; color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="table">
+      <div class="melds panel">
+        <section class="player">
+          <h3>Your melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">4♠</span><span class="card">5♠</span><span class="card">6♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">J♦</span><span class="card">J♣</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Dana's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">7♣</span><span class="card red">7♦</span><span class="card red">7♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">2♠</span><span class="card">3♠</span><span class="card">4♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">9♥</span><span class="card red">10♥</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">Q♣</span><span class="card red">Q♦</span><span class="card red">Q♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Tom's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">K♠</span><span class="card red">K♦</span><span class="card">K♣</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+      </div>
+      <div class="piles panel">
+        <div class="pile">
+          <span class="pile-label">Stock</span>
+          <div class="pile-card back"><span>31</span></div>
+        </div>
+        <div class="pile">
+          <span class="pile-label">Discard</span>
+          <div class="pile-card"><span class="card red big">9♦</span></div>
+        </div>
+      </div>
+      <div class="hand panel">
+        <h3>Your hand</h3>
+        <div class="hand-cards">
+          <span class="card lg">A♠</span><span class="card lg">3♠</span><span class="card lg red">7♥</span><span class="card lg red">7♦</span><span class="card lg">7♣</span><span class="card lg red">10♦</span><span class="card lg red">J♦</span><span class="card lg red">Q♦</span><span class="card lg">K♣</span>
+        </div>
+        <div class="actions">
+          <button class="btn primary">Draw stock</button>
+          <button class="btn">Take discard</button>
+          <button class="btn">Discard ▾</button>
+        </div>
+      </div>
+    </div>
+    <aside class="rail">
+      <div class="brand">Rummy</div>
+      <div class="rail-block">
+        <div class="round">Round 3 · Deal: Sam</div>
+      </div>
+      <div class="rail-block">
+        <h4>Turn</h4>
+        <ul class="turn-list">
+          <li class="active">You</li>
+          <li>Dana</li>
+          <li>Tom</li>
+        </ul>
+      </div>
+      <div class="rail-block">
+        <h4>Scores</h4>
+        <ul class="score-list">
+          <li><span>You</span><span>19</span></li>
+          <li><span>Dana</span><span>30</span></li>
+          <li><span>Tom</span><span>23</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

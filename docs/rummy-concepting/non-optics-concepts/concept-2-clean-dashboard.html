@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rummy — Concept 2: Clean Dashboard</title>
+<style>
+  :root {
+    --bg: #eef1f6;
+    --panel: #ffffff;
+    --line: #e4e8ef;
+    --ink: #1f2733;
+    --muted: #6b7688;
+    --red: #d13b3b;
+    --indigo: #4f46e5;
+    --indigo-soft: #eef0fe;
+    --shadow: 0 1px 2px rgba(16,24,40,0.06), 0 6px 16px rgba(16,24,40,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    height: 100vh;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    height: 100vh;
+    padding: 24px;
+    gap: 20px;
+  }
+  .table {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    grid-template-rows: 1fr auto;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- melds ---- */
+  .melds {
+    grid-column: 1; grid-row: 1;
+    overflow-y: auto;
+    padding: 8px 22px 22px;
+  }
+  .player { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .player:last-child { border-bottom: 0; }
+  .player h3 {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .melds-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .meld {
+    display: flex; align-items: center; gap: 4px;
+    padding: 8px;
+    background: #f7f8fb;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  /* ---- cards ---- */
+  .card {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 32px; height: 44px; padding: 0 6px;
+    font-size: 16px; font-weight: 600;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(16,24,40,0.05);
+  }
+  .card.red { color: var(--red); }
+  .card.lg { min-width: 42px; height: 60px; font-size: 20px; border-radius: 10px; }
+  .card.big { min-width: 58px; height: 82px; font-size: 27px; border-radius: 12px; }
+
+  .layoff {
+    width: 26px; height: 26px; margin-left: 2px;
+    font-size: 17px; line-height: 1; color: var(--indigo);
+    background: var(--indigo-soft);
+    border: 1px solid #dcdcfb; border-radius: 8px;
+    cursor: pointer;
+  }
+  .layoff:hover { background: var(--indigo); color: #fff; }
+
+  /* ---- piles ---- */
+  .piles {
+    grid-column: 2; grid-row: 1;
+    display: flex; flex-direction: column; gap: 16px;
+    padding: 18px 16px;
+  }
+  .pile { flex: 1; display: flex; flex-direction: column; }
+  .pile-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+  .pile-card {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    min-height: 108px; border-radius: 12px;
+  }
+  .pile-card.back {
+    color: #fff; font-size: 24px; font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: 2px solid #fff;
+    box-shadow: inset 0 0 0 1px #4338ca;
+  }
+  .pile-card:not(.back) { background: #f7f8fb; border: 1px dashed #cfd5df; }
+
+  /* ---- hand ---- */
+  .hand {
+    grid-column: 1 / -1; grid-row: 2;
+    padding: 16px 22px 20px;
+  }
+  .hand h3 {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .hand-cards { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .actions { display: flex; gap: 10px; }
+  .btn {
+    font: inherit; font-size: 14px; font-weight: 600; padding: 11px 18px;
+    color: var(--ink); cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .btn:hover { background: #f3f5f9; }
+  .btn.primary {
+    color: #fff; border-color: transparent;
+    background: var(--indigo);
+    box-shadow: 0 2px 6px rgba(79,70,229,0.35);
+  }
+  .btn.primary:hover { background: #433cd0; }
+
+  /* ---- rail ---- */
+  .rail {
+    display: flex; flex-direction: column; gap: 22px;
+    padding: 22px 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+  }
+  .brand {
+    font-size: 24px; font-weight: 800; letter-spacing: -0.01em;
+    color: var(--indigo);
+  }
+  .rail-block h4 {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .round {
+    font-size: 14px; font-weight: 600; padding: 12px 14px; border-radius: 10px;
+    background: var(--indigo-soft); color: #3730a3;
+  }
+  .turn-list, .score-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .turn-list li {
+    display: flex; align-items: center; gap: 10px; font-size: 14px;
+    padding: 8px 10px; border-radius: 8px; color: var(--muted);
+  }
+  .turn-list li::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%;
+    background: #cfd5df;
+  }
+  .turn-list li.active { background: var(--indigo-soft); color: #3730a3; font-weight: 700; }
+  .turn-list li.active::before { background: var(--indigo); }
+  .score-list li {
+    display: flex; justify-content: space-between; font-size: 14px;
+    padding: 9px 2px; border-bottom: 1px solid var(--line);
+  }
+  .score-list li span:first-child { color: var(--muted); }
+  .score-list li span:last-child { font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="table">
+      <div class="melds panel">
+        <section class="player">
+          <h3>Your melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">4♠</span><span class="card">5♠</span><span class="card">6♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">J♦</span><span class="card">J♣</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Dana's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">7♣</span><span class="card red">7♦</span><span class="card red">7♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">2♠</span><span class="card">3♠</span><span class="card">4♠</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card red">9♥</span><span class="card red">10♥</span><span class="card red">J♥</span><button class="layoff" title="Lay off">+</button></div>
+            <div class="meld"><span class="card">Q♣</span><span class="card red">Q♦</span><span class="card red">Q♥</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+        <section class="player">
+          <h3>Tom's melds</h3>
+          <div class="melds-row">
+            <div class="meld"><span class="card">K♠</span><span class="card red">K♦</span><span class="card">K♣</span><button class="layoff" title="Lay off">+</button></div>
+          </div>
+        </section>
+      </div>
+      <div class="piles panel">
+        <div class="pile">
+          <span class="pile-label">Stock</span>
+          <div class="pile-card back"><span>31</span></div>
+        </div>
+        <div class="pile">
+          <span class="pile-label">Discard</span>
+          <div class="pile-card"><span class="card red big">9♦</span></div>
+        </div>
+      </div>
+      <div class="hand panel">
+        <h3>Your hand</h3>
+        <div class="hand-cards">
+          <span class="card lg">A♠</span><span class="card lg">3♠</span><span class="card lg red">7♥</span><span class="card lg red">7♦</span><span class="card lg">7♣</span><span class="card lg red">10♦</span><span class="card lg red">J♦</span><span class="card lg red">Q♦</span><span class="card lg">K♣</span>
+        </div>
+        <div class="actions">
+          <button class="btn primary">Draw stock</button>
+          <button class="btn">Take discard</button>
+          <button class="btn">Discard ▾</button>
+        </div>
+      </div>
+    </div>
+    <aside class="rail">
+      <div class="brand">Rummy</div>
+      <div class="rail-block">
+        <div class="round">Round 3 · Deal: Sam</div>
+      </div>
+      <div class="rail-block">
+        <h4>Turn</h4>
+        <ul class="turn-list">
+          <li class="active">You</li>
+          <li>Dana</li>
+          <li>Tom</li>
+        </ul>
+      </div>
+      <div class="rail-block">
+        <h4>Scores</h4>
+        <ul class="score-list">
+          <li><span>You</span><span>19</span></li>
+          <li><span>Dana</span><span>30</span></li>
+          <li><span>Tom</span><span>23</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
