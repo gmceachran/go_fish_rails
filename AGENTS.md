@@ -132,8 +132,9 @@ callbacks push Turbo Stream refreshes to connected clients.
   unless you also update `from_json`** (bit us with `GoFish::Player#name`, since
   fixed by the concern).
 - **New/changed game logic lives in the `Engine` + STI subclass**; don't
-  special-case games in shared controllers/views beyond the existing `case game`
-  dispatch.
+  special-case games in shared controllers/views. `TurnsController` has no
+  per-game branching — it reads `game.turn_class`/`game.turn_params_keys`,
+  mirroring the existing `engine_class`/`player_class` pattern.
 - `Current.session` / `Current.user` carry the authenticated user (see
   `app/controllers/concerns/authentication.rb`) — no Devise.
 - The `Player` join model auto-starts the game once full (`start_if_full!` via an

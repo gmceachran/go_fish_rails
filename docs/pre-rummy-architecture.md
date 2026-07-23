@@ -38,7 +38,7 @@ games already prove works.
 
 ---
 
-## Phase 2 — Push per-game turn dispatch onto the Game model
+## Phase 2 — Push per-game turn dispatch onto the Game model (done)
 
 `TurnsController#create` hardcodes `case game when GoFishGame / CrazyEightsGame`
 (`turns_controller.rb:5-8`), with per-game `handle_*` / `apply_*` / `*_params`
