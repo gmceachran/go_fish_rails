@@ -60,8 +60,10 @@ Under `app/models/go_fish/` and `app/models/crazy_eights/`:
 - **`Player`** (PORO) — `user_id`, `hand`, and game-specific bits (Go Fish adds
   `books`, `cant_play`, `create_book_if_possible`).
 - **`TurnResult`** — a serializable record of what happened on a turn, used to
-  render the feed. Go Fish: `go_fish`, `cards`, `book_made`, `go_again`,
-  `deck_empty`. Crazy Eights: `drew_card`, `played_card`, `play_again`, `wild`.
+  render the feed. Both subclass `Games::TurnResult`, which holds the shared
+  `go_again`/`go_again?` (the flag the controller checks to decide whether to
+  advance the turn). Go Fish adds `go_fish`, `cards`, `book_made`,
+  `deck_empty`. Crazy Eights adds `drew_card`, `played_card`, `wild`.
 - **`GameBoard`** — a per-request view object handed to the Slim templates.
 
 ## Serialization contract

@@ -35,6 +35,15 @@ RSpec.describe :play_crazy_eights, type: :system do
       # context "when the user does not have a playable card" do
 
       # end
+
+      context "when the user draws a card" do
+        before { visit game_path(game) }
+
+        it "the turn does not advance" do
+          click_on "Draw Card"
+          expect(page).to have_content "Your Turn"
+        end
+      end
     end
   end
 

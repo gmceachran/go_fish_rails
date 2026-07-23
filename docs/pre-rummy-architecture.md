@@ -18,7 +18,7 @@ changes are mechanical and driven by the specs already covering the two games.
 
 ---
 
-## Phase 1 — Unify the turn-advance signal
+## Phase 1 — Unify the turn-advance signal (done)
 
 Go Fish's `TurnResult` exposes `go_again` (`app/models/go_fish/turn_result.rb`);
 Crazy Eights' exposes `play_again` (`app/models/crazy_eights/turn_result.rb`).

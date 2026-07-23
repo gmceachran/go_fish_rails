@@ -107,9 +107,12 @@ plain-Ruby domain objects under `app/models/go_fish/` and
 `app/models/crazy_eights/`. Those POROs (`Engine`, `Deck`, `Card`,
 `Player`, `Book`, `TurnResult`, `GameBoard`) hold all card-game rules and know
 nothing about the database. Shared bases live under `app/models/games/`: `Card`,
-`Deck`, and each `Engine` subclass `Games::Card` / `Games::Deck` / `Games::Engine`,
-and the serialized POROs mix in `Games::Serializable`. `Games::Engine` exposes the
-common interface (`start`, `play_turn`, `advance_turn`, `winner`, `board_for`).
+`Deck`, `TurnResult`, and each `Engine` subclass `Games::Card` / `Games::Deck` /
+`Games::TurnResult` / `Games::Engine`, and the serialized POROs mix in
+`Games::Serializable`. `Games::Engine` exposes the common interface (`start`,
+`play_turn`, `advance_turn`, `winner`, `board_for`); `Games::TurnResult` exposes
+the shared `go_again?` predicate the controller uses to decide whether a turn
+advances.
 See `docs/architecture.md`.
 
 Turn flow: a controller builds a non-persisted `ActiveModel` form object (`Turn`

@@ -76,7 +76,7 @@ module CrazyEights
 
       card = deck.top_card
       player.hand << card
-      turn_results << TurnResult.new(drew_card: card, play_again: true)
+      turn_results << TurnResult.new(drew_card: card, go_again: true)
     end
 
     def playable?(card)

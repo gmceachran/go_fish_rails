@@ -138,7 +138,7 @@ layer was suspected of causing the hang; that's resolved, so treat them as
 confidence/quality work rather than urgent.
 
 - **No request/controller specs exist at all.** The entire turn-application flow
-  — `TurnsController` dispatch, `advance_turn unless go_again`/`play_again`,
+  — `TurnsController` dispatch, `advance_turn unless result.go_again?`,
   winner declaration — is unverified except through the browser suite (system
   specs) and, for `declare_winner_if_over!` itself, a model spec. There is no
   `type: :request` spec anywhere. A request-spec layer asserting turn outcomes at

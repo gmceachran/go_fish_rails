@@ -2,13 +2,13 @@ require "rails_helper"
 
 RSpec.describe CrazyEights::TurnResult, type: :model do
   let(:card) { CrazyEights::Card.new(rank: "3", suit: "Diamonds") }
-  let(:turn_result) { described_class.new(drew_card: card, play_again: true) }
+  let(:turn_result) { described_class.new(drew_card: card, go_again: true) }
 
   describe ".from_json" do
     it "turns the given json into a ruby object" do
       restored = CrazyEights::TurnResult.from_json(turn_result.as_json)
       expect(restored.drew_card).to eq card
-      expect(restored.play_again).to be true
+      expect(restored.go_again).to be true
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.describe CrazyEights::TurnResult, type: :model do
     subject do
       described_class.new(drew_card: card,
                           played_card: card,
-                          play_again: true,
+                          go_again: true,
                           wild: true)
     end
   end

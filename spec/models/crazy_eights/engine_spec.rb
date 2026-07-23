@@ -123,9 +123,9 @@ RSpec.describe CrazyEights::Engine, type: :model do
         expect(game.players.first.hand).to be_empty
       end
 
-      it "records a result without play_again" do
+      it "records a result without go_again" do
         result = game.play_turn(turn)
-        expect(result.play_again).to be false
+        expect(result.go_again).to be false
       end
     end
 
@@ -171,7 +171,7 @@ RSpec.describe CrazyEights::Engine, type: :model do
 
       it "allows another turn" do
         result = game.play_turn(turn)
-        expect(result.play_again).to be true
+        expect(result.go_again).to be true
       end
     end
   end
