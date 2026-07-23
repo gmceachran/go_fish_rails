@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-23T00:00:00Z",
+  "title": "Design System: The Focused Felt",
+  "referenceOfRecord": "docs/rummy-concepting/optics/piles-in-board-accent.html",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Muted Teal-Blue",
+        "canonical": "hsl(200 50% 32%)",
+        "note": "Cool, structural accent. Solid (-base) only on the next action (primary button, layoff +). Pale tiers wash meld surfaces (-plus-seven) and the feed rail (-plus-eight). Never marks state.",
+        "tonalRamp": [
+          "hsl(200 50% 12%)",
+          "hsl(200 50% 16%)",
+          "hsl(200 50% 24%)",
+          "hsl(200 50% 40%)",
+          "hsl(200 50% 90%)",
+          "hsl(200 50% 94%)",
+          "hsl(200 50% 96%)",
+          "hsl(200 50% 98%)"
+        ]
+      },
+      "warning-amber": {
+        "role": "tertiary",
+        "displayName": "Warm Amber",
+        "canonical": "hsl(47 100% 40%)",
+        "note": "Warm accent, always meaning current/chosen/mine, plus genuine alerts. Marks: active player row (.is-active), round badge, focused meld (.meld--accent) and its layoff, hand-selection. Rationed; never decorative. Teal = where/what to do; amber = what is mine and now.",
+        "tonalRamp": [
+          "hsl(47 100% 8%)",
+          "hsl(47 100% 14%)",
+          "hsl(47 100% 32%)",
+          "hsl(47 100% 40%)",
+          "hsl(47 100% 60%)",
+          "hsl(47 100% 88%)",
+          "hsl(47 100% 96%)",
+          "hsl(47 100% 98%)"
+        ]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "Cool Table White",
+        "canonical": "hsl(200 4% 100%)",
+        "note": "Neutrals derive from the primary hue at 4% saturation, so grays read faintly teal-cool, never dead. Board work area and floating card/row surfaces.",
+        "tonalRamp": [
+          "hsl(200 4% 8%)",
+          "hsl(200 4% 16%)",
+          "hsl(200 4% 20%)",
+          "hsl(200 4% 40%)",
+          "hsl(200 4% 84%)",
+          "hsl(200 4% 94%)",
+          "hsl(200 4% 98%)",
+          "hsl(200 4% 100%)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Reserved page-level titles. Rare." },
+      "headline": { "displayName": "Headline", "purpose": "Panel header bars — Board, Rummy, Your Hand." },
+      "title": { "displayName": "Title", "purpose": "Player names and primary readable labels (medium weight)." },
+      "body": { "displayName": "Body", "purpose": "Default text." },
+      "label": { "displayName": "Micro-label", "purpose": "Uppercase, letter-spaced, muted zone titles — YOUR MELDS, STOCK, PLAYERS. The system's connective tissue." }
+    },
+    "shadows": [
+      { "name": "resting-lift", "value": "0 1px 2px hsl(0deg 0% 0% / 3%), 0 1px 3px hsl(0deg 0% 0% / 15%)", "purpose": "The only everyday shadow — deliberately softened to 3-15% black. On playing cards and the small floating rows that carry them (player-list). (--op-shadow-x-small)" },
+      { "name": "overlay-lift", "value": "0 4px 8px hsl(0deg 0% 0% / 15%), 0 1px 3px hsl(0deg 0% 0% / 3%)", "purpose": "Reserved for true overlays (winner/confirm dialog), paired with backdrop blur. (--op-shadow-medium)" }
+    ],
+    "motion": [],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Meld",
+      "kind": "custom",
+      "refersTo": "meld",
+      "description": "Signature object: a row of small card faces plus a trailing layoff +, bundled at 16px. Default pale teal; --accent turns amber for the meld a player is working.",
+      "html": "<div class=\"ds-meld ds-meld--accent\"><span class=\"ds-cardface\">9♥</span><span class=\"ds-cardface\">10♥</span><span class=\"ds-cardface\">J♥</span><button class=\"ds-layoff\">+</button></div>",
+      "css": ".ds-meld { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.8rem; background: hsl(200 50% 96%); border: 1px solid hsl(200 50% 94%); border-radius: 16px; font-family: 'Noto Sans', sans-serif; } .ds-meld--accent { background: hsl(47 100% 98%); border-color: hsl(47 100% 40%); } .ds-cardface { display: inline-flex; align-items: flex-start; justify-content: center; width: 54px; height: 76px; padding: 4px; background: #fff; border: 1px solid hsl(200 4% 90%); border-radius: 6px; box-shadow: 0 1px 2px hsl(0deg 0% 0% / 3%), 0 1px 3px hsl(0deg 0% 0% / 15%); font-size: 1.4rem; font-weight: 600; } .ds-layoff { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; margin-left: 0.4rem; font-size: 1.6rem; line-height: 1; color: #fff; background: hsl(200 50% 40%); border: 0; border-radius: 8px; cursor: pointer; } .ds-meld--accent .ds-layoff { background: hsl(47 100% 14%); color: hsl(47 100% 60%); } .ds-layoff:hover { filter: brightness(1.08); }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The next action (Draw stock). Solid teal, semibold, visually wider than its siblings so it dominates the action row.",
+      "html": "<div class=\"ds-actions\"><button class=\"ds-btn\">Take discard</button><button class=\"ds-btn ds-btn--primary\">Draw stock</button><button class=\"ds-btn\">Discard ▾</button></div>",
+      "css": ".ds-actions { display: flex; gap: 1.6rem; max-width: 760px; font-family: 'Noto Sans', sans-serif; } .ds-btn { flex: 1; font-size: 1.6rem; font-weight: 500; padding: 1.2rem 1.6rem; border-radius: 8px; cursor: pointer; border: 1px solid hsl(200 4% 90%); background: #fff; color: hsl(200 4% 20%); } .ds-btn:hover { background: hsl(200 4% 96%); } .ds-btn--primary { flex: 1.66; font-weight: 600; background: hsl(200 50% 40%); color: #fff; border-color: transparent; } .ds-btn--primary:hover { filter: brightness(1.08); }"
+    },
+    {
+      "name": "Player Row",
+      "kind": "custom",
+      "refersTo": "player-row",
+      "description": "Combined turn + score row in the feed rail. White 8px row, hairline border, whisper shadow; .is-active turns amber to mark whose turn it is.",
+      "html": "<ul class=\"ds-player-list\"><li class=\"ds-player is-active\"><span class=\"ds-player__turn\"></span><span class=\"ds-player__name\">You</span><span class=\"ds-player__score\">Score: <strong>19</strong></span></li><li class=\"ds-player\"><span class=\"ds-player__turn\"></span><span class=\"ds-player__name\">Dana</span><span class=\"ds-player__score\">Score: <strong>30</strong></span></li></ul>",
+      "css": ".ds-player-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; font-family: 'Noto Sans', sans-serif; } .ds-player { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 1.6rem; border: 1px solid hsl(200 4% 90%); border-radius: 8px; background: #fff; box-shadow: 0 1px 2px hsl(0deg 0% 0% / 3%), 0 1px 3px hsl(0deg 0% 0% / 15%); } .ds-player__turn { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: hsl(200 50% 90%); } .ds-player__name { flex: 1; font-size: 1.6rem; color: hsl(200 4% 20%); } .ds-player__score { font-size: 1.4rem; color: hsl(200 4% 20%); } .ds-player__score strong { font-size: 1.6rem; font-weight: 600; color: hsl(200 4% 40%); } .ds-player.is-active { border-color: hsl(47 100% 40%); background: hsl(47 100% 98%); } .ds-player.is-active .ds-player__turn { background: hsl(47 100% 40%); } .ds-player.is-active .ds-player__name { font-weight: 600; color: hsl(47 100% 4%); }"
+    },
+    {
+      "name": "Round Badge / Feed Bubble",
+      "kind": "chip",
+      "refersTo": null,
+      "description": "A 32px amber pill reporting what's happening now — the round badge and short warm feed lines.",
+      "html": "<span class=\"ds-bubble\">Round 3</span>",
+      "css": ".ds-bubble { display: inline-block; padding: 0.4rem 1.6rem; border-radius: 32px; background: hsl(47 100% 14%); color: hsl(47 100% 60%); font-family: 'Noto Sans', sans-serif; font-size: 1.4rem; font-weight: 500; }"
+    },
+    {
+      "name": "Micro-label",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Uppercase, letter-spaced, muted zone title that names every region without competing with the cards.",
+      "html": "<h3 class=\"ds-label\">Your melds</h3>",
+      "css": ".ds-label { font-family: 'Noto Sans', sans-serif; font-size: 1.2rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: hsl(200 4% 40%); }"
+    },
+    {
+      "name": "Pile",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Stock or discard pile: uppercase label, a centered medium card (back for stock, face-up for discard), and a muted count.",
+      "html": "<div class=\"ds-pile\"><h3 class=\"ds-label\">Stock</h3><div class=\"ds-pile__card\">▂</div><span class=\"ds-pile__count\">31 left</span></div>",
+      "css": ".ds-pile { text-align: center; font-family: 'Noto Sans', sans-serif; } .ds-pile__card { display: inline-flex; align-items: center; justify-content: center; width: 82px; height: 115px; margin-top: 0.8rem; background: hsl(200 50% 40%); border-radius: 12px; box-shadow: 0 1px 2px hsl(0deg 0% 0% / 3%), 0 1px 3px hsl(0deg 0% 0% / 15%); } .ds-pile__count { display: inline-block; margin-top: 0.8rem; font-size: 1.4rem; color: hsl(200 4% 20%); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Focused Felt",
+    "overview": "The table is a neutral stage, not a decorated one. Every screen reads as a quiet, even-lit felt surface where the only things that carry weight are the cards, whose turn it is, and what just happened. Chrome recedes into a faintly cool near-white so the cards are the loudest thing present. This is an Operate-mode world: players arrive to take their turn with people they already know, and the interface's job is to be exact and get out of the way. Two accents signal, each with one meaning: teal is cool and structural (zones the play area, marks the next action); amber is warm and marks what is mine and now (active row, round badge, the meld you're building, cards you selected). Depth is near-flat: hairline borders and soft tonal steps, with a whisper-quiet shadow only on liftable objects. Every value is a RoleModel Optics token. Reference of record: docs/rummy-concepting/optics/piles-in-board-accent.html; the shipped Go Fish / Crazy Eights screens are legacy to bring in line.",
+    "keyCharacteristics": [
+      "Faintly teal-cool neutral stage; cards are the focus, chrome recedes.",
+      "Two-accent logic: teal = structure + next action; amber = mine + now.",
+      "8px is the default corner almost everywhere; 16px groups a meld; 32px pills.",
+      "Near-flat: hairline borders and soft tonal steps; shadow is whisper-quiet.",
+      "Uppercase, letter-spaced micro-labels name every zone.",
+      "Every value is an Optics token; no bespoke CSS values."
+    ],
+    "rules": [
+      { "name": "The Two-Accent Rule", "body": "Teal is cool and structural: it zones the play area and marks the next action. Amber is warm: it marks the current/chosen/mine thing — your turn, your row, the meld you're building, the cards you picked — and genuine alerts. Cool = where and what to do; warm = what is mine and now. Decide which question the accent answers before using it.", "section": "colors" },
+      { "name": "The Sparing Teal Rule", "body": "Solid teal appears only on the next action (primary button, layoff +). Everywhere else teal is a pale wash or nothing. Its rarity is what makes the action obvious.", "section": "colors" },
+      { "name": "The Optics-Only Rule", "body": "Every color is an --op-color-* token. A raw hex or hsl() literal outside game-theme-core.css is a bug.", "section": "colors" },
+      { "name": "The Uppercase Micro-Label Rule", "body": "Every zone is named by a small, uppercase, letter-spaced, muted semibold label — never a full-size heading. These labels orient without competing with the cards.", "section": "typography" },
+      { "name": "The Weight-Not-Face Rule", "body": "Emphasis uses Optics weight tokens at one family. Never add a second typeface for hierarchy.", "section": "typography" },
+      { "name": "The Whisper-Shadow Rule", "body": "Surfaces are flat and bordered at rest. Apply --op-shadow-x-small only to something that reads as a liftable object (a card, a card-bearing row). Reserve anything heavier for floating overlays.", "section": "elevation" },
+      { "name": "The Soft-Eight Rule", "body": "8px is the answer unless there's a reason: step up to 16px only to group a meld, go full-round (32px) only for a pill/badge. Don't introduce intermediate radii or reach for 24px.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do treat docs/rummy-concepting/optics/piles-in-board-accent.html as the reference of record and bring legacy screens toward it.",
+      "Do express every color, space, radius, type, and shadow as an --op-* token; put any new project override in core/theme/game-theme-core.css, not inline.",
+      "Do apply the Two-Accent Rule: teal for structure + the next action, amber for the current/chosen/mine thing and alerts.",
+      "Do default to 8px corners; step to 16px only to group a meld, 32px only for a pill (Soft-Eight Rule).",
+      "Do name every zone with an uppercase, letter-spaced, muted micro-label.",
+      "Do keep depth near-flat: hairline borders and soft tonal steps; whisper-quiet x-small shadow only on cards and card-bearing rows.",
+      "Do pair color turn-cues with a non-color cue (the turn dot, the name, an icon) so turn state never depends on color alone."
+    ],
+    "donts": [
+      "Don't treat the shipped Go Fish / Crazy Eights styling as the target; it's legacy to be reconciled with this system.",
+      "Don't hand-roll CSS or introduce raw hex / hsl() literals outside the theme file.",
+      "Don't flood a screen with solid teal — solid teal is the next action only.",
+      "Don't use amber for anything that isn't current/chosen/mine or an alert; it's never decorative.",
+      "Don't add ambient drop-shadows to flat surfaces, or reach past x-small for anything that isn't a true overlay.",
+      "Don't introduce 24px or other intermediate radii, or a second typeface for hierarchy."
+    ]
+  }
+}
